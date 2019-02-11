@@ -8,7 +8,7 @@ using UnityEngine;
  * 
  */
 // https://unity3d.com/learn/tutorials/projects/2d-roguelike-tutorial/writing-player-script
-public abstract class Player : MonoBehaviour
+public abstract class Player : PlayerController
 {
     //TODO: List of objects of type "Inventory"
     //TODO: List of objects of type "Weapon"
