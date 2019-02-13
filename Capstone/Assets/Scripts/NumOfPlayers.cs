@@ -5,7 +5,7 @@ using UnityEngine;
 public class NumOfPlayers : MonoBehaviour
 {
 
-    public int HowManyPlayers;
+    public int HowManyPlayers = Settings.NumOfPlayers;
 
 
     private void Start()
@@ -15,6 +15,7 @@ public class NumOfPlayers : MonoBehaviour
         {
             HowManyPlayers = 1;
         }
+        Settings.NumOfPlayers = HowManyPlayers;
     }
 
 }

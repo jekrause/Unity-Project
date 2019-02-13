@@ -4,7 +4,6 @@ using System.Collections;
 public class CameraControl : MonoBehaviour {
 
     public GameObject player;
-
     private Vector3 offset;
     private int playerNum;
     private Camera thisCam;
@@ -17,25 +16,24 @@ public class CameraControl : MonoBehaviour {
 
         //for testing
         numOfPlayers = GameObject.FindWithTag("SceneControl").GetComponent<NumOfPlayers>().HowManyPlayers;
-
-
+   
         switch (numOfPlayers)
         {
             case 1:
                 if (player.name == "Player1")
                 {
                     thisCam.rect = new Rect(0, 0, 1, 1);
-                    GameObject.FindWithTag("Camera2").active = false;
-                    GameObject.FindWithTag("Camera3").active = false;
-                    GameObject.FindWithTag("Camera4").active = false;
+                    GameObject.FindWithTag("Camera2").SetActive(false);
+                    GameObject.FindWithTag("Camera3").SetActive(false);
+                    GameObject.FindWithTag("Camera4").SetActive(false);
                 }
                 break;
             case 2:
                 if (player.name == "Player1")
                 {
                     thisCam.rect = new Rect(0, 0.5f, 1, 0.5f);
-                    GameObject.FindWithTag("Camera3").active = false;
-                    GameObject.FindWithTag("Camera4").active = false;
+                    GameObject.FindWithTag("Camera3").SetActive(false);
+                    GameObject.FindWithTag("Camera4").SetActive(false);
                 }
                 else if (player.name == "Player2")
                 {
@@ -46,7 +44,7 @@ public class CameraControl : MonoBehaviour {
                 if (player.name == "Player1")
                 {
                     thisCam.rect = new Rect(0, 0.5f, 0.5f, 0.5f);
-                    GameObject.FindWithTag("Camera4").active = false;
+                    GameObject.FindWithTag("Camera4").SetActive(false);
                 }
                 else if (player.name == "Player2")
                 {
@@ -81,7 +79,6 @@ public class CameraControl : MonoBehaviour {
         //offset = transform.position - player.transform.position;
         transform.position = new Vector3(player.transform.position.x, player.transform.position.y, -10);
         offset = transform.position - player.transform.position;
-
         //transform.position = player.transform.position;
 
     }

@@ -9,16 +9,38 @@ public class PlayerHeavy : Player
     {
         base.Start();
 
-        fMoveRate = 0.5f;
+        fMoveRate = 5f;
         fHP *= 1.5f;
         fAttackRadius = 5f;
         //TODO: Setup other class specific stuff here.
 
     }
 
+    protected override void Update()
+    {
+        GetMovementInput();
+        base.Update();
+    }
+
+
+
     protected override void Move(int xDir, int yDir)
     {
 
+    }
+
+    protected override void GetMovementInput()
+    {
+        try
+        {
+            float moveHorizontal = Input.GetAxis(myControllerInput.LeftHorizontalAxis);
+            float moveVertical = Input.GetAxis(myControllerInput.LeftVerticalAxis);
+            velocity = new Vector2(moveHorizontal, moveVertical) * fMoveRate;
+        }
+        catch
+        {
+
+        }
     }
 
 }

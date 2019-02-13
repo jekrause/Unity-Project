@@ -8,10 +8,16 @@ public class PlayerMedic : Player
     new void Start()
     {
         base.Start();
-
         fAttackRadius = 2f;
+        fMoveRate = 6f;
         //TODO: Setup other class specific stuff here.
 
+    }
+
+    protected override void Update()
+    {
+        GetMovementInput();
+        base.Update();
     }
 
     protected override void Move(int xDir, int yDir)
@@ -24,5 +30,19 @@ public class PlayerMedic : Player
         //TODO: might need rules for healing players.
         
         return p;
+    }
+
+    protected override void GetMovementInput()
+    {
+        try
+        {
+            float moveHorizontal = Input.GetAxis(myControllerInput.LeftHorizontalAxis);
+            float moveVertical = Input.GetAxis(myControllerInput.LeftVerticalAxis);
+            velocity = new Vector2(moveHorizontal, moveVertical) * fMoveRate;
+        }
+        catch
+        {
+
+        }
     }
 }
