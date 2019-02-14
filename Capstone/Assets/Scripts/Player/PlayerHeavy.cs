@@ -23,12 +23,6 @@ public class PlayerHeavy : Player
     }
 
 
-
-    protected override void Move(int xDir, int yDir)
-    {
-
-    }
-
     protected override void GetMovementInput()
     {
         try

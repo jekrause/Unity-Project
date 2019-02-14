@@ -53,11 +53,16 @@ public abstract class Player : MonoBehaviour
 
     // Update is called once per frame
     protected virtual void Update()
-    {
+    { 
         //check for less than 1 so we can simply subtract enemy damage rather than checking for 0.
         if (fHP < 1f)
         {
-            //TODO: if players remaining == 0, game over
+            Settings.NumOfPlayers--;
+            if (Settings.NumOfPlayers == 0)
+            {
+                //TODO: Call game over screen
+            }
+            Destroy(gameObject);
         }
 
         try
@@ -69,11 +74,6 @@ public abstract class Player : MonoBehaviour
         {
 
         }
-
-    }
-
-    virtual protected void Move(int xDir, int yDir)
-    {
 
     }
 

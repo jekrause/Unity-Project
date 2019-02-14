@@ -20,11 +20,6 @@ public class PlayerMedic : Player
         base.Update();
     }
 
-    protected override void Move(int xDir, int yDir)
-    {
-
-    }
-
     public bool HealPlayer(Player p)
     {
         //TODO: might need rules for healing players.

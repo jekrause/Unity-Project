@@ -22,11 +22,6 @@ public class PlayerSniper : Player
         base.Update();
     }
 
-    protected override void Move(int xDir, int yDir)
-    {
-
-    }
-
     protected override void GetMovementInput()
     {
         try
