@@ -10,6 +10,7 @@ public class PlayerMedic : Player
         base.Start();
         fAttackRadius = 2f;
         fMoveRate = 6f;
+        fProjSpeed = 20f;
         //TODO: Setup other class specific stuff here.
 
     }
@@ -17,6 +18,7 @@ public class PlayerMedic : Player
     protected override void Update()
     {
         GetMovementInput();
+        
         base.Update();
     }
 
@@ -37,7 +39,7 @@ public class PlayerMedic : Player
         }
         catch
         {
-
+            
         }
     }
 }

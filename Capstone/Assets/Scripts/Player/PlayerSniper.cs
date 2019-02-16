@@ -12,6 +12,7 @@ public class PlayerSniper : Player
         fMoveRate = 7f;
         fHP *= 0.75f;          
         fAttackRadius = 10f;
+        fProjSpeed = 20f;
         //TODO: Setup other class specific stuff here.
         
     }

@@ -9,6 +9,7 @@ public class PlayerFast : Player
     {
         base.Start();
         fMoveRate = 10f;
+        fProjSpeed = 20f;
         //TODO: Setup other class specific stuff here.
 
     }

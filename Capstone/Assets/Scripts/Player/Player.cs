@@ -18,6 +18,7 @@ public abstract class Player : MonoBehaviour
     protected float fDamage = 10f;         //default damage if no weapon is equipped
     protected float fMoveRate = 1f;
     protected float fAttackRadius = 2f;
+    protected float fProjSpeed = 20f;
     public int playerNumber;
     public int iAvailInvSlots = 6;      //player spawns with no inventory. Max of 6
     public int iAvailWeaponSlots = 3;   //player can have at most 3 weapons
@@ -27,6 +28,9 @@ public abstract class Player : MonoBehaviour
     // player's movement
     private Rigidbody2D rb;
     protected Vector2 velocity;
+
+    //attacking
+    protected Rigidbody2D bullet;
 
     // mouse
     private Vector2 direction;
@@ -46,14 +50,15 @@ public abstract class Player : MonoBehaviour
         myCamera = GameObject.FindWithTag("Camera" + playerNumber).GetComponent<Camera>();
     }
 
-    private void OnDisable()
-    {
-        //TODO: Not sure if we need this yet, but it's used to update the game manager
-    }
-
     // Update is called once per frame
     protected virtual void Update()
-    { 
+    {
+        //TODO
+        if(Input.GetKeyDown(KeyCode.Space))
+        {
+           // Attack();
+        }
+
         //check for less than 1 so we can simply subtract enemy damage rather than checking for 0.
         if (fHP < 1f)
         {
@@ -65,6 +70,7 @@ public abstract class Player : MonoBehaviour
             Destroy(gameObject);
         }
 
+        //movement
         try
         {
             getRotationPosition();
@@ -74,7 +80,6 @@ public abstract class Player : MonoBehaviour
         {
 
         }
-
     }
 
     // Must be implemented in other subclasses
@@ -125,5 +130,15 @@ public abstract class Player : MonoBehaviour
         {
             fHP = 100f;
         }
+    }
+
+    protected void Damaged(float f)
+    {
+        fHP -= f;
+    }
+
+    virtual protected void Attack() {
+        Rigidbody2D bulletInstance = Instantiate(Resources.Load("Bullet"), transform.position, Quaternion.Euler(new Vector3(0, 0, 0))) as Rigidbody2D;
+        bulletInstance.velocity = transform.forward * fProjSpeed;
     }
 }

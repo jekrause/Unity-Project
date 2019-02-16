@@ -12,6 +12,7 @@ public class PlayerHeavy : Player
         fMoveRate = 5f;
         fHP *= 1.5f;
         fAttackRadius = 5f;
+        fProjSpeed = 10f;
         //TODO: Setup other class specific stuff here.
 
     }

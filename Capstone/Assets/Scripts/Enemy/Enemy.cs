@@ -40,12 +40,14 @@ public class Enemy : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //death 
         if(fHP <= 0)
         {
             Object.Destroy(gameObject);
             Destroy(this);
         }
         
+        //movement
         switch(aiMvmt)
         {
             case MovementTypeEnum.Patrol:
@@ -96,5 +98,10 @@ public class Enemy : MonoBehaviour
             //TODO: check for collision at move spot before adding to list
             moveSpots[i] = new Vector2(Random.Range(5, 25), Random.Range(5, 25));
         }
+    }
+
+    protected void Damaged(float f)
+    {
+        fHP -= f;
     }
 }
