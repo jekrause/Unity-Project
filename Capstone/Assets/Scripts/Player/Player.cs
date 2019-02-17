@@ -20,9 +20,8 @@ public abstract class Player : MonoBehaviour
     protected float fAttackRadius = 2f;
     protected float fProjSpeed = 20f;
     public int playerNumber;
-    public int iAvailInvSlots = 6;      //player spawns with no inventory. Max of 6
     public int iAvailWeaponSlots = 3;   //player can have at most 3 weapons
-
+    private Inventory inventory = new Inventory(); //player spawns with empty inventory. Max of 6
     private Animator anim;
 
     // player's movement
@@ -37,7 +36,7 @@ public abstract class Player : MonoBehaviour
 
     //camera for the specific player
     private Camera myCamera;
-
+    
     // reference to the controller that is attached to the player
     public MyControllerInput myControllerInput;
 
@@ -48,6 +47,7 @@ public abstract class Player : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         myControllerInput = new MyControllerInput();
         myCamera = GameObject.FindWithTag("Camera" + playerNumber).GetComponent<Camera>();
+
     }
 
     // Update is called once per frame
@@ -78,7 +78,7 @@ public abstract class Player : MonoBehaviour
         }
         catch
         {
-
+            
         }
     }
 
