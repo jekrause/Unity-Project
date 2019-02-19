@@ -40,15 +40,20 @@ public class MyControllerInput
         if(inputType == InputType.PS4_CONTROLLER || inputType == InputType.XBOX_CONTROLLER)
         {
             string controllerType = inputType == InputType.PS4_CONTROLLER ? "PS4" : "XBOX";
+            string OS = Settings.OS;
 
-            UpButton = "J" + joystickNum + controllerType +"_UpButton";
-            RightButton = "J" + joystickNum + controllerType + "_RightButton";
-            LeftButton = "J" + joystickNum + controllerType + "_LeftButton";
-            DownButton = "J" + joystickNum + controllerType + "_DownButton";
-            RightHorizontalAxis = "J" + joystickNum + controllerType + "_Right_Horizontal_Axis";
-            RightVerticalAxis = "J" + joystickNum + controllerType + "_Right_Vertical_Axis";
-            LeftHorizontalAxis = "J" + joystickNum + controllerType + "_Left_Horizontal_Axis";
-            LeftVerticalAxis = "J" + joystickNum + controllerType + "_Left_Vertical_Axis";
+            UpButton = "J" + joystickNum + controllerType +"_UpButton_" + OS;
+            RightButton = "J" + joystickNum + controllerType + "_RightButton_" + OS;
+            LeftButton = "J" + joystickNum + controllerType + "_LeftButton_" + OS;
+            DownButton = "J" + joystickNum + controllerType + "_DownButton_" + OS;
+            RightHorizontalAxis = "J" + joystickNum + controllerType + "_Right_Horizontal_Axis_" + OS;
+            RightVerticalAxis = "J" + joystickNum + controllerType + "_Right_Vertical_Axis_" + OS;
+            LeftHorizontalAxis = "J" + joystickNum + controllerType + "_Left_Horizontal_Axis_" + OS;
+            LeftVerticalAxis = "J" + joystickNum + controllerType + "_Left_Vertical_Axis_" + OS;
+            LTrigger = "J" + joystickNum + controllerType + "_LTrigger_" + OS;
+            RTrigger = "J" + joystickNum + controllerType + "_RTrigger_" + OS;
+            LBumper = "J" + joystickNum + controllerType + "_LBumper_" + OS;
+            RBumper = "J" + joystickNum + controllerType + "_RBumper_" + OS;
         }
         else
         {

@@ -10,18 +10,15 @@ using UnityEngine;
 // https://unity3d.com/learn/tutorials/projects/2d-roguelike-tutorial/writing-player-script
 public abstract class Player : MonoBehaviour
 {
-    //TODO: List of objects of type "Inventory"
-    //TODO: List of objects of type "Weapon"
-
     public const int iBaseAttackRate = 1;
-    protected float fHP = 100f;
+    public float fHP = 100f;
     protected float fDamage = 10f;         //default damage if no weapon is equipped
-    protected float fMoveRate = 1f;
+    public float fMoveRate = 1f;
     protected float fAttackRadius = 2f;
     protected float fProjSpeed = 20f;
     public int playerNumber;
-    public int iAvailWeaponSlots = 3;   //player can have at most 3 weapons
-    private Inventory inventory = new Inventory(); //player spawns with empty inventory. Max of 6
+    public Inventory WeaponInventory = new Inventory(3);   //player can have at most 3 weapons
+    public Inventory MainInventory = new Inventory(6); //player spawns with empty inventory. Max of 6
     private Animator anim;
 
     // player's movement
@@ -39,7 +36,7 @@ public abstract class Player : MonoBehaviour
     
     // reference to the controller that is attached to the player
     public MyControllerInput myControllerInput;
-
+   
     // Start is called before the first frame update
     protected void Start()
     {
@@ -47,7 +44,6 @@ public abstract class Player : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         myControllerInput = new MyControllerInput();
         myCamera = GameObject.FindWithTag("Camera" + playerNumber).GetComponent<Camera>();
-
     }
 
     // Update is called once per frame
@@ -56,7 +52,7 @@ public abstract class Player : MonoBehaviour
         //TODO
         if(Input.GetKeyDown(KeyCode.Space))
         {
-           // Attack();
+            // Attack();
         }
 
         //check for less than 1 so we can simply subtract enemy damage rather than checking for 0.
@@ -78,7 +74,7 @@ public abstract class Player : MonoBehaviour
         }
         catch
         {
-            
+
         }
     }
 

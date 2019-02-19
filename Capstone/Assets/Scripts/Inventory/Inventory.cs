@@ -1,15 +1,53 @@
-﻿
+﻿public class Inventory{
 
-public class Inventory{
+    private class Slot
+    {
 
-    private const int MAX_SLOT_SIZE = 6;
+        private Item CurrentItem;
+        public int CurrentQuantity;
+
+        public Slot(Item item, int quantity)
+        {
+            CurrentItem = item;
+            CurrentQuantity = quantity;
+        }
+
+        public Slot() { Clear(); }
+
+        public bool HasItem() { return CurrentItem != null; }
+
+        public bool IsFull() { return CurrentItem != null && CurrentQuantity >= CurrentItem.GetMaxStackSize(); }
+
+        public void UpdateQuantity()
+        {
+            CurrentQuantity = ++CurrentQuantity > CurrentItem.GetMaxStackSize() ? CurrentItem.GetMaxStackSize() : CurrentQuantity;
+        }
+
+        public void Clear()
+        {
+            CurrentItem = null;
+            CurrentQuantity = 0;
+        }
+        public Item GetItem() { return CurrentItem; }
+
+    }
+
+
+    public readonly int MAX_SLOT_SIZE;
     private int slotUsed = 0;
-    private int ItemCursor = -1; // may be used for quick selection 
+    private int ItemCursor = 0; // may be used for quick selection 
     private Slot[] Slots;
 
-    public Inventory() {
+    public Inventory(int maxSlotSize) {
+        if (maxSlotSize <= 0) throw new System.ArgumentException("Can't have max size be lower than 1");
+        MAX_SLOT_SIZE = maxSlotSize;
         Slots = new Slot[MAX_SLOT_SIZE];
         ClearInventory();
+    }
+
+    public Inventory(Item item, int maxSlotSize) : this(maxSlotSize)
+    {
+        Slots[0] = new Slot(item, 1);
     }
 
     public void ClearInventory() {
@@ -22,39 +60,26 @@ public class Inventory{
 
         for (int i = 0; i < MAX_SLOT_SIZE; i++)
         {
-
             // if same item, ex: potion so we will be adding more potion to the current quantity stack
-            if (Slots[i].GetItem().GetType() == item.GetType())
+            if (Slots[i].HasItem() && Slots[i].GetItem().GetType() == item.GetType())
             {
-                if (Slots[i].CanAddMore())
+                if (!Slots[i].IsFull())
                 {
                     Slots[i].UpdateQuantity();
-                    ret = true;
+                    return true;
                 }
-                else
-                {
-                    int freeSlotIndex = FindEmptySlot();
-                    if(freeSlotIndex != -1)
-                    {
-                        Slots[freeSlotIndex] = new Slot(item, 1);
-                        IncrementSlotUsed();
-                        ret = true;
-                    }
-                }
+                
             }
-            else
-            {
-                if (Slots[i].IsAvailable())
-                {
-                    Slots[i] = new Slot(item, 1);
-                    IncrementSlotUsed();
-                    ret = true;
-                    break;
-                }
-  
-            }
-            
         }
+
+        int freeSlotIndex = FindEmptySlot();
+        if (freeSlotIndex != -1)
+        {
+            Slots[freeSlotIndex] = new Slot(item, 1);
+            IncrementSlotUsed();
+            ret = true;
+        }
+
         return ret;
     }
 
@@ -62,7 +87,7 @@ public class Inventory{
     {
         for(int i = 0; i < MAX_SLOT_SIZE; i++)
         {
-            if (Slots[i].IsAvailable()) return i;
+            if (!Slots[i].HasItem()) return i;
         }
         return -1; // inventory is full
     }
@@ -70,25 +95,20 @@ public class Inventory{
     public bool RemoveItem(int index)
     {
         bool ret = false;
-        if (Slots[index].IsAvailable())
+        if (Slots[index].HasItem())
         {
             ret = true;
             Slots[index].Clear();
             DecrementSlotUsed();
         }
-
         return ret;
     }
 
-    public Item GetCurrentItem()
-    {
-        ItemCursor = ItemCursor == -1 ? 0 : ItemCursor;
-        return Slots[ItemCursor].GetItem();
-    }
+    public Item GetCurrentItem() { return Slots[ItemCursor].GetItem(); }
 
     public Item GetItemInSlot(int slot) {
 
-        if (slot < 0 || slot >= MAX_SLOT_SIZE) throw new System.ArgumentOutOfRangeException("Inventory consist of 6 slots only");
+        if (slot < 0 || slot >= MAX_SLOT_SIZE) throw new System.ArgumentOutOfRangeException("Inventory consist of " + MAX_SLOT_SIZE + " slots only");
 
         return Slots[slot].GetItem();
     }
@@ -106,11 +126,12 @@ public class Inventory{
         return Slots[ItemCursor].GetItem();
     }
 
-    public int GetSlotUsed() { return slotUsed; }
+    public int GetNumOfSlotUsed() { return slotUsed; }
 
     // Should call the methods for safe mutation
     private int IncrementSlotUsed() { return slotUsed = ++slotUsed >= MAX_SLOT_SIZE ? MAX_SLOT_SIZE - 1 : slotUsed; }
 
     private int DecrementSlotUsed() { return slotUsed = --slotUsed < 0 ? 0 : slotUsed; }
+
 
 }

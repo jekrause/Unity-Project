@@ -1,4 +1,6 @@
-﻿public abstract class Item {
+﻿using UnityEngine;
+
+public abstract class Item : MonoBehaviour{
 
     public abstract int GetMaxStackSize();
 
