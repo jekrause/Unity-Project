@@ -8,29 +8,28 @@ public class MyControllerInput
 {
     
     // -- Controller left and right analog sticks
-    public string LeftHorizontalAxis { get; set; }
-    public string LeftVerticalAxis { get; set; }
-    public string RightHorizontalAxis { get; set; }
-    public string RightVerticalAxis { get; set; }
+    public string LeftHorizontalAxis { get; private set; }
+    public string LeftVerticalAxis { get; private set; }
+    public string RightHorizontalAxis { get; private set; }
+    public string RightVerticalAxis { get; private set; }
 
     // -- Controller D-Pads
-    public string LeftDPad { get; set; }
-    public string RightDPad { get; set; }
-    public string UpDPad { get; set; }
-    public string DownDPad { get; set; }
+    public string DPadX { get; private set; }
+    public string DPadY { get; private set; }
+
 
     // -- Controller right side buttons
-    public string DownButton { get; set; }    // PS4 - X Button || XBOX - A Button
-    public string RightButton { get; set; }   // PS4 - O Button || XBOX - B Button
-    public string UpButton { get; set; }      // PS4 - Triangle Button || XBOX - Y Button
-    public string LeftButton { get; set; }    // PS4 - Square Button || XBOX - X Button
+    public string DownButton { get; private set; }    // PS4 - X Button || XBOX - A Button
+    public string RightButton { get; private set; }   // PS4 - O Button || XBOX - B Button
+    public string UpButton { get; private set; }      // PS4 - Triangle Button || XBOX - Y Button
+    public string LeftButton { get; private set; }    // PS4 - Square Button || XBOX - X Button
     
 
     // -- Controller bumpers
-    public string LTrigger { get; set; }
-    public string LBumper { get; set; }
-    public string RTrigger { get; set; }
-    public string RBumper { get; set; }
+    public string LTrigger { get; private set; }
+    public string LBumper { get; private set; }
+    public string RTrigger { get; private set; }
+    public string RBumper { get; private set; }
 
     public InputType inputType { get; set; } = InputType.NONE; // default 
 
@@ -46,21 +45,33 @@ public class MyControllerInput
             RightButton = "J" + joystickNum + controllerType + "_RightButton_" + OS;
             LeftButton = "J" + joystickNum + controllerType + "_LeftButton_" + OS;
             DownButton = "J" + joystickNum + controllerType + "_DownButton_" + OS;
-            RightHorizontalAxis = "J" + joystickNum + controllerType + "_Right_Horizontal_Axis_" + OS;
-            RightVerticalAxis = "J" + joystickNum + controllerType + "_Right_Vertical_Axis_" + OS;
+            RightHorizontalAxis = "J" + joystickNum + controllerType + "_Right_Horizontal_Axis_" + OS; // only for controllers
+            RightVerticalAxis = "J" + joystickNum + controllerType + "_Right_Vertical_Axis_" + OS;     // only for controllers
             LeftHorizontalAxis = "J" + joystickNum + controllerType + "_Left_Horizontal_Axis_" + OS;
             LeftVerticalAxis = "J" + joystickNum + controllerType + "_Left_Vertical_Axis_" + OS;
             LTrigger = "J" + joystickNum + controllerType + "_LTrigger_" + OS;
             RTrigger = "J" + joystickNum + controllerType + "_RTrigger_" + OS;
             LBumper = "J" + joystickNum + controllerType + "_LBumper_" + OS;
             RBumper = "J" + joystickNum + controllerType + "_RBumper_" + OS;
+            DPadX = "J" + joystickNum + controllerType + "_DPadX_" + OS;
+            DPadY = "J" + joystickNum + controllerType + "_DPadY_" + OS;
         }
         else
         {
-            LeftHorizontalAxis = "KeyboardHorizontal";
-            LeftVerticalAxis = "KeyboardVertical";
-            RightButton = "KeyboardReload";
-            LeftButton = "KeyboardBack";
+            // key binds on keyboard subject to change depending on what you guys want
+            LeftHorizontalAxis = "KeyboardHorizontal"; // keyboard a and d
+            LeftVerticalAxis = "KeyboardVertical"; // keyboard w and s
+            RightButton = "Keyboard_Reload"; // mouse right button
+            LeftButton = "Keyboard_Escape";
+            UpButton = "Keyboard_I";
+            DownButton = "Keyboard_E";
+            RTrigger = "Keyboard_Fire"; // mouse left button
+            LTrigger = "Keyboard_Q";
+            LBumper = "Keyboard_C";
+            RBumper = "Keyboard_V";
+            DPadX = "Keyboard_DPadX"; // keyboard left and right
+            DPadY = "Keyboard_DPadY"; // keyboard up and down
+
         }
 
     }
