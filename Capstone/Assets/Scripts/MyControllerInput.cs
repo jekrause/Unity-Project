@@ -6,32 +6,121 @@ public enum InputType { NONE, KEYBOARD, PS4_CONTROLLER, XBOX_CONTROLLER }
 
 public class MyControllerInput
 {
-    
-    // -- Controller left and right analog sticks
+
+    // -- Controller left and right analog sticks --//
+
+    /// <summary>
+    /// Use only in Input.GetAxis() method. This will be the Keyboard and console controller left and right movement direction.
+    /// </summary>
     public string LeftHorizontalAxis { get; private set; }
+
+    /// <summary>
+    /// Use only in Input.GetAxis() method. This will be the Keyboard and console controller up and down movement direction.
+    /// </summary>
     public string LeftVerticalAxis { get; private set; }
+
+    /// <summary>
+    /// Use only in Input.GetAxis() method and should only be used for Console controllers and NOT keyboard input.
+    /// This will be the console controller left and right facing direction.
+    /// </summary>
     public string RightHorizontalAxis { get; private set; }
+
+    /// <summary>
+    /// Use only in Input.GetAxis() method and should only be used for Console controllers and NOT keyboard input.
+    /// This will be the console controller up and down facing direction.
+    /// </summary>
     public string RightVerticalAxis { get; private set; }
 
-    // -- Controller D-Pads
-    public string DPadX { get; private set; }
-    public string DPadY { get; private set; }
 
 
-    // -- Controller right side buttons
-    public string DownButton { get; private set; }    // PS4 - X Button || XBOX - A Button
-    public string RightButton { get; private set; }   // PS4 - O Button || XBOX - B Button
-    public string UpButton { get; private set; }      // PS4 - Triangle Button || XBOX - Y Button
-    public string LeftButton { get; private set; }    // PS4 - Square Button || XBOX - X Button
-    
+    // -- Controller D-Pads --//
 
-    // -- Controller bumpers
+    /// <summary>
+    /// Must be on Windows OS and use only in Input.GetAxis() method or (Input.GetKeyDown() for keyboard). Comparing the float value equal to 1 will determine if
+    /// the (RIGHT D-Pad) was pressed and value equal to -1 for the oppisite button.
+    /// </summary>
+    public string DPadX_Windows { get; private set; }
+
+    /// <summary>
+    /// Must be on Windows OS and use only in Input.GetAxis() method or (Input.GetKeyDown() for keyboard). Comparing the float value equal to 1 will determine if
+    /// the (UP D-Pad) was pressed and value equal to -1 for the oppisite button.
+    /// </summary>
+    public string DPadY_Windows { get; private set; }
+
+    /// <summary>
+    /// Must be on Mac OS and use only in Input.GetButton() method.
+    /// </summary>
+    public string DPadRight_Mac { get; private set; }
+
+    /// <summary>
+    /// Must be on Mac OS and use only in Input.GetButton() method.
+    /// </summary>
+    public string DPadLeft_Mac { get; private set; }
+
+    /// <summary>
+    /// Must be on Mac OS and use only in Input.GetButton() method.
+    /// </summary>
+    public string DPadUp_Mac { get; private set; }
+
+    /// <summary>
+    /// Must be on Mac OS and use only in Input.GetButton() method.
+    /// </summary>
+    public string DPadDown_Mac { get; private set; }
+
+
+
+    // -- Controller right side buttons --//
+
+    /// <summary>
+    /// Use only in Input.GetButton() or (Input.GetKeyDown()  for keyboard). This button is represented differently depending what platform it is  (PS4 - X Button || XBOX-360 - A Button)
+    /// </summary>
+    public string DownButton { get; private set; }
+
+    /// <summary>
+    /// Use only in Input.GetButton() or (InpInput.GetKeyDown()  for keyboard). This button is represented differently depending what platform it is  (PS4 - O Button || XBOX-360 - B Button)
+    /// </summary>
+    public string RightButton { get; private set; }
+
+    /// <summary>
+    /// Use only in Input.GetButton() or (Input.GetKeyDown()  for keyboard). This button is represented differently depending what platform it is  (PS4 - Triangle Button || XBOX-360 - Y Button)
+    /// </summary>
+    public string UpButton { get; private set; }
+
+    /// <summary>
+    /// Use only in Input.GetButton() or (Input.GetKeyDown()  for keyboard). This button is represented differently depending what platform it is (PS4 - Square Button || XBOX-360 - X Button)
+    /// </summary>
+    public string LeftButton { get; private set; }
+
+
+    // -- Controller Triggers and Bumpers --//
+
+    /// <summary>
+    /// Use only in Input.GetAxis() or (Input.GetKeyDown()  for keyboard). Value return are -1 to 1 to distinguish if trigger was pressed.
+    /// </summary>
     public string LTrigger { get; private set; }
+
+    /// <summary>
+    /// Use only in Input.GetButton() or (Input.GetKeyDown()  for keyboard).
+    /// </summary>
     public string LBumper { get; private set; }
+
+    /// <summary>
+    /// Use only in Input.GetAxis() or (Input.GetKeyDown()  for keyboard). Value return are -1 to 1 to distinguish if trigger was pressed.
+    /// </summary>
     public string RTrigger { get; private set; }
+
+    /// <summary>
+    /// Use only in Input.GetButton() or (Input.GetKeyDown()  for keyboard).
+    /// </summary>
     public string RBumper { get; private set; }
 
+
+    /// <summary>
+    /// The input type that is binded to the player (InputType.NONE if not binded). 
+    /// </summary>
     public InputType inputType { get; set; } = InputType.NONE; // default 
+
+
 
     public MyControllerInput(InputType inputType, int joystickNum)
     {
@@ -53,8 +142,19 @@ public class MyControllerInput
             RTrigger = "J" + joystickNum + controllerType + "_RTrigger_" + OS;
             LBumper = "J" + joystickNum + controllerType + "_LBumper_" + OS;
             RBumper = "J" + joystickNum + controllerType + "_RBumper_" + OS;
-            DPadX = "J" + joystickNum + controllerType + "_DPadX_" + OS;
-            DPadY = "J" + joystickNum + controllerType + "_DPadY_" + OS;
+            if (Settings.OS.Equals("Windows") || controllerType.Equals("PS4"))
+            {
+                DPadX_Windows = "J" + joystickNum + controllerType + "_DPadX_" + OS;
+                DPadY_Windows = "J" + joystickNum + controllerType + "_DPadY_" + OS;
+            }
+            else
+            {
+                DPadDown_Mac = "J" + joystickNum + controllerType + "_DPadDown_" + OS;
+                DPadUp_Mac = "J" + joystickNum + controllerType + "_DPadUp_" + OS;
+                DPadRight_Mac = "J" + joystickNum + controllerType + "_DPadRight_" + OS;
+                DPadLeft_Mac = "J" + joystickNum + controllerType + "_DPadLeft_" + OS;
+            }
+            
         }
         else
         {
@@ -69,8 +169,8 @@ public class MyControllerInput
             LTrigger = "Keyboard_Q";
             LBumper = "Keyboard_C";
             RBumper = "Keyboard_V";
-            DPadX = "Keyboard_DPadX"; // keyboard left and right
-            DPadY = "Keyboard_DPadY"; // keyboard up and down
+            DPadX_Windows = "Keyboard_DPadX"; // keyboard left and right
+            DPadY_Windows = "Keyboard_DPadY"; // keyboard up and down
 
         }
 
