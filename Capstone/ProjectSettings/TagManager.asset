@@ -9,6 +9,8 @@ TagManager:
   - Camera2
   - Camera4
   - Camera1
+  - Bullet
+  - Enemy
   layers:
   - Default
   - TransparentFX
