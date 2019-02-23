@@ -12,7 +12,7 @@
 
     public void Apply(Player player)
     {
-        player.fHP += HP_Points;
+        player.Healed(HP_Points);
     }
 }
 

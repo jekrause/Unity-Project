@@ -19,6 +19,7 @@ public class PlayerSniper : Player
 
     protected override void Update()
     {
+
         GetMovementInput();
         base.Update();
     }

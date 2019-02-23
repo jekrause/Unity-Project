@@ -11,7 +11,10 @@ using UnityEngine;
 public abstract class Player : MonoBehaviour
 {
     public const int iBaseAttackRate = 1;
-    public float fHP = 100f;
+
+    protected float fAttackTime = 3;  //The higher this number, the more frequent you can shoot
+    protected float fHP = 100f;
+
     protected float fDamage = 10f;         //default damage if no weapon is equipped
     public float fMoveRate = 1f;
     protected float fAttackRadius = 2f;
@@ -26,7 +29,9 @@ public abstract class Player : MonoBehaviour
     protected Vector2 velocity;
 
     //attacking
-    protected Rigidbody2D bullet;
+    
+    public Transform shootPoint;
+    public GameObject bullet;
 
     // mouse
     private Vector2 direction;
@@ -49,21 +54,11 @@ public abstract class Player : MonoBehaviour
     // Update is called once per frame
     protected virtual void Update()
     {
-        //TODO
-        if(Input.GetKeyDown(KeyCode.Space))
-        {
-            // Attack();
-        }
 
         //check for less than 1 so we can simply subtract enemy damage rather than checking for 0.
         if (fHP < 1f)
         {
-            Settings.NumOfPlayers--;
-            if (Settings.NumOfPlayers == 0)
-            {
-                //TODO: Call game over screen
-            }
-            Destroy(gameObject);
+            Death();
         }
 
         //movement
@@ -76,6 +71,7 @@ public abstract class Player : MonoBehaviour
         {
 
         }
+        GetAttackInput();
     }
 
     // Must be implemented in other subclasses
@@ -118,9 +114,8 @@ public abstract class Player : MonoBehaviour
     }
 
     //Called when player is healed
-    protected void Healed(float f)
+    public void Healed(float f)
     {
-        //TODO: maybe a healing animation gets called here
         fHP += f;
         if (fHP > 100f)
         {
@@ -128,13 +123,43 @@ public abstract class Player : MonoBehaviour
         }
     }
 
-    protected void Damaged(float f)
+    public void Damaged(float f)
     {
         fHP -= f;
     }
 
+    protected void Death()
+    {
+        Settings.NumOfPlayers--;
+        if (Settings.NumOfPlayers == 0)
+        {
+            //TODO: Call game over screen
+        }
+        Destroy(gameObject);
+    }
+
+    protected void GetAttackInput()
+    {
+        try
+        {
+            if (Input.GetAxis(myControllerInput.RTrigger) == 1 && Time.time > fAttackTime)
+            {
+
+                fAttackTime = Time.time + 1 / iBaseAttackRate;
+                Attack();
+
+            }
+        }
+        catch (System.ArgumentException ae)
+        {
+            /* 
+             * Nothing to worry about.
+             * This exception is thrown when the game has started, but the players have not been assigned a controller.
+             */
+        }
+    }
+
     virtual protected void Attack() {
-        Rigidbody2D bulletInstance = Instantiate(Resources.Load("Bullet"), transform.position, Quaternion.Euler(new Vector3(0, 0, 0))) as Rigidbody2D;
-        bulletInstance.velocity = transform.forward * fProjSpeed;
+        Instantiate(bullet, shootPoint.position, shootPoint.rotation); ;
     }
 }

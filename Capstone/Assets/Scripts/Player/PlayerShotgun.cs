@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerMedic : Player
+public class PlayerShotgun : Player
 {
     // Start is called before the first frame update
     new void Start()
@@ -17,16 +17,10 @@ public class PlayerMedic : Player
 
     protected override void Update()
     {
+
         GetMovementInput();
         
         base.Update();
-    }
-
-    public bool HealPlayer(Player p)
-    {
-        //TODO: might need rules for healing players.
-        
-        return p;
     }
 
     protected override void GetMovementInput()
