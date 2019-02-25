@@ -1,5 +1,5 @@
 ﻿interface IConsumableItem {
 
-    void Apply(Player player);
+    bool Consume(Player player);
 
 }

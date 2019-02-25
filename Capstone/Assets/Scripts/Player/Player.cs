@@ -20,9 +20,14 @@ public abstract class Player : MonoBehaviour
     protected float fAttackRadius = 2f;
     protected float fProjSpeed = 20f;
     public int playerNumber;
+    private Animator anim;
+
+    // Inventory management
     public Inventory WeaponInventory = new Inventory(3);   //player can have at most 3 weapons
     public Inventory MainInventory = new Inventory(6); //player spawns with empty inventory. Max of 6
-    private Animator anim;
+    public InventoryHandler InventoryHUD;
+    private Item itemOnGround;
+    private bool ItemFocused;
 
     // player's movement
     private Rigidbody2D rb;
@@ -45,6 +50,7 @@ public abstract class Player : MonoBehaviour
     // Start is called before the first frame update
     protected void Start()
     {
+       // InventoryHUD = new InventoryHandler(MainInventory, WeaponInventory);
         anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
         myControllerInput = new MyControllerInput();
@@ -59,6 +65,19 @@ public abstract class Player : MonoBehaviour
         if (fHP < 1f)
         {
             Death();
+        }
+
+        if (myControllerInput.inputType != InputType.NONE && Input.GetButton(myControllerInput.DownButton))
+        {
+            if (ItemFocused)
+            {
+                MainInventory.AddItem(itemOnGround);
+                Destroy(itemOnGround);
+                print("Item added, size of inventory: " + MainInventory.GetNumOfSlotUsed());
+                ItemFocused = false;
+                InventoryHUD.RemovePickUpItemMsg();
+            }
+           
         }
 
         //movement
@@ -113,14 +132,38 @@ public abstract class Player : MonoBehaviour
         //TODO
     }
 
-    //Called when player is healed
-    public void Healed(float f)
+    private void OnCollisionEnter2D(Collision2D collision)
     {
+        itemOnGround = collision.collider.GetComponent<Item>();
+        if (itemOnGround != null)
+        {
+            InventoryHUD.ShowPickUpItemMsg();
+            ItemFocused = true;
+  
+        }
+    }
+
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        itemOnGround = collision.collider.GetComponent<Item>();
+        if (itemOnGround != null)
+        {
+            InventoryHUD.RemovePickUpItemMsg();
+            ItemFocused = false;
+        }
+    }
+
+    //Called when player is healed
+    public bool Healed(float f)
+    {
+        //TODO: maybe a healing animation gets called here
+        bool gotHealed = fHP == 100f ? false : true; // used to indicate if player is already max health
         fHP += f;
         if (fHP > 100f)
         {
             fHP = 100f;
         }
+        return gotHealed;
     }
 
     public void Damaged(float f)

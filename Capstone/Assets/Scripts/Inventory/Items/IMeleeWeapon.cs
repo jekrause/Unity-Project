@@ -1,5 +1,0 @@
-﻿interface IMeleeWeapon {
-
-    void Strike();
-
-}

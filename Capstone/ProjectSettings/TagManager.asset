@@ -11,6 +11,7 @@ TagManager:
   - Camera1
   - Bullet
   - Enemy
+  - PickUpMessagePanel
   layers:
   - Default
   - TransparentFX

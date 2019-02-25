@@ -72,22 +72,22 @@ public class MyControllerInput
     // -- Controller right side buttons --//
 
     /// <summary>
-    /// Use only in Input.GetButton() or (Input.GetKeyDown()  for keyboard). This button is represented differently depending what platform it is  (PS4 - X Button || XBOX-360 - A Button)
+    /// Use only in Input.GetButton(). This button is represented differently depending what platform it is  (PS4 - X Button || XBOX-360 - A Button)
     /// </summary>
     public string DownButton { get; private set; }
 
     /// <summary>
-    /// Use only in Input.GetButton() or (InpInput.GetKeyDown()  for keyboard). This button is represented differently depending what platform it is  (PS4 - O Button || XBOX-360 - B Button)
+    /// Use only in Input.GetButton(). This button is represented differently depending what platform it is  (PS4 - O Button || XBOX-360 - B Button)
     /// </summary>
     public string RightButton { get; private set; }
 
     /// <summary>
-    /// Use only in Input.GetButton() or (Input.GetKeyDown()  for keyboard). This button is represented differently depending what platform it is  (PS4 - Triangle Button || XBOX-360 - Y Button)
+    /// Use only in Input.GetButton(). This button is represented differently depending what platform it is  (PS4 - Triangle Button || XBOX-360 - Y Button)
     /// </summary>
     public string UpButton { get; private set; }
 
     /// <summary>
-    /// Use only in Input.GetButton() or (Input.GetKeyDown()  for keyboard). This button is represented differently depending what platform it is (PS4 - Square Button || XBOX-360 - X Button)
+    /// Use only in Input.GetButton(). This button is represented differently depending what platform it is (PS4 - Square Button || XBOX-360 - X Button)
     /// </summary>
     public string LeftButton { get; private set; }
 
@@ -95,22 +95,22 @@ public class MyControllerInput
     // -- Controller Triggers and Bumpers --//
 
     /// <summary>
-    /// Use only in Input.GetAxis() or (Input.GetKeyDown()  for keyboard). Value return are -1 to 1 to distinguish if trigger was pressed.
+    /// Use only in Input.GetAxis() or (Input.GetButton()  for keyboard). Value return are -1 to 1 to distinguish if trigger was pressed.
     /// </summary>
     public string LTrigger { get; private set; }
 
     /// <summary>
-    /// Use only in Input.GetButton() or (Input.GetKeyDown()  for keyboard).
+    /// Use only in Input.GetButton().
     /// </summary>
     public string LBumper { get; private set; }
 
     /// <summary>
-    /// Use only in Input.GetAxis() or (Input.GetKeyDown()  for keyboard). Value return are -1 to 1 to distinguish if trigger was pressed.
+    /// Use only in Input.GetAxis() or (Input.GetButton()  for keyboard). Value return are -1 to 1 to distinguish if trigger was pressed.
     /// </summary>
     public string RTrigger { get; private set; }
 
     /// <summary>
-    /// Use only in Input.GetButton() or (Input.GetKeyDown()  for keyboard).
+    /// Use only in Input.GetButton().
     /// </summary>
     public string RBumper { get; private set; }
 

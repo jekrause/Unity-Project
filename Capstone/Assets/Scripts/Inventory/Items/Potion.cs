@@ -1,26 +1,18 @@
-﻿public abstract class Potion : Item, IConsumableItem
+﻿using UnityEngine;
+
+public abstract class Potion : Item, IConsumableItem
 {
+    public Sprite _image;
     private const int MAX_STACK_SIZE = 6;
     protected float HP_Points;
 
     public override int GetMaxStackSize() { return MAX_STACK_SIZE; }
 
-    public override void InteractWithItem()
-    {
-        throw new System.NotImplementedException();
-    }
+    public bool Consume(Player player){ return player.Healed(HP_Points); }
 
-    public void Apply(Player player)
-    {
-        player.Healed(HP_Points);
-    }
+    public override bool UseItem(Player player){ return Consume(player); }
 }
 
-public class LowPotion : Potion
-{
-    private const float LOW_POTION = 30f;
-    public LowPotion() { HP_Points = LOW_POTION; }
-}
 
 public class SuperPotion : Potion
 {
