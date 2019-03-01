@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PlayerHeavy : Player
 {
+    
     // Start is called before the first frame update
     new void Start()
     {
@@ -13,7 +14,11 @@ public class PlayerHeavy : Player
         fHP *= 1.5f;
         fAttackRadius = 5f;
         fProjSpeed = 10f;
-        //TODO: Setup other class specific stuff here.
+
+        if (basicWeapon != null)
+        {
+            WeaponInventory.AddItem(basicWeapon);
+        }
 
     }
 

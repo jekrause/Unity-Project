@@ -13,8 +13,8 @@ public class PlayerSniper : Player
         fHP *= 0.75f;          
         fAttackRadius = 10f;
         fProjSpeed = 20f;
-        //TODO: Setup other class specific stuff here.
-        
+      
+
     }
 
     protected override void Update()

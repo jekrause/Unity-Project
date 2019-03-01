@@ -34,9 +34,7 @@ public abstract class Player : MonoBehaviour
     protected Vector2 velocity;
 
     //attacking
-    
-    public Transform shootPoint;
-    public GameObject bullet;
+    public Item basicWeapon;
 
     // mouse
     private Vector2 direction;
@@ -189,20 +187,20 @@ public abstract class Player : MonoBehaviour
             {
 
                 fAttackTime = Time.time + 1 / iBaseAttackRate;
-                Attack();
+                if (typeof(IRangedWeapon).IsAssignableFrom(WeaponInventory.GetCurrentItem().GetType()))
+                {
+                    print("weapon firing");
+                    ((IRangedWeapon)WeaponInventory.GetCurrentItem()).Fire();
+                }
 
             }
         }
-        catch (System.ArgumentException ae)
+        catch (System.ArgumentException)
         {
             /* 
              * Nothing to worry about.
              * This exception is thrown when the game has started, but the players have not been assigned a controller.
              */
         }
-    }
-
-    virtual protected void Attack() {
-        Instantiate(bullet, shootPoint.position, shootPoint.rotation); ;
     }
 }

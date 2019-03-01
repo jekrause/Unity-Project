@@ -4,7 +4,7 @@
 
     public void Fire()
     {
-        throw new System.NotImplementedException();
+        Instantiate(bullet, ShootPosition.position, ShootPosition.rotation);
     }
 
     public void Reload()

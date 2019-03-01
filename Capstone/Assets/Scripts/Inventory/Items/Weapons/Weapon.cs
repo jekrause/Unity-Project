@@ -1,8 +1,13 @@
-﻿public abstract class Weapon : Item
+﻿using UnityEngine;
+
+public abstract class Weapon : Item
 {
     protected const int MAX_STACK_SIZE = 1;
     protected float weight;
     protected bool IsEquipped;
+
+    public Bullet bullet;
+    public Transform ShootPosition;
     
 
     public override int GetMaxStackSize() { return MAX_STACK_SIZE; }
@@ -15,6 +20,7 @@
             // equip weapon here
             ret = IsEquipped = true;
         }
+
         return ret;
     }
 }

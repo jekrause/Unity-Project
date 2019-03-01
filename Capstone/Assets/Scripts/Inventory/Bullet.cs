@@ -12,18 +12,13 @@ public class Bullet : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        target = GameObject.Find("BulletTarget").transform.position;
+        
     }
 
     // Update is called once per frame
     void Update()
     {
-        transform.position = Vector2.MoveTowards(transform.position, target, speed * Time.deltaTime);
-
-        if(transform.position.x == target.x && transform.position.y == target.y)
-        {
-            Object.Destroy(gameObject);
-        }
+        
     }
 
     void OnTriggerEnter2D(Collider2D col)

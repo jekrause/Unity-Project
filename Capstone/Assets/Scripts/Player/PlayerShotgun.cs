@@ -11,7 +11,6 @@ public class PlayerShotgun : Player
         fAttackRadius = 2f;
         fMoveRate = 6f;
         fProjSpeed = 20f;
-        //TODO: Setup other class specific stuff here.
 
     }
 
