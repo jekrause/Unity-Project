@@ -15,11 +15,6 @@ public class PlayerHeavy : Player
         fAttackRadius = 5f;
         fProjSpeed = 10f;
 
-        if (basicWeapon != null)
-        {
-            WeaponInventory.AddItem(basicWeapon);
-        }
-
     }
 
     protected override void Update()

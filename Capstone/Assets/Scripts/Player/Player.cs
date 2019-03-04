@@ -34,7 +34,8 @@ public abstract class Player : MonoBehaviour
     protected Vector2 velocity;
 
     //attacking
-    public Item basicWeapon;
+    public GameObject currentWeapon;
+
 
     // mouse
     private Vector2 direction;
@@ -53,6 +54,7 @@ public abstract class Player : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         myControllerInput = new MyControllerInput();
         myCamera = GameObject.FindWithTag("Camera" + playerNumber).GetComponent<Camera>();
+       
     }
 
     // Update is called once per frame

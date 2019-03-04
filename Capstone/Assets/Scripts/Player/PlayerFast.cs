@@ -11,10 +11,17 @@ public class PlayerFast : Player
         fMoveRate = 10f;
         fProjSpeed = 20f;
 
-        if (basicWeapon != null)
+        for (int i = 0; i < gameObject.transform.childCount; i++)
         {
-            WeaponInventory.AddItem(basicWeapon);
+            GameObject child = gameObject.transform.GetChild(i).gameObject;
+            if(child.tag == "Weapon")
+            {
+                print(child.GetComponent<Item>().name);
+                WeaponInventory.AddItem(child.GetComponent<Item>());
+                break;
+            }
         }
+        
     }
 
     protected override void Update()

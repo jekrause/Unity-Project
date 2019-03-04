@@ -4,7 +4,8 @@
 
     public void Fire()
     {
-        Instantiate(bullet, ShootPosition.position, ShootPosition.rotation);
+        var x = Instantiate(bullet, this.ShootPosition.position, ShootPosition.rotation);
+        x.gameObject.SendMessage("SetTargetPosition", transform.position);
     }
 
     public void Reload()
