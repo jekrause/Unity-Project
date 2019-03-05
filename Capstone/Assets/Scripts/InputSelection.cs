@@ -12,7 +12,7 @@ public class InputSelection : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        numOfPlayers = GameObject.FindWithTag("SceneControl").GetComponent<NumOfPlayers>().HowManyPlayers;
+        numOfPlayers = Settings.NumOfPlayers;
         objList = new GameObject[4];
         playerLists = new Player[4];
         for (int i = 0; i < 4; i++)

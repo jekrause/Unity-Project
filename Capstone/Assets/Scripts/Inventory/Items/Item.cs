@@ -1,13 +1,14 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+
+
 public abstract class Item : MonoBehaviour{
 
-    public Sprite Image { get; }
+    [SerializeField] public Sprite Image;
 
-    /// <summary>
-    /// <ret>Returns if this item is a quest item.</ret>
-    /// </summary>
-    public bool IsQuestItem { get; private set; }
+    public enum Type { HEALING_ITEM, WEAPON, ARMOR, QUEST_ITEM };
+
+    public Type type { get; protected set;}
 
     /// <summary>
     /// <ret>Returns the max stack size of this item.</ret>
@@ -20,9 +21,5 @@ public abstract class Item : MonoBehaviour{
     /// </summary>
     public abstract bool UseItem(Player player);
 
-    public void PickUpItem()
-    {
-        gameObject.SetActive(false);
-    }
 
 }

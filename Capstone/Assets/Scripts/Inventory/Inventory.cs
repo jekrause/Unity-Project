@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+
 public class Inventory
 {
 
@@ -10,7 +11,7 @@ public class Inventory
 
         public Slot(Item item, int quantity)
         {
-            CurrentItem = item ?? throw new System.ArgumentNullException("Cannot have null item");
+            CurrentItem = item ?? throw new System.ArgumentNullException("Attempting to add null item");
 
             if(quantity > CurrentItem.GetMaxStackSize())
                 throw new System.ArgumentException("Quantity given is bigger than item's max stack size");
@@ -49,9 +50,9 @@ public class Inventory
 
 
     public readonly int MAX_SLOT_SIZE;
-    private int slotUsed = 0;
+    [SerializeField] private int slotUsed = 0;
     private int ItemCursor = 0; // may be used for quick selection 
-    private readonly Slot[] Slots;
+    [SerializeField] private readonly Slot[] Slots;
 
     public Inventory(int maxSlotSize) {
         if (maxSlotSize <= 0) throw new System.ArgumentException("Can't have max size be lower than 1");
@@ -69,20 +70,21 @@ public class Inventory
         for (int i = 0; i < MAX_SLOT_SIZE; i++) Slots[i] = new Slot();
     }
 
-    public bool AddItem(Item item)
+    public int AddItem(Item item)
     {
-        bool ret = false;
+        int ret = -1;
+        if (item == null) throw new System.ArgumentNullException("Attempting to add null item");
 
         for (int i = 0; i < MAX_SLOT_SIZE; i++)
         {
             // if same item, ex: potion so we will be adding more potion to the current quantity stack
-            if (Slots[i].HasItem() && Slots[i].GetItem().GetType() == item.GetType())
+            if (Slots[i].HasItem())
             {
-                if (!Slots[i].IsFull())
+                if (!Slots[i].IsFull() && Slots[i].GetItem().GetType() == item.GetType())
                 {
                     Slots[i].IncrementQuantity();
-                    item.PickUpItem();
-                    return true;
+                    Debug.Log("Inventory AddItem: Slot no: " + (i+1) + ", Item stack Incremented");
+                    return i;
                 }
                 
             }
@@ -93,10 +95,10 @@ public class Inventory
         {
             Slots[freeSlotIndex] = new Slot(item, 1);
             IncrementSlotUsed();
-            item.PickUpItem();
-            ret = true;
+            ret = freeSlotIndex;
         }
 
+        Debug.Log("Inventory AddItem: Item added to Slot: " + (ret + 1));
         return ret;
     }
 
@@ -109,14 +111,26 @@ public class Inventory
         return -1; // inventory is full
     }
 
-    public bool RemoveItem(int index)
+    public bool RemoveItem(int index, bool removeFullStack)
     {
         bool ret = false;
         if (Slots[index].HasItem())
         {
-            ret = true;
-            Slots[index].Clear();
-            DecrementSlotUsed();
+            if (removeFullStack)
+            {
+                ret = true;
+                Slots[index].Clear();
+                DecrementSlotUsed();
+                Debug.Log("Inventory RemoveItem: Slot no: " + (index+1) + ", Full Stack removed");
+            }
+            else
+            {
+                ret = true;
+                Slots[index].DecrementQuantity();
+                if (!Slots[index].HasItem()) DecrementSlotUsed();
+                Debug.Log("Inventory RemoveItem: Slot no: " + (index+1) + ", 1 removed from stack");
+            }
+            
         }
         return ret;
     }
@@ -133,13 +147,13 @@ public class Inventory
     //used for cycling through the quick inventory list that would be displayed at the bottom of the screen
     public Item GetNextItem()
     {
-        ItemCursor = ++ItemCursor >= slotUsed ? 0 : ItemCursor;
+        ItemCursor = ++ItemCursor >= MAX_SLOT_SIZE ? 0 : ItemCursor;
         return Slots[ItemCursor].GetItem();
     }
 
     public Item GetPrevItem()
     {
-        ItemCursor = --ItemCursor < 0 ? slotUsed - 1 : ItemCursor;
+        ItemCursor = --ItemCursor < 0 ? MAX_SLOT_SIZE - 1 : ItemCursor;
         return Slots[ItemCursor].GetItem();
     }
 
@@ -153,11 +167,27 @@ public class Inventory
         ret = s.GetItem().UseItem(player);
         if (ret == true)
         {
+            Debug.Log("Inventory UseItem: Used item successfully");
             s.DecrementQuantity();
             if (!s.HasItem()) DecrementSlotUsed();
         }
         return ret;
     }
+
+    public int GetQuantityInSlot(int slot) {
+        if (Slots[slot].HasItem())
+        {
+            return Slots[slot].CurrentQuantity;
+        }
+        else
+        {
+            return -1;
+        }
+    }
+
+    public int GetCurrentSlotNum() { return ItemCursor; }
+
+    public bool SlotIsFull(int slot) { return Slots[slot] != null && Slots[slot].IsFull(); }
 
     // Should call the methods for safe mutation
     private int IncrementSlotUsed() { return slotUsed = ++slotUsed >= MAX_SLOT_SIZE ? MAX_SLOT_SIZE - 1 : slotUsed; }
