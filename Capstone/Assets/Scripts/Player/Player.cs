@@ -10,16 +10,6 @@ using System.Collections.Generic;
 // https://unity3d.com/learn/tutorials/projects/2d-roguelike-tutorial/writing-player-script
 public abstract class Player : MonoBehaviour
 {
-
-    // Player events that other class can subscribe to
-    // Using Observer design pattern where the observers (subscribers) will listen to the events
-
-    // Player Health events
-    public delegate void PlayerHealthEvent(float amount);
-    public event PlayerHealthEvent OnPlayerDamagedEvent;
-    public event PlayerHealthEvent OnPlayerHealedEvent;
-    public event PlayerHealthEvent OnPlayerDeathEvent;
-
     // Player stats
     protected const int iBaseAttackRate = 1;
 
@@ -30,18 +20,8 @@ public abstract class Player : MonoBehaviour
     protected float fMoveRate = 1f;
     protected float fAttackRadius = 2f;
     protected float fProjSpeed = 20f;
-    public readonly int playerNumber;
+    [SerializeField] public int playerNumber;
     private Animator anim;
-
-    // Inventory management
-    [SerializeField] protected InventoryHUD InventoryHUD;
-    protected Item itemOnGround;
-    protected List<GameObject> ObjectsPickedUp = new List<GameObject>();
-    protected bool ItemFocused;
-    protected bool InventoryHUDFocused;
-    protected bool actionInProgress; // to elminate multiple button press
-    protected Inventory MainInventory;
-    protected Inventory WeaponInventory;
 
     // player's movement
     private Rigidbody2D rb;
@@ -54,25 +34,24 @@ public abstract class Player : MonoBehaviour
     private Vector2 direction;
 
     //camera for the specific player
-    [SerializeField] private Camera myCamera;
-    
+    [SerializeField] public Camera myCamera;
+
     // reference to the controller that is attached to the player
-    public MyControllerInput myControllerInput;
+    public MyControllerInput myControllerInput = new MyControllerInput();
+
+    public readonly Inventory MainInventory = new Inventory(6);
+    public readonly Inventory WeaponInventory = new Inventory(3);
 
     // Start is called before the first frame update
 
     private void Awake()
     {
-    
+
     }
     protected void Start()
     {
         anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
-        myControllerInput = new MyControllerInput();
-        MainInventory = new Inventory(6);
-        WeaponInventory = new Inventory(3);
-        
     }
 
     // Update is called once per frame
@@ -85,18 +64,11 @@ public abstract class Player : MonoBehaviour
             Death();
         }
 
-        ReadControllerInput();
-
         //movement
-        try
-        {
-            getRotationPosition();
-            rb.MovePosition(rb.position + velocity * Time.deltaTime); // move the player after updating user input
-        }
-        catch
-        {
 
-        }
+        getRotationPosition();
+        rb.MovePosition(rb.position + velocity * Time.deltaTime); // move the player after updating user input
+
         GetAttackInput();
     }
 
@@ -126,7 +98,7 @@ public abstract class Player : MonoBehaviour
             }
             catch
             {
-                
+
             }
 
         }
@@ -138,153 +110,6 @@ public abstract class Player : MonoBehaviour
     {
         //TODO
     }
-
-    private void ReadControllerInput()
-    {
-        if (myControllerInput.inputType != InputType.NONE)
-        {
-
-            if (Input.GetButtonDown(myControllerInput.UpButton) || Input.GetButton(myControllerInput.UpButton))
-            {
-                if(actionInProgress == false)
-                {
-                    InventoryHUDFocused = !InventoryHUDFocused; // toggle inventory selection
-                    InventoryHUD.InventoryToggled(InventoryHUDFocused); 
-                    Debug.Log("Inventory toggled");
-                    actionInProgress = true;
-                    StartCoroutine(DelayReadingInput());
-                }
-                
-            }
-
-            if (InventoryHUDFocused)
-            {
-                if (Input.GetAxis(myControllerInput.DPadX_Windows) > 0) // D-Pad right
-                {
-                    if (actionInProgress == false)
-                    {
-                        MainInventory.GetNextItem();
-                        InventoryHUD.IterateRight(); 
-                        actionInProgress = true;
-                        StartCoroutine(DelayReadingInput());
-                    }
-
-                }
-                else if (Input.GetAxis(myControllerInput.DPadX_Windows) < 0) // D-Pad left
-                {
-                    if (actionInProgress == false)
-                    {
-                        MainInventory.GetPrevItem();
-                        InventoryHUD.IterateLeft();
-                        actionInProgress = true;
-                        StartCoroutine(DelayReadingInput());
-                    }
-                }else if(Input.GetButtonDown(myControllerInput.LeftButton) || Input.GetButton(myControllerInput.LeftButton))
-                {
-                    if (actionInProgress == false)
-                    {
-                        int slotNum = MainInventory.GetCurrentSlotNum();
-                        Item itemToDrop = MainInventory.GetCurrentItem();
-                        if(itemToDrop != null)
-                        {
-                            int itemIndex = 0;
-                            for(int i = 0; i < ObjectsPickedUp.Count; i++)
-                            {
-                                if(ObjectsPickedUp[i].GetComponent<Item>().GetType() == itemToDrop.GetType())
-                                {
-                                    ObjectsPickedUp[i].transform.position = transform.position;
-                                    ObjectsPickedUp[i].SetActive(true);
-                                    MainInventory.RemoveItem(slotNum, false);
-                                    actionInProgress = true;
-                                    StartCoroutine(DelayReadingInput());
-                                    itemIndex = i;
-                                    break;
-                                }
-                            }
-                            InventoryHUD.OnItemRemove(MainInventory.GetQuantityInSlot(slotNum));
-                            ObjectsPickedUp.RemoveAt(itemIndex);
-                        }
-                        
-                    }
-                    
-                }else if (Input.GetButtonDown(myControllerInput.DownButton) || Input.GetButton(myControllerInput.DownButton))
-                {
-                    Item itemToUse = MainInventory.GetCurrentItem();
-                    if(itemToUse != null)
-                    {
-                        if (MainInventory.UseItem(this, MainInventory.GetCurrentSlotNum()))
-                        {
-                            InventoryHUD.OnItemRemove(MainInventory.GetQuantityInSlot(MainInventory.GetCurrentSlotNum()));
-                            ObjectsPickedUp.Remove(itemToUse.gameObject);
-                            if(MainInventory.GetCurrentItem() == null)
-                                Destroy(itemToUse.gameObject);
-                        }
-                        
-                    }
-                    
-                }
-            }
-            else
-            {
-                if (Input.GetButtonDown(myControllerInput.DownButton) || Input.GetButton(myControllerInput.DownButton))
-                {
-                    if (ItemFocused)
-                    {
-                        if (itemOnGround != null)
-                        {
-                            int slot = MainInventory.AddItem(itemOnGround);
-                            if(slot != -1)
-                            {
-                                InventoryHUD.OnItemAdd(itemOnGround, slot, MainInventory.GetQuantityInSlot(slot));
-                                itemOnGround.gameObject.SetActive(false);
-                                ObjectsPickedUp.Add(itemOnGround.gameObject);
-                                ItemFocused = false;
-                                InventoryHUD.RemovePickUpItemMsg();
-                            }
-                            
-                        }
-
-                    }
-
-                }
-            }
-        }
-    }
-
-
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        itemOnGround = collision.collider.GetComponent<Item>();
-        Player player = collision.collider.GetComponent<Player>();
-        if (itemOnGround != null)
-        {
-            ItemFocused = true;
-            InventoryHUD.ShowPickUpItemMsg(myControllerInput.inputType);
-        }else if(player != null)
-        {
-            Damaged(10); // testing Health HUD
-        }
-    }
-
-    private void OnCollisionExit2D(Collision2D collision)
-    {
-        itemOnGround = collision.collider.GetComponent<Item>();
-        
-        if (itemOnGround != null)
-        {
-            ItemFocused = false;
-            InventoryHUD.RemovePickUpItemMsg();
-        }
-    }
-
-    private IEnumerator DelayReadingInput()
-    {
-
-        yield return new WaitForSeconds(.25f);
-        actionInProgress = false;
-
-    }
-
 
     //Called when player is healed
     public bool Healed(float f)
@@ -299,7 +124,7 @@ public abstract class Player : MonoBehaviour
         }
         if (gotHealed)
         {
-            OnPlayerHealedEvent?.Invoke(fHP); // if there are subscribers to the Event, invoke the methods
+            EventAggregator.GetInstance().Publish(new PlayerHealedEvent(fHP, playerNumber));
         }
         return gotHealed;
     }
@@ -309,8 +134,7 @@ public abstract class Player : MonoBehaviour
         if (fHP > 0)
         {
             fHP -= f;
-            OnPlayerDamagedEvent?.Invoke(fHP); // if there are subscribers to the Event, invoke the methods
-
+            EventAggregator.GetInstance().Publish(new PlayerDamagedEvent(fHP, playerNumber)); // fire event
             return true;
         }
         return false;
@@ -348,6 +172,15 @@ public abstract class Player : MonoBehaviour
              * Nothing to worry about.
              * This exception is thrown when the game has started, but the players have not been assigned a controller.
              */
+        }
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        Player player = collision.collider.GetComponent<Player>();
+        if (player != null)
+        {
+            Damaged(10);
         }
     }
 }

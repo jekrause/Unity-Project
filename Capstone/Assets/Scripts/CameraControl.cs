@@ -15,7 +15,7 @@ public class CameraControl : MonoBehaviour {
         thisCam = gameObject.GetComponent<Camera>();
 
         //for testing
-        numOfPlayers = GameObject.FindWithTag("SceneControl").GetComponent<NumOfPlayers>().HowManyPlayers;
+        numOfPlayers = Settings.NumOfPlayers;
    
         switch (numOfPlayers)
         {

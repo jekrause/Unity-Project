@@ -4,26 +4,19 @@ using UnityEngine.UI;
 
 public class InventoryHUD : MonoBehaviour
 {
-    [SerializeField] private List<GameObject> MainInvSlots;
-    [SerializeField] private List<GameObject> WeaponInvSlots;
-    [SerializeField] private GameObject MainInventoryPanel;
-    [SerializeField] private GameObject WeaponInventoryPanel;
-    [SerializeField] private GameObject MessagePanel;
+    [SerializeField] public List<GameObject> MainInvSlots;
+    [SerializeField] public List<GameObject> WeaponInvSlots;
+    [SerializeField] public GameObject MainInventoryPanel;
+    [SerializeField] public GameObject WeaponInventoryPanel;
+    [SerializeField] public GameObject MessagePanel;
+    private EventAggregator eventAggregator = EventAggregator.GetInstance();
     private bool IsInvToggled;
     private string PickUpMessage;
     private int slotIndex = 0;
 
     private void Start()
     {
-        
-    }
 
-   
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 
     public void ShowPickUpItemMsg(InputType inputType)
@@ -100,5 +93,4 @@ public class InventoryHUD : MonoBehaviour
     {
 
     }
-
 }

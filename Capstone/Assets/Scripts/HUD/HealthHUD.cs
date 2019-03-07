@@ -3,20 +3,26 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class HealthHUD : MonoBehaviour
+public class HealthHUD : MonoBehaviour, ISubscriber<PlayerHealedEvent>, ISubscriber<PlayerDamagedEvent>
 {
-    [SerializeField] private Player player;
-    [SerializeField] private Slider HealthBar;
+    public int playerNumHUD;
+    private Slider HealthBar;
 
 
     // Start is called before the first frame update
     void Start()
     {
+        if (playerNumHUD <= 0 || playerNumHUD >= 5)
+        {
+            throw new System.Exception("Health HUD player number is out of bound: " + playerNumHUD + "\nMust be 1 - 4");
+        }
+        HealthBar = transform.GetChild(0).GetComponent<Slider>();
         // listen for player hp events
-        player.OnPlayerDamagedEvent += OnDamaged;
-        player.OnPlayerHealedEvent += OnHealed;
-        player.OnPlayerDeathEvent += OnDeath;
+        EventAggregator.GetInstance().Register<PlayerHealedEvent>(this);
+        EventAggregator.GetInstance().Register<PlayerDamagedEvent>(this);
+
         HealthBar.value = 1; // full health
+        
     }
 
     // Update is called once per frame
@@ -49,9 +55,26 @@ public class HealthHUD : MonoBehaviour
 
     private void OnDisable()
     {
-        player.OnPlayerDamagedEvent -= OnDamaged;
-        player.OnPlayerHealedEvent -= OnHealed;
-        player.OnPlayerDeathEvent -= OnDeath;
+        // unsubscribe the events
+        EventAggregator.GetInstance().Unregister<PlayerHealedEvent>(this);
+        EventAggregator.GetInstance().Unregister<PlayerDamagedEvent>(this);
     }
 
+
+    // when an event is fired, these will be the methods that are called
+    public void OnEventHandler(PlayerHealedEvent eventData)
+    {
+        if(playerNumHUD == eventData.playerNum) // make sure we are updating the correct player HUD
+        {
+            OnHealed(eventData.Health);
+        }
+    }
+
+    public void OnEventHandler(PlayerDamagedEvent eventData)
+    {
+        if (playerNumHUD == eventData.playerNum) // make sure we are updating the correct player HUD
+        {
+            OnDamaged(eventData.Health);
+        }
+    }
 }
