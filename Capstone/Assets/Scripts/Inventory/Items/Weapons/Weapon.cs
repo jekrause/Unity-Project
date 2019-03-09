@@ -6,6 +6,7 @@ public abstract class Weapon : Item
     protected float weight;
     protected bool IsEquipped;
 
+    public Sprite PlayerImage { get; }
     public Bullet bullet;
     public Transform ShootPosition;
     

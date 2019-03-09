@@ -5,9 +5,7 @@ using UnityEngine;
 public class Bullet : MonoBehaviour
 {
 
-    protected float speed = 5;
-
-    private Vector2 target; //target for bullet
+    protected float damage = 10;
 
     // Start is called before the first frame update
     void Start()
@@ -18,33 +16,30 @@ public class Bullet : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (transform.position.x == target.x && transform.position.y == target.y)
-        {
-            transform.position = Vector2.MoveTowards(transform.position, target, speed * Time.deltaTime);
-        }
-    }
-
-    void SetTargetPosition(Vector3 pos)
-    {
-        target = pos;
+        
     }
 
     void OnTriggerEnter2D(Collider2D col)
     {
-
-        print("collision");
-
-        if (col.gameObject.tag != "Weapon" && col.gameObject.tag != "Player")
+        print("collided with " + col.tag);
+        if (col.gameObject.tag == "Weapon" || col.gameObject.tag == "Player" || col.gameObject.tag == "Untagged")
         {
             return;
         }
 
         if (col.gameObject.tag == "Enemy")
         {
-            col.gameObject.SendMessage("Damaged", 20);
+            print("Player did " + damage + " damage");
+            col.gameObject.SendMessage("Damaged", damage);
         }
         
         Destroy(gameObject);
 
+    }
+
+    public void SetDamage(float dmg)
+    {
+        damage = dmg;
+        print("damage set to " + damage);
     }
 }
