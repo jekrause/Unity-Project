@@ -156,7 +156,8 @@ public abstract class Player : MonoBehaviour
         {
             if (Input.GetAxis(myControllerInput.RTrigger) == 1 && Time.time > fAttackTime)
             {
-
+                print("weapon inventory size = " + WeaponInventory.GetNumOfSlotUsed());
+                print("Trying to fire " + WeaponInventory.GetCurrentItem().name);
                 fAttackTime = Time.time + 1 / iBaseAttackRate;
                 if (typeof(IRangedWeapon).IsAssignableFrom(WeaponInventory.GetCurrentItem()?.GetType()))
                 {

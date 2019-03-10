@@ -18,6 +18,7 @@ public abstract class Weapon : Item
         bool ret = false; // in the case that it is already equipped, return false
         if (!IsEquipped)
         {
+            print(this.name + " has been equipped.");
             // equip weapon here
             ret = IsEquipped = true;
         }
