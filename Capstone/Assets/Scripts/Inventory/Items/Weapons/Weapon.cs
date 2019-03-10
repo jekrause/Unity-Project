@@ -6,7 +6,7 @@ public abstract class Weapon : Item
     protected float weight;
     protected bool IsEquipped;
 
-    public Sprite PlayerImage { get; }
+    public Sprite PlayerImage;
     public Bullet bullet;
     public Transform ShootPosition;
     
@@ -19,6 +19,7 @@ public abstract class Weapon : Item
         if (!IsEquipped)
         {
             print(this.name + " has been equipped.");
+            player.gameObject.GetComponent<SpriteRenderer>().sprite = PlayerImage;
             // equip weapon here
             ret = IsEquipped = true;
         }

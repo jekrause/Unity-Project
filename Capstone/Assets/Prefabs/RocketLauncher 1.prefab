@@ -125,6 +125,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Image: {fileID: 21300000, guid: f67ee539a3f707947ab406d410ca856e, type: 3}
+  PlayerImage: {fileID: 21300000, guid: 2b2254bc1e9894bdc8323eddf0f19cfd, type: 3}
   bullet: {fileID: 5111930284792508334, guid: 853e294866df6064ca3ad5ab3a1f8488, type: 3}
   ShootPosition: {fileID: 4970427373688987281}
 --- !u!61 &6061381929267859570
