@@ -49,7 +49,8 @@ public class InventoryHandler : MonoBehaviour
                 if (actionInProgress == false)
                 {
                     InventoryHUDFocused = !InventoryHUDFocused; // toggle inventory selection
-                    InventoryHUD.InventoryToggled(InventoryHUDFocused);
+                    InventoryHUD.InventoryToggled(InventoryHUDFocused, myControllerInput.inputType);
+                    if (InventoryHUDFocused) InventoryHUD.RemovePickUpItemMsg();
                     Debug.Log("Inventory toggled");
                     actionInProgress = true;
                     StartCoroutine(DelayReadingInput());
@@ -187,12 +188,16 @@ public class InventoryHandler : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        itemOnGround = collision.collider.GetComponent<Item>();
-        if (itemOnGround != null)
+        if (!InventoryHUDFocused)
         {
-            ItemFocused = true;
-            InventoryHUD.ShowPickUpItemMsg(myControllerInput.inputType);
+            itemOnGround = collision.collider.GetComponent<Item>();
+            if (itemOnGround != null)
+            {
+                ItemFocused = true;
+                InventoryHUD.ShowPickUpItemMsg(myControllerInput.inputType);
+            }
         }
+        
  
     }
 

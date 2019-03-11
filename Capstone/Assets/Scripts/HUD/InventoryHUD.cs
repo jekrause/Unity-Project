@@ -9,9 +9,13 @@ public class InventoryHUD : MonoBehaviour
     [SerializeField] public GameObject MainInventoryPanel;
     [SerializeField] public GameObject WeaponInventoryPanel;
     [SerializeField] public GameObject MessagePanel;
+    [SerializeField] public GameObject ActionPanel;
+
+    private InputType inputType = InputType.NONE;
     private EventAggregator eventAggregator = EventAggregator.GetInstance();
     private bool IsInvToggled;
     private string PickUpMessage;
+    private string ActionMessage;
     private int MainInvIndex = 0;
     private int WeaponInvIndex = 0;
 
@@ -20,11 +24,12 @@ public class InventoryHUD : MonoBehaviour
 
     }
 
-    public void ShowPickUpItemMsg(InputType inputType)
+    public void ShowPickUpItemMsg(InputType input)
     {
-        if(PickUpMessage == null && inputType != InputType.NONE)
+        if(inputType == InputType.NONE) inputType = input;
+        if (PickUpMessage == null && input != InputType.NONE)
         {
-            string platformButton = inputType == InputType.KEYBOARD ? "E" : inputType == InputType.PS4_CONTROLLER ? "X" : "A";
+            string platformButton = input == InputType.KEYBOARD ? "E" : input == InputType.PS4_CONTROLLER ? "X" : "A";
             PickUpMessage = "-Press '" + platformButton + "' to pick up item-";
             MessagePanel.transform.Find("PickUpItemText").GetComponent<Text>().text = PickUpMessage;
         }
@@ -81,12 +86,41 @@ public class InventoryHUD : MonoBehaviour
         MainInvSlots[MainInvIndex].transform.GetChild(0).GetComponent<Image>().color = Color.yellow;
     }
 
-    public void InventoryToggled(bool InvToggled)
+    public void InventoryToggled(bool InvToggled, InputType input)
     {
-        if(InvToggled)
+        if (InvToggled)
+        {
             MainInvSlots[MainInvIndex].transform.GetChild(0).GetComponent<Image>().color = Color.yellow;
+            if(inputType == InputType.NONE) inputType = input;
+            if (ActionMessage == null)
+            {
+                switch (inputType)
+                {
+                    case InputType.PS4_CONTROLLER:
+                        ActionMessage = "'X' - Use Item\n'O' - Drop Item";
+                        break;
+
+                    case InputType.XBOX_CONTROLLER:
+                        ActionMessage = "'A' - Use Item\n'B' - Drop Item";
+                        break;
+
+                    default:
+                        ActionMessage = ActionPanel.transform.GetComponentInChildren<Text>().text;
+                        break;
+                }
+                ActionPanel.transform.GetComponentInChildren<Text>().text = ActionMessage;
+            }
+             
+             ActionPanel.gameObject.SetActive(true);
+            
+            
+        }
         else
+        {
             MainInvSlots[MainInvIndex].transform.GetChild(0).GetComponent<Image>().color = Color.white;
+            ActionPanel.gameObject.SetActive(false);
+        }
+            
     }
 
     public void OnWeaponEquip(Item item, int weaponSlot, int mainInvSlot)

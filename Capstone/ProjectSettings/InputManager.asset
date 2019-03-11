@@ -479,7 +479,7 @@ InputManager:
     altPositiveButton: 
     gravity: 0
     dead: 0.25
-    sensitivity: 1000
+    sensitivity: 0.9
     snap: 0
     invert: 0
     type: 2
@@ -703,7 +703,7 @@ InputManager:
     altPositiveButton: 
     gravity: 0
     dead: 0.25
-    sensitivity: 500
+    sensitivity: 0.9
     snap: 0
     invert: 0
     type: 2
@@ -927,7 +927,7 @@ InputManager:
     altPositiveButton: 
     gravity: 0
     dead: 0.25
-    sensitivity: 1000
+    sensitivity: 0.9
     snap: 0
     invert: 0
     type: 2
@@ -1151,7 +1151,7 @@ InputManager:
     altPositiveButton: 
     gravity: 0
     dead: 0.25
-    sensitivity: 3
+    sensitivity: 0.9
     snap: 0
     invert: 0
     type: 2
@@ -1375,7 +1375,7 @@ InputManager:
     altPositiveButton: 
     gravity: 0
     dead: 0.25
-    sensitivity: 1000
+    sensitivity: 0.9
     snap: 0
     invert: 0
     type: 2
@@ -1599,7 +1599,7 @@ InputManager:
     altPositiveButton: 
     gravity: 0
     dead: 0.25
-    sensitivity: 1000
+    sensitivity: 0.9
     snap: 0
     invert: 0
     type: 2
@@ -1823,7 +1823,7 @@ InputManager:
     altPositiveButton: 
     gravity: 0
     dead: 0.25
-    sensitivity: 1000
+    sensitivity: 0.9
     snap: 0
     invert: 0
     type: 2
@@ -2047,7 +2047,7 @@ InputManager:
     altPositiveButton: 
     gravity: 0
     dead: 0.25
-    sensitivity: 3
+    sensitivity: 0.9
     snap: 0
     invert: 0
     type: 2
@@ -2303,7 +2303,7 @@ InputManager:
     altPositiveButton: 
     gravity: 0
     dead: 0.25
-    sensitivity: 1000
+    sensitivity: 0.9
     snap: 0
     invert: 0
     type: 2
@@ -2495,7 +2495,7 @@ InputManager:
     altPositiveButton: 
     gravity: 0
     dead: 0.25
-    sensitivity: 1000
+    sensitivity: 0.9
     snap: 0
     invert: 0
     type: 2
@@ -2687,7 +2687,7 @@ InputManager:
     altPositiveButton: 
     gravity: 0
     dead: 0.25
-    sensitivity: 1000
+    sensitivity: 0.9
     snap: 0
     invert: 0
     type: 2
@@ -2879,7 +2879,7 @@ InputManager:
     altPositiveButton: 
     gravity: 0
     dead: 0.25
-    sensitivity: 1000
+    sensitivity: 0.9
     snap: 0
     invert: 0
     type: 2

@@ -28,5 +28,12 @@ public class OnWeaponEquipEvent
     public OnWeaponEquipEvent(int playerNum, Weapon Weapon) { this.playerNum = playerNum; this.Weapon = Weapon; }
 }
 
+public class OnPlayerDeathEvent
+{
+    public int playerNum { get; set; }
+
+    public OnPlayerDeathEvent(int playerNum) {this.playerNum = playerNum; }
+}
+
 // other events to add...
 
