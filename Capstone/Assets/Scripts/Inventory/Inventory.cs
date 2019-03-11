@@ -70,6 +70,8 @@ public class Inventory
         for (int i = 0; i < MAX_SLOT_SIZE; i++) Slots[i] = new Slot();
     }
 
+    public bool AllSlotTaken() { return slotUsed >= MAX_SLOT_SIZE; }
+
     public int AddItem(Item item)
     {
         int ret = -1;
@@ -83,7 +85,7 @@ public class Inventory
                 if (!Slots[i].IsFull() && Slots[i].GetItem().GetType() == item.GetType())
                 {
                     Slots[i].IncrementQuantity();
-                    Debug.Log("Inventory AddItem: Slot no: " + (i+1) + ", Item stack Incremented");
+                    Debug.Log("Inventory AddItem(): Slot no: " + (i+1) + ", Item stack Incremented");
                     return i;
                 }
                 
@@ -98,7 +100,15 @@ public class Inventory
             ret = freeSlotIndex;
         }
 
-        Debug.Log("Inventory AddItem: Item added to Slot: " + (ret + 1));
+        if(ret != -1)
+        {
+            Debug.Log("Inventory AddItem(): Item added to Slot: " + (ret + 1));
+        }
+        else
+        {
+            Debug.Log("Inventory AddItem(): Inventory Full, size: " + slotUsed);
+        }
+        
         return ret;
     }
 
@@ -121,14 +131,14 @@ public class Inventory
                 ret = true;
                 Slots[index].Clear();
                 DecrementSlotUsed();
-                Debug.Log("Inventory RemoveItem: Slot no: " + (index+1) + ", Full Stack removed");
+                Debug.Log("Inventory RemoveItem(): Slot no: " + (index+1) + ", Full Stack removed");
             }
             else
             {
                 ret = true;
                 Slots[index].DecrementQuantity();
                 if (!Slots[index].HasItem()) DecrementSlotUsed();
-                Debug.Log("Inventory RemoveItem: Slot no: " + (index+1) + ", 1 removed from stack");
+                Debug.Log("Inventory RemoveItem(): Slot no: " + (index+1) + ", 1 removed from stack");
             }
             
         }
@@ -167,9 +177,13 @@ public class Inventory
         ret = s.GetItem().UseItem(player);
         if (ret == true)
         {
-            Debug.Log("Inventory UseItem: Used item successfully");
+            Debug.Log("Inventory UseItem(): Used item successfully");
             s.DecrementQuantity();
             if (!s.HasItem()) DecrementSlotUsed();
+        }
+        else
+        {
+            Debug.Log("Inventory UseItem(): Use item unsuccessful");
         }
         return ret;
     }

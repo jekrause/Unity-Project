@@ -2,13 +2,12 @@
 using UnityEngine.UI;
 
 
-public abstract class Item : MonoBehaviour{
+public abstract class Item : MonoBehaviour
+{
 
     [SerializeField] public Sprite Image;
 
     public enum Type { HEALING_ITEM, WEAPON, ARMOR, QUEST_ITEM };
-
-    public Type type { get; protected set;}
 
     /// <summary>
     /// <ret>Returns the max stack size of this item.</ret>
@@ -20,6 +19,8 @@ public abstract class Item : MonoBehaviour{
     /// <para>Player: the player that is using the item.</para>
     /// </summary>
     public abstract bool UseItem(Player player);
+
+    public abstract Type GetItemType();
 
 
 }

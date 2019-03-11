@@ -5,7 +5,6 @@ public class MedKit : FirstAid
 
     public MedKit() {
         HP_Points = MED_KIT_POINTS;
-        type = Type.HEALING_ITEM;
     }
 
 }

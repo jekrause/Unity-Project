@@ -12,7 +12,8 @@ public class InventoryHUD : MonoBehaviour
     private EventAggregator eventAggregator = EventAggregator.GetInstance();
     private bool IsInvToggled;
     private string PickUpMessage;
-    private int slotIndex = 0;
+    private int MainInvIndex = 0;
+    private int WeaponInvIndex = 0;
 
     private void Start()
     {
@@ -40,46 +41,67 @@ public class InventoryHUD : MonoBehaviour
         int stackQuantity = Quantity;
         MainInvSlots[slot].transform.Find("ItemSelected").Find("Item").GetComponent<Image>().sprite = item.Image;
         MainInvSlots[slot].transform.Find("ItemSelected").Find("Background").gameObject.SetActive(true);
-        MainInvSlots[slot].transform.Find("ItemSelected").Find("Background").Find("Quantity").GetComponent<Text>().text = stackQuantity + "";
+        if(item.GetItemType() != Item.Type.WEAPON)
+        {
+            MainInvSlots[slot].transform.Find("ItemSelected").Find("Background").Find("Quantity").GetComponent<Text>().text = stackQuantity + "";
+            MainInvSlots[slot].transform.Find("ItemSelected").Find("Background").gameObject.SetActive(true);
+        }
+        else
+        {
+            MainInvSlots[slot].transform.Find("ItemSelected").Find("Background").gameObject.SetActive(false);
+        }
+            
        
     }
 
     public void OnItemRemove(int Quantity)
     {
-        Debug.Log("Item removed");
-        MainInvSlots[slotIndex].transform.Find("ItemSelected").Find("Background").Find("Quantity").GetComponent<Text>().text = Quantity + "";
+        Debug.Log("InventoryHUD: Item removed");
+        MainInvSlots[MainInvIndex].transform.Find("ItemSelected").Find("Background").Find("Quantity").GetComponent<Text>().text = Quantity + "";
 
         if(Quantity <= 0)
         {
-            MainInvSlots[slotIndex].transform.Find("ItemSelected").Find("Item").GetComponent<Image>().sprite = null;
-            MainInvSlots[slotIndex].transform.Find("ItemSelected").Find("Background").gameObject.SetActive(false);
+            MainInvSlots[MainInvIndex].transform.Find("ItemSelected").Find("Item").GetComponent<Image>().sprite = null;
+            MainInvSlots[MainInvIndex].transform.Find("ItemSelected").Find("Background").gameObject.SetActive(false);
         }
       
     }
 
     public void IterateRight()
     {
-        MainInvSlots[slotIndex].transform.GetChild(0).GetComponent<Image>().color = Color.white;
-        slotIndex = ++slotIndex >= MainInvSlots.Count ? 0 : slotIndex;
-        MainInvSlots[slotIndex].transform.GetChild(0).GetComponent<Image>().color = Color.yellow;
+        MainInvSlots[MainInvIndex].transform.GetChild(0).GetComponent<Image>().color = Color.white;
+        MainInvIndex = ++MainInvIndex >= MainInvSlots.Count ? 0 : MainInvIndex;
+        MainInvSlots[MainInvIndex].transform.GetChild(0).GetComponent<Image>().color = Color.yellow;
     }
 
     public void IterateLeft()
     {
-        MainInvSlots[slotIndex].transform.transform.GetChild(0).GetComponent<Image>().color = Color.white;
-        slotIndex = --slotIndex < 0 ? MainInvSlots.Count - 1 : slotIndex;
-        MainInvSlots[slotIndex].transform.GetChild(0).GetComponent<Image>().color = Color.yellow;
+        MainInvSlots[MainInvIndex].transform.transform.GetChild(0).GetComponent<Image>().color = Color.white;
+        MainInvIndex = --MainInvIndex < 0 ? MainInvSlots.Count - 1 : MainInvIndex;
+        MainInvSlots[MainInvIndex].transform.GetChild(0).GetComponent<Image>().color = Color.yellow;
     }
 
     public void InventoryToggled(bool InvToggled)
     {
         if(InvToggled)
-            MainInvSlots[slotIndex].transform.GetChild(0).GetComponent<Image>().color = Color.yellow;
+            MainInvSlots[MainInvIndex].transform.GetChild(0).GetComponent<Image>().color = Color.yellow;
         else
-            MainInvSlots[slotIndex].transform.GetChild(0).GetComponent<Image>().color = Color.white;
+            MainInvSlots[MainInvIndex].transform.GetChild(0).GetComponent<Image>().color = Color.white;
     }
 
-    private void OnItemUse(Item item, int slot, int Quantity)
+    public void OnWeaponEquip(Item item, int weaponSlot, int mainInvSlot)
+    {
+        // remove from main inventory hud
+        MainInvSlots[MainInvIndex].transform.Find("ItemSelected").Find("Item").GetComponent<Image>().sprite = null;
+        MainInvSlots[MainInvIndex].transform.Find("ItemSelected").Find("Background").gameObject.SetActive(false);
+
+        // add it to weapon hud
+        WeaponInvSlots[weaponSlot].transform.Find("WeaponItemSelected").Find("WeaponItem").GetComponent<Image>().sprite = item.Image;
+        WeaponInvSlots[weaponSlot].transform.Find("WeaponItemSelected").Find("WeaponItem").gameObject.SetActive(true);
+        
+    }
+
+    public void OnWeaponUnEquip(Item item, int slot)
     {
         //TODO
     }

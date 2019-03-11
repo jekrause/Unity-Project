@@ -5,6 +5,8 @@ public abstract class FirstAid : Item, IHealingItem
     private const int MAX_STACK_SIZE = 6;
     [SerializeField] protected float HP_Points;
 
+    public override Type GetItemType() { return Type.HEALING_ITEM; }
+
     public override int GetMaxStackSize() { return MAX_STACK_SIZE; }
 
     public bool Apply(Player player){ return player.Healed(HP_Points); }

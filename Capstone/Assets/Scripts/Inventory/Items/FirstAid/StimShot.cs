@@ -5,7 +5,6 @@
     public StimShot()
     {
         HP_Points = STIMSHOT_POINTS;
-        type = Type.HEALING_ITEM;
     }
 }
 

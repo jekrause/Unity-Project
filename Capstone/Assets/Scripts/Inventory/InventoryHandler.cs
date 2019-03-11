@@ -57,30 +57,32 @@ public class InventoryHandler : MonoBehaviour
 
             }
 
-            if (InventoryHUDFocused)
+            if (InventoryHUDFocused) // user has inventory toggled on
             {
-                if (Input.GetAxis(myControllerInput.DPadX_Windows) > 0) // D-Pad right
-                {
-                    if (actionInProgress == false)
-                    {
-                        MainInventory.GetNextItem();
-                        InventoryHUD.IterateRight();
-                        actionInProgress = true;
-                        StartCoroutine(DelayReadingInput());
-                    }
 
-                }
-                else if (Input.GetAxis(myControllerInput.DPadX_Windows) < 0) // D-Pad left
-                {
-                    if (actionInProgress == false)
+                if(Settings.OS == "Windows"){
+                    if (Input.GetAxis(myControllerInput.DPadX_Windows) > 0) // D-Pad right, iterate throught item inventory
                     {
-                        MainInventory.GetPrevItem();
-                        InventoryHUD.IterateLeft();
-                        actionInProgress = true;
-                        StartCoroutine(DelayReadingInput());
+                        IterateRightList();
+                    }
+                    else if (Input.GetAxis(myControllerInput.DPadX_Windows) < 0) // D-Pad left, iterate throught item inventory
+                    {
+                        IterateLeftList();
                     }
                 }
-                else if (Input.GetButtonDown(myControllerInput.LeftButton) || Input.GetButton(myControllerInput.LeftButton))
+                else
+                {
+                    if (Input.GetButton(myControllerInput.DPadRight_Mac))
+                    {
+                        IterateRightList();
+                    }
+                    else if (Input.GetButton(myControllerInput.DPadLeft_Mac))
+                    {
+                        IterateLeftList();
+                    }
+                }
+               
+                if (Input.GetButtonDown(myControllerInput.LeftButton) || Input.GetButton(myControllerInput.LeftButton)) // item drop
                 {
                     if (actionInProgress == false)
                     {
@@ -109,18 +111,41 @@ public class InventoryHandler : MonoBehaviour
                     }
 
                 }
-                else if (Input.GetButtonDown(myControllerInput.DownButton) || Input.GetButton(myControllerInput.DownButton))
+                else if (Input.GetButtonDown(myControllerInput.DownButton) || Input.GetButton(myControllerInput.DownButton)) // use item
                 {
                     Item itemToUse = MainInventory.GetCurrentItem();
+                    int mainInvSlot = MainInventory.GetCurrentSlotNum();
                     if (itemToUse != null)
                     {
-                        if (MainInventory.UseItem(GetComponent<Player>(), MainInventory.GetCurrentSlotNum()))
+                        if (itemToUse.GetItemType() == Item.Type.WEAPON)
                         {
-                            InventoryHUD.OnItemRemove(MainInventory.GetQuantityInSlot(MainInventory.GetCurrentSlotNum()));
-                            ObjectsPickedUp.Remove(itemToUse.gameObject);
-                            if (MainInventory.GetCurrentItem() == null)
-                                Destroy(itemToUse.gameObject);
+                            // equip weapon
+                            int weaponSlot = WeaponInventory.AddItem(itemToUse);
+                            if (weaponSlot != -1)
+                            {
+                                MainInventory.UseItem(GetComponent<Player>(), mainInvSlot);
+                                InventoryHUD.OnWeaponEquip(itemToUse, weaponSlot, mainInvSlot);
+                                eventAggregator.Publish(new OnWeaponEquipEvent(playerNumber, (Weapon)itemToUse));
+                                Debug.Log("InventoryHandler: Weapon Equipped Successfully");
+                            }
+                            else
+                            {
+                                // equip failed due to full weapon inventory, do nothing
+                                Debug.Log("InventoryHandler: Weapon inventory full, weapon did not equip");
+                            }
                         }
+                        else
+                        {
+                            if(MainInventory.UseItem(GetComponent<Player>(), mainInvSlot))
+                            {
+                                InventoryHUD.OnItemRemove(MainInventory.GetQuantityInSlot(mainInvSlot));
+                                ObjectsPickedUp.Remove(itemToUse.gameObject);
+                                if (MainInventory.GetCurrentItem() == null)
+                                    Destroy(itemToUse.gameObject);
+                            }
+                            
+                        }
+                        
 
                     }
 
@@ -188,5 +213,27 @@ public class InventoryHandler : MonoBehaviour
         yield return new WaitForSeconds(.25f);
         actionInProgress = false;
 
+    }
+
+    private void IterateRightList()
+    {
+        if (actionInProgress == false)
+        {
+            MainInventory.GetNextItem();
+            InventoryHUD.IterateRight();
+            actionInProgress = true;
+            StartCoroutine(DelayReadingInput());
+        }
+    }
+
+    private void IterateLeftList()
+    {
+        if (actionInProgress == false)
+        {
+            MainInventory.GetPrevItem();
+            InventoryHUD.IterateLeft();
+            actionInProgress = true;
+            StartCoroutine(DelayReadingInput());
+        }
     }
 }

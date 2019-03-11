@@ -20,5 +20,13 @@ public class OnEnemeyNearDeathEvent
     // enemey that is near death
 }
 
+public class OnWeaponEquipEvent
+{
+    public Weapon Weapon;
+    public int playerNum { get; set; }
+
+    public OnWeaponEquipEvent(int playerNum, Weapon Weapon) { this.playerNum = playerNum; this.Weapon = Weapon; }
+}
+
 // other events to add...
 

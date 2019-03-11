@@ -5,6 +5,5 @@ public class Bandage : FirstAid
 
     public Bandage() {
         HP_Points = BANDAGE_POINTS;
-        type = Type.HEALING_ITEM;
     }
 }

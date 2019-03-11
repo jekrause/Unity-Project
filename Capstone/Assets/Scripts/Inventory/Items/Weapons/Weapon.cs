@@ -9,7 +9,8 @@ public abstract class Weapon : Item
     public Sprite PlayerImage;
     public Bullet bullet;
     public Transform ShootPosition;
-    
+
+    public override Type GetItemType() { return Type.WEAPON; }
 
     public override int GetMaxStackSize() { return MAX_STACK_SIZE; }
 
