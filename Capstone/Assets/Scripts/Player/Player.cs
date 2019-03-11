@@ -184,4 +184,34 @@ public abstract class Player : MonoBehaviour
             Damaged(10);
         }
     }
+
+    public float GetMoveRate()
+    {
+        return fMoveRate;
+    }
+
+    public void SetMoveRate(float rate)
+    {
+        fMoveRate = rate;
+    }
+
+    public void MultiplyMoveRate(float rate)
+    {
+        fMoveRate *= rate;
+    }
+
+    //used to access methods from outside Player class
+    //may not be needed
+    public static explicit operator Player(GameObject v)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void SetLocation(float xPos, float yPos)
+    {
+        Vector2 newLocation;
+        newLocation.x = xPos;
+        newLocation.y = yPos;
+        rb.transform.position = newLocation;
+    }
 }
