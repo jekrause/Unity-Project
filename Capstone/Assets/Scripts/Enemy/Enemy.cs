@@ -29,12 +29,20 @@ public class Enemy : MonoBehaviour
     private int iRandomSpot;
     public Vector2[] moveSpots = new Vector2[5]; //could be used if we want the Patrol AI to move between set spots
 
+    //Rigidbody2D rb; // for enemyposition
+
+    //private Vector2 e_location; // this enemies location;
+
+    private Rigidbody2D rb;
+    private Vector2 p_location; // the player being attacked
+
     void Start()
     {
         fWaitTime = fStartWaitTime;
         iRandomSpot = Random.Range(0, moveSpots.Length);
         FillMoveSpots();
         aiMvmt = MovementTypeEnum.Patrol;
+        rb = GetComponent<Rigidbody2D>();
     }
 
     // Update is called once per frame
@@ -82,7 +90,7 @@ public class Enemy : MonoBehaviour
 
     protected void MvmtChase()
     {
-
+        rb.MovePosition(rb.position + p_location * Time.deltaTime);
     }
 
     protected void MvmtSafe()
@@ -104,4 +112,10 @@ public class Enemy : MonoBehaviour
     {
         fHP -= f;
     }
+
+    private void setPlayerLocation()
+    {
+        p_location = gameObject.GetComponent("Player").transform.position;
+    }
+
 }

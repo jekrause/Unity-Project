@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class WarpStar : MonoBehaviour
 {
-
-    EndStar destination;
+    int number;
+    [SerializeField] public EndStar destination;
 
     private void Start()
     {
@@ -22,7 +22,7 @@ public class WarpStar : MonoBehaviour
 
             ((Player)other.gameObject.GetComponent("Player")).SetLocation(xPos, yPos);
             */
-            ((Player)other.gameObject.GetComponent("Player")).SetLocation(0, 0);
+            ((Player)other.gameObject.GetComponent("Player")).transform.position = destination.transform.position;
             Debug.Log("Entered WarpStar");
 
                 //Vector2 pos = destination.transform.position;
