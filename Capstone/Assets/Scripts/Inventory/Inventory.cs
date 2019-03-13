@@ -147,12 +147,9 @@ public class Inventory
 
     public Item GetCurrentItem() { return Slots[ItemCursor].GetItem(); }
 
-    public Item GetItemInSlot(int slot) {
+    public Item GetFirstItem() { return Slots[ItemCursor = 0].GetItem();  }
 
-        if (slot < 0 || slot >= MAX_SLOT_SIZE) throw new System.ArgumentOutOfRangeException("Inventory consist of " + MAX_SLOT_SIZE + " slots only");
-
-        return Slots[slot].GetItem();
-    }
+    public Item GetLastItem() { return Slots[ItemCursor = Slots.Length - 1].GetItem(); }
 
     //used for cycling through the quick inventory list that would be displayed at the bottom of the screen
     public Item GetNextItem()
@@ -166,6 +163,15 @@ public class Inventory
         ItemCursor = --ItemCursor < 0 ? MAX_SLOT_SIZE - 1 : ItemCursor;
         return Slots[ItemCursor].GetItem();
     }
+
+    public Item GetItemInSlot(int slot) {
+
+        if (slot < 0 || slot >= MAX_SLOT_SIZE) throw new System.ArgumentOutOfRangeException("Inventory consist of " + MAX_SLOT_SIZE + " slots only");
+
+        return Slots[slot].GetItem();
+    }
+
+   
 
     public int GetNumOfSlotUsed() { return slotUsed; }
 
@@ -183,7 +189,7 @@ public class Inventory
         }
         else
         {
-            Debug.Log("Inventory UseItem(): Use item unsuccessful");
+            Debug.Log("Inventory UseItem(): Use item " + s.GetItem().name +  " unsuccessful");
         }
         return ret;
     }

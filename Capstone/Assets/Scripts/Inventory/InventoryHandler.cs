@@ -16,6 +16,7 @@ public class InventoryHandler : MonoBehaviour
     [SerializeField] private InventoryHUD InventoryHUD;
     private Inventory MainInventory;
     private Inventory WeaponInventory;
+    private bool IteratingMainInv = true;
 
     // Use this for initialization
     void Start()
@@ -83,99 +84,28 @@ public class InventoryHandler : MonoBehaviour
                     }
                 }
                
-                if (Input.GetButtonDown(myControllerInput.LeftButton) || Input.GetButton(myControllerInput.LeftButton)) // item drop
+                if (Input.GetButtonDown(myControllerInput.LeftButton) || Input.GetButton(myControllerInput.LeftButton)) // item remove
                 {
-                    if (actionInProgress == false)
-                    {
-                        int slotNum = MainInventory.GetCurrentSlotNum();
-                        Item itemToDrop = MainInventory.GetCurrentItem();
-                        if (itemToDrop != null)
-                        {
-                            int itemIndex = 0;
-                            for (int i = 0; i < ObjectsPickedUp.Count; i++)
-                            {
-                                if (ObjectsPickedUp[i].GetComponent<Item>().GetType() == itemToDrop.GetType())
-                                {
-                                    ObjectsPickedUp[i].transform.position = transform.position;
-                                    ObjectsPickedUp[i].SetActive(true);
-                                    MainInventory.RemoveItem(slotNum, false);
-                                    actionInProgress = true;
-                                    StartCoroutine(DelayReadingInput());
-                                    itemIndex = i;
-                                    break;
-                                }
-                            }
-                            InventoryHUD.OnItemRemove(MainInventory.GetQuantityInSlot(slotNum));
-                            ObjectsPickedUp.RemoveAt(itemIndex);
-                        }
-
-                    }
-
+                    RemoveItemFromInv();
                 }
                 else if (Input.GetButtonDown(myControllerInput.DownButton) || Input.GetButton(myControllerInput.DownButton)) // use item
                 {
-                    Item itemToUse = MainInventory.GetCurrentItem();
-                    int mainInvSlot = MainInventory.GetCurrentSlotNum();
-                    if (itemToUse != null)
+                    if (IteratingMainInv)
                     {
-                        if (itemToUse.GetItemType() == Item.Type.WEAPON)
-                        {
-                            // equip weapon
-                            int weaponSlot = WeaponInventory.AddItem(itemToUse);
-                            if (weaponSlot != -1)
-                            {
-                                MainInventory.UseItem(GetComponent<Player>(), mainInvSlot);
-                                InventoryHUD.OnWeaponEquip(itemToUse, weaponSlot, mainInvSlot);
-                                eventAggregator.Publish(new OnWeaponEquipEvent(playerNumber, (Weapon)itemToUse));
-                                Debug.Log("InventoryHandler: Weapon Equipped Successfully");
-                            }
-                            else
-                            {
-                                // equip failed due to full weapon inventory, do nothing
-                                Debug.Log("InventoryHandler: Weapon inventory full, weapon did not equip");
-                            }
-                        }
-                        else
-                        {
-                            if(MainInventory.UseItem(GetComponent<Player>(), mainInvSlot))
-                            {
-                                InventoryHUD.OnItemRemove(MainInventory.GetQuantityInSlot(mainInvSlot));
-                                ObjectsPickedUp.Remove(itemToUse.gameObject);
-                                if (MainInventory.GetCurrentItem() == null)
-                                    Destroy(itemToUse.gameObject);
-                            }
-                            
-                        }
-                        
-
+                        UseItemFromMainInv();
                     }
-
+                    else
+                    {
+                        UseItemFromWeaponInv();
+                    }
+                    
                 }
             }
             else
             {
-                if (Input.GetButtonDown(myControllerInput.DownButton) || Input.GetButton(myControllerInput.DownButton))
+                if (Input.GetButtonDown(myControllerInput.DownButton) || Input.GetButton(myControllerInput.DownButton)) // add item
                 {
-                    if (ItemFocused)
-                    {
-                        if (itemOnGround != null)
-                        {
-                            int slot = MainInventory.AddItem(itemOnGround);
-                            if (slot != -1)
-                            {
-                                InventoryHUD.OnItemAdd(itemOnGround, slot, MainInventory.GetQuantityInSlot(slot));
-                       
-                                // disable game object
-                                itemOnGround.gameObject.SetActive(false);
-                                ObjectsPickedUp.Add(itemOnGround.gameObject);
-                                ItemFocused = false;
-                                InventoryHUD.RemovePickUpItemMsg();
-                            }
-
-                        }
-
-                    }
-
+                    AddItem();
                 }
             }
         }
@@ -215,19 +145,168 @@ public class InventoryHandler : MonoBehaviour
     private IEnumerator DelayReadingInput()
     {
 
-        yield return new WaitForSeconds(.25f);
+        yield return new WaitForSeconds(.3f);
         actionInProgress = false;
 
+    }
+
+    private void AddItem()
+    {
+        if (ItemFocused)
+        {
+            if (itemOnGround != null)
+            {
+                int slot = MainInventory.AddItem(itemOnGround);
+                if (slot != -1)
+                {
+                    InventoryHUD.OnItemAdd(itemOnGround, slot, MainInventory.GetQuantityInSlot(slot));
+
+                    // disable game object
+                    itemOnGround.gameObject.SetActive(false);
+                    ObjectsPickedUp.Add(itemOnGround.gameObject);
+                    ItemFocused = false;
+                    InventoryHUD.RemovePickUpItemMsg();
+                }
+
+            }
+
+        }
+    }
+
+    private void UseItemFromMainInv()
+    {
+        Item itemToUse = MainInventory.GetCurrentItem();
+        int mainInvSlot = MainInventory.GetCurrentSlotNum();
+        if (itemToUse != null)
+        {
+            if (itemToUse.GetItemType() == Item.Type.WEAPON)
+            {
+                // equip weapon
+                int weaponSlot = WeaponInventory.AddItem(itemToUse);
+                if (weaponSlot != -1)
+                {
+                    MainInventory.UseItem(GetComponent<Player>(), mainInvSlot);
+                    InventoryHUD.OnAddWeapon(itemToUse, weaponSlot, mainInvSlot);
+                    eventAggregator.Publish(new OnWeaponEquipEvent(playerNumber, (Weapon)itemToUse));
+                    Debug.Log("InventoryHandler: Weapon Equipped Successfully");
+                }
+                else
+                {
+                    // equip failed due to full weapon inventory, do nothing
+                    Debug.Log("InventoryHandler: Weapon inventory full, weapon did not equip");
+                }
+            }
+            else
+            {
+                if (MainInventory.UseItem(GetComponent<Player>(), mainInvSlot))
+                {
+                    InventoryHUD.OnItemRemove(MainInventory.GetQuantityInSlot(mainInvSlot));
+                    ObjectsPickedUp.Remove(itemToUse.gameObject);
+                    if (MainInventory.GetCurrentItem() == null)
+                        Destroy(itemToUse.gameObject);
+                }
+
+            }
+
+        }
+    }
+
+    private void UseItemFromWeaponInv()
+    {
+        //TODO
+    }
+
+    private void RemoveItemFromInv()
+    {
+        if (actionInProgress == false)
+        {
+            if (IteratingMainInv)
+            {
+                int slotNum = MainInventory.GetCurrentSlotNum();
+                Item itemToRemove = MainInventory.GetCurrentItem();
+                if (itemToRemove != null)
+                {
+                    int itemIndex = 0;
+                    for (int i = 0; i < ObjectsPickedUp.Count; i++)
+                    {
+                        if (ObjectsPickedUp[i].GetComponent<Item>().GetType() == itemToRemove.GetType())
+                        {
+                            ObjectsPickedUp[i].transform.position = transform.position;
+                            ObjectsPickedUp[i].SetActive(true);
+                            MainInventory.RemoveItem(slotNum, false);
+                            actionInProgress = true;
+                            StartCoroutine(DelayReadingInput());
+                            itemIndex = i;
+                            break;
+                        }
+                    }
+                    InventoryHUD.OnItemRemove(MainInventory.GetQuantityInSlot(slotNum));
+                    ObjectsPickedUp.RemoveAt(itemIndex);
+                }
+            }
+            else
+            {
+                int slotNum = WeaponInventory.GetCurrentSlotNum();
+                Weapon weaponToRemove = (Weapon) WeaponInventory.GetCurrentItem();
+                if (weaponToRemove != null)
+                {
+                    weaponToRemove.UnEquip(GetComponent<Player>());
+                    int itemIndex = 0;
+                    for (int i = 0; i < ObjectsPickedUp.Count; i++)
+                    {
+                        if (ObjectsPickedUp[i].GetComponent<Item>().name.Equals(weaponToRemove.name))
+                        {
+                            ObjectsPickedUp[i].transform.position = transform.position;
+                            ObjectsPickedUp[i].SetActive(true);
+                            WeaponInventory.RemoveItem(slotNum, false);
+                            actionInProgress = true;
+                            StartCoroutine(DelayReadingInput());
+                            itemIndex = i;
+                            break;
+                        }
+                    }
+                    InventoryHUD.OnItemRemove(WeaponInventory.GetQuantityInSlot(slotNum));
+                    ObjectsPickedUp.RemoveAt(itemIndex);
+                }
+
+            }
+
+
+        }
     }
 
     private void IterateRightList()
     {
         if (actionInProgress == false)
         {
-            MainInventory.GetNextItem();
-            InventoryHUD.IterateRight();
+            bool oldIteringMainInv = IteratingMainInv;
+            IteratingMainInv = InventoryHUD.IterateRight(); // return true if iterating main inv
             actionInProgress = true;
             StartCoroutine(DelayReadingInput());
+
+            if(oldIteringMainInv == IteratingMainInv)
+            {
+                if (IteratingMainInv)
+                {
+                    MainInventory.GetNextItem();
+                }
+                else
+                {
+                    WeaponInventory.GetNextItem();
+                }
+            }
+            else
+            {
+                if (IteratingMainInv)
+                {
+                    MainInventory.GetFirstItem();
+                }
+                else
+                {
+                    WeaponInventory.GetFirstItem();
+                }
+            }
+
         }
     }
 
@@ -235,10 +314,33 @@ public class InventoryHandler : MonoBehaviour
     {
         if (actionInProgress == false)
         {
-            MainInventory.GetPrevItem();
-            InventoryHUD.IterateLeft();
+            bool oldIteringMainInv = IteratingMainInv;
+            IteratingMainInv = InventoryHUD.IterateLeft(); // return true if iterating main inv
             actionInProgress = true;
             StartCoroutine(DelayReadingInput());
+
+            if (oldIteringMainInv == IteratingMainInv)
+            {
+                if (IteratingMainInv)
+                {
+                    MainInventory.GetPrevItem();
+                }
+                else
+                {
+                    WeaponInventory.GetPrevItem();
+                }
+            }
+            else
+            {
+                if (IteratingMainInv)
+                {
+                    MainInventory.GetLastItem();
+                }
+                else
+                {
+                    WeaponInventory.GetLastItem();
+                }
+            }
         }
     }
 }
