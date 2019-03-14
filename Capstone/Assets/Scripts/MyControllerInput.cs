@@ -161,8 +161,8 @@ public class MyControllerInput
             // key binds on keyboard subject to change depending on what you guys want
             LeftHorizontalAxis = "KeyboardHorizontal"; // keyboard a and d
             LeftVerticalAxis = "KeyboardVertical"; // keyboard w and s
-            RightButton = "Keyboard_Reload"; // mouse right button
-            LeftButton = "Keyboard_Escape";
+            LeftButton = "Keyboard_Reload"; // mouse right button
+            RightButton = "Keyboard_Escape";
             UpButton = "Keyboard_I";
             DownButton = "Keyboard_E";
             RTrigger = "Keyboard_Fire"; // mouse left button
