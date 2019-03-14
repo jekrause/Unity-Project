@@ -32,7 +32,7 @@ public class Inventory
         }
 
         public void DecrementQuantity() {
-            CurrentQuantity = --CurrentQuantity;
+            --CurrentQuantity;
             if(CurrentQuantity <= 0)
             {
                 Clear();

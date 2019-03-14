@@ -16,7 +16,9 @@ public class InventoryHandler : MonoBehaviour
     [SerializeField] private InventoryHUD InventoryHUD;
     private Inventory MainInventory;
     private Inventory WeaponInventory;
+    private Sprite PlayerOriginalImage;
     private bool IteratingMainInv = true;
+    private Item EquippedWeapon;
 
     // Use this for initialization
     void Start()
@@ -26,6 +28,7 @@ public class InventoryHandler : MonoBehaviour
         myControllerInput = GetComponent<Player>().myControllerInput;
         MainInventory = GetComponent<Player>().MainInventory;
         WeaponInventory = GetComponent<Player>().WeaponInventory;
+        PlayerOriginalImage = GetComponent<SpriteRenderer>().sprite;
         if(MainInventory == null || WeaponInventory == null)
         {
             throw new System.MissingFieldException("Inventory Handler: Player should have Inventory as a field");
@@ -90,14 +93,20 @@ public class InventoryHandler : MonoBehaviour
                 }
                 else if (Input.GetButtonDown(myControllerInput.DownButton) || Input.GetButton(myControllerInput.DownButton)) // use item
                 {
-                    if (IteratingMainInv)
+                    if (!actionInProgress)
                     {
-                        UseItemFromMainInv();
+                        if (IteratingMainInv)
+                        {
+                            UseItemFromMainInv();
+                        }
+                        else
+                        {
+                            UseItemFromWeaponInv();
+                        }
+                        actionInProgress = true;
+                        StartCoroutine(DelayReadingInput());
                     }
-                    else
-                    {
-                        UseItemFromWeaponInv();
-                    }
+                    
                     
                 }
             }
@@ -185,15 +194,15 @@ public class InventoryHandler : MonoBehaviour
                 int weaponSlot = WeaponInventory.AddItem(itemToUse);
                 if (weaponSlot != -1)
                 {
-                    MainInventory.UseItem(GetComponent<Player>(), mainInvSlot);
-                    InventoryHUD.OnAddWeapon(itemToUse, weaponSlot, mainInvSlot);
+                    MainInventory.RemoveItem(mainInvSlot, true);
+                    InventoryHUD.OnWeaponStow(itemToUse, weaponSlot, mainInvSlot);
                     eventAggregator.Publish(new OnWeaponEquipEvent(playerNumber, (Weapon)itemToUse));
-                    Debug.Log("InventoryHandler: Weapon Equipped Successfully");
+                    Debug.Log("InventoryHandler: Weapon stowed Successfully");
                 }
                 else
                 {
                     // equip failed due to full weapon inventory, do nothing
-                    Debug.Log("InventoryHandler: Weapon inventory full, weapon did not equip");
+                    Debug.Log("InventoryHandler: Weapon inventory full, could not store weapon");
                 }
             }
             else
@@ -213,7 +222,31 @@ public class InventoryHandler : MonoBehaviour
 
     private void UseItemFromWeaponInv()
     {
-        //TODO
+        Weapon weaponToUse = (Weapon) WeaponInventory.GetCurrentItem();
+        int weaponInvSlot = WeaponInventory.GetCurrentSlotNum();
+
+        if(weaponToUse != null)
+        {
+            if(GetComponent<Player>().CurrentWeapon != null && GetComponent<Player>().CurrentWeapon == weaponToUse)
+            {
+                GetComponent<SpriteRenderer>().sprite = PlayerOriginalImage;
+                GetComponent<Player>().CurrentWeapon = null;
+                InventoryHUD.OnWeaponUnEquip();
+            }
+            else
+            {
+                InventoryHUD.OnWeaponEquip(weaponInvSlot);
+                GetComponent<SpriteRenderer>().sprite = weaponToUse.PlayerImage;
+                GetComponent<Player>().CurrentWeapon = weaponToUse;
+            }
+            
+        }
+        else
+        {
+            GetComponent<SpriteRenderer>().sprite = PlayerOriginalImage;
+            GetComponent<Player>().CurrentWeapon = null;
+            InventoryHUD.OnWeaponUnEquip();
+        }
     }
 
     private void RemoveItemFromInv()
@@ -250,7 +283,13 @@ public class InventoryHandler : MonoBehaviour
                 Weapon weaponToRemove = (Weapon) WeaponInventory.GetCurrentItem();
                 if (weaponToRemove != null)
                 {
-                    weaponToRemove.UnEquip(GetComponent<Player>());
+                    if(GetComponent<Player>().CurrentWeapon != null && GetComponent<Player>().CurrentWeapon == weaponToRemove)
+                    {
+                        GetComponent<SpriteRenderer>().sprite = PlayerOriginalImage;
+                        GetComponent<Player>().CurrentWeapon = null;
+                        InventoryHUD.OnWeaponUnEquip();
+                    }
+                    WeaponInventory.RemoveItem(slotNum, true);
                     int itemIndex = 0;
                     for (int i = 0; i < ObjectsPickedUp.Count; i++)
                     {
