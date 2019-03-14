@@ -87,7 +87,7 @@ public class InventoryHandler : MonoBehaviour
                     }
                 }
                
-                if (Input.GetButtonDown(myControllerInput.LeftButton) || Input.GetButton(myControllerInput.LeftButton)) // item remove
+                if (Input.GetButtonDown(myControllerInput.RightButton) || Input.GetButton(myControllerInput.RightButton)) // item remove
                 {
                     RemoveItemFromInv();
                 }
@@ -107,7 +107,6 @@ public class InventoryHandler : MonoBehaviour
                         StartCoroutine(DelayReadingInput());
                     }
                     
-                    
                 }
             }
             else
@@ -115,6 +114,25 @@ public class InventoryHandler : MonoBehaviour
                 if (Input.GetButtonDown(myControllerInput.DownButton) || Input.GetButton(myControllerInput.DownButton)) // add item
                 {
                     AddItem();
+                }
+                else if (Input.GetButtonDown(myControllerInput.RBumper) || Input.GetButton(myControllerInput.RBumper)) // equip weapon equipment from the next right slot
+                {
+                    if (!actionInProgress)
+                    {
+                        EquipNextWeapon();
+                        actionInProgress = true;
+                        StartCoroutine(DelayReadingInput());
+                    }
+                    
+                }
+                else if (Input.GetButtonDown(myControllerInput.LBumper) || Input.GetButton(myControllerInput.LBumper)) // equip weapon equipment from the next left slot
+                {
+                    if (!actionInProgress)
+                    {
+                        EquipPrevWeapon();
+                        actionInProgress = true;
+                        StartCoroutine(DelayReadingInput());
+                    }
                 }
             }
         }
@@ -154,9 +172,21 @@ public class InventoryHandler : MonoBehaviour
     private IEnumerator DelayReadingInput()
     {
 
-        yield return new WaitForSeconds(.3f);
+        yield return new WaitForSeconds(.25f);
         actionInProgress = false;
 
+    }
+
+    private void EquipNextWeapon()
+    {
+        WeaponInventory.GetNextItem();
+        UseItemFromWeaponInv();
+    }
+
+    private void EquipPrevWeapon()
+    {
+        WeaponInventory.GetPrevItem();
+        UseItemFromWeaponInv();
     }
 
     private void AddItem()

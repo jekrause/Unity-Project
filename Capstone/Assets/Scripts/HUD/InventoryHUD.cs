@@ -176,6 +176,7 @@ public class InventoryHUD : MonoBehaviour
 
     public void InventoryToggled(bool InvToggled, InputType input)
     {
+        IsInvToggled = InvToggled;
         if (InvToggled)
         {
             if (IteratingMainInv)
@@ -252,7 +253,11 @@ public class InventoryHUD : MonoBehaviour
     public void OnWeaponEquip(int weaponSlot)
     {
         OnWeaponUnEquip(); // remove any slot that was equipped
-        WeaponInvSlots[weaponSlot].transform.GetChild(0).GetComponent<Image>().color = Color.yellow;
+        if(IsInvToggled)
+            WeaponInvSlots[weaponSlot].transform.GetChild(0).GetComponent<Image>().color = Color.yellow;
+        else
+            WeaponInvSlots[weaponSlot].transform.GetChild(0).GetComponent<Image>().color = Color.green;
+
         WeaponEquippedIndex = weaponSlot;
 
     }
@@ -261,7 +266,7 @@ public class InventoryHUD : MonoBehaviour
     {
         if(WeaponEquippedIndex != -1)
         {
-            if(WeaponEquippedIndex == WeaponInvIndex)
+            if(WeaponEquippedIndex == WeaponInvIndex && IsInvToggled)
             {
                 WeaponInvSlots[WeaponEquippedIndex].transform.GetChild(0).GetComponent<Image>().color = Color.yellow;
             }

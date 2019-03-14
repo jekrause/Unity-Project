@@ -155,7 +155,7 @@ public abstract class Player : MonoBehaviour
     {
         try
         {
-            if (Input.GetAxis(myControllerInput.RTrigger) == 1 && Time.time > fAttackTime)
+            if (Input.GetAxis(myControllerInput.RTrigger) > 0 && Time.time > fAttackTime)
             {
                 if(CurrentWeapon != null)
                 {
