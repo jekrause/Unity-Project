@@ -30,6 +30,8 @@ public abstract class Player : MonoBehaviour
     //attacking
     public Item basicWeapon;
     public Item CurrentWeapon;
+    public Ammunition Ammunition = new Ammunition(200);
+    private bool AxisButtonInUse;
 
     // mouse
     private Vector2 direction;
@@ -155,18 +157,40 @@ public abstract class Player : MonoBehaviour
     {
         try
         {
-            if (Input.GetAxis(myControllerInput.RTrigger) > 0 && Time.time > fAttackTime)
+            if (Input.GetAxis(myControllerInput.RTrigger) == 1 && Time.time > fAttackTime)
             {
-                if(CurrentWeapon != null)
+                if(CurrentWeapon != null && !AxisButtonInUse) // prevent multiple calls while holding the button
                 {
                     print("weapon inventory size = " + WeaponInventory.GetNumOfSlotUsed());
                     print("Trying to fire " + CurrentWeapon.name);
                     fAttackTime = Time.time + 1 / iBaseAttackRate;
                     CurrentWeapon.UseItem(this);
-                    
+                    AxisButtonInUse = true;
                 }
                 
 
+            }
+            else if ((Input.GetButtonDown(myControllerInput.LeftButton) && myControllerInput.inputType == InputType.KEYBOARD) // prevents multiple calls on keyboard
+                        || (Input.GetButton(myControllerInput.LeftButton) && myControllerInput.inputType != InputType.KEYBOARD)) // only work with xbox and ps4
+            {
+                // Reload 
+                if(CurrentWeapon != null && CurrentWeapon is RangedWeapon)
+                {
+                    if(Ammunition.Amount <= 0)
+                    {
+                        Debug.Log("I have no more ammunition");
+                    }
+                    else
+                    {
+                        StartCoroutine(((RangedWeapon)CurrentWeapon).Reload(Ammunition));
+                    }
+                    
+                }
+                
+            }
+            if(Input.GetAxis(myControllerInput.RTrigger) <= 0) // if player let go of holding the trigger button
+            {
+                AxisButtonInUse = false;
             }
         }
         catch (System.ArgumentException)

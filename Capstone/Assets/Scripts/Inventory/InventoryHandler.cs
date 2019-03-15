@@ -34,6 +34,7 @@ public class InventoryHandler : MonoBehaviour
             throw new System.MissingFieldException("Inventory Handler: Player should have Inventory as a field");
         }
         eventAggregator = EventAggregator.GetInstance();
+        
        
     }
 
@@ -179,12 +180,14 @@ public class InventoryHandler : MonoBehaviour
 
     private void EquipNextWeapon()
     {
+        WeaponReloadInterrupt();
         WeaponInventory.GetNextItem();
         UseItemFromWeaponInv();
     }
 
     private void EquipPrevWeapon()
     {
+        WeaponReloadInterrupt();
         WeaponInventory.GetPrevItem();
         UseItemFromWeaponInv();
     }
@@ -212,6 +215,10 @@ public class InventoryHandler : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Attempt to use an item from main inventory. Using a weapon will simply stow it to the weapon inventory,
+    /// while other items will vary depending on what type the item is.
+    /// </summary>
     private void UseItemFromMainInv()
     {
         Item itemToUse = MainInventory.GetCurrentItem();
@@ -250,6 +257,10 @@ public class InventoryHandler : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Attempt to equip a weapon from weapon inventory slot. If the slot is empty, the player will be replaced
+    /// by the original sprite (no weapon). Otherwise, it will equip or unequip the weapon currently selected.
+    /// </summary>
     private void UseItemFromWeaponInv()
     {
         Weapon weaponToUse = (Weapon) WeaponInventory.GetCurrentItem();
@@ -257,13 +268,14 @@ public class InventoryHandler : MonoBehaviour
 
         if(weaponToUse != null)
         {
-            if(GetComponent<Player>().CurrentWeapon != null && GetComponent<Player>().CurrentWeapon == weaponToUse)
+            if(GetComponent<Player>().CurrentWeapon != null && GetComponent<Player>().CurrentWeapon == weaponToUse) // unequip their weapon
             {
+                WeaponReloadInterrupt();
                 GetComponent<SpriteRenderer>().sprite = PlayerOriginalImage;
                 GetComponent<Player>().CurrentWeapon = null;
                 InventoryHUD.OnWeaponUnEquip();
             }
-            else
+            else // equip weapon
             {
                 InventoryHUD.OnWeaponEquip(weaponInvSlot);
                 GetComponent<SpriteRenderer>().sprite = weaponToUse.PlayerImage;
@@ -271,14 +283,31 @@ public class InventoryHandler : MonoBehaviour
             }
             
         }
-        else
+        else // no weapon in slot, so use player orginal image
         {
+            WeaponReloadInterrupt();
             GetComponent<SpriteRenderer>().sprite = PlayerOriginalImage;
             GetComponent<Player>().CurrentWeapon = null;
             InventoryHUD.OnWeaponUnEquip();
         }
     }
 
+    /// <summary>
+    /// Called when player attempts to drop, swap or unequip their current weapon in the case
+    /// that the gun is currently reloading
+    /// </summary>
+    private void WeaponReloadInterrupt()
+    {
+        Weapon playerWeapon = (Weapon)GetComponent<Player>().CurrentWeapon;
+        if (playerWeapon != null && playerWeapon is RangedWeapon)
+        {
+            ((RangedWeapon)playerWeapon).ReloadingInterrupted();
+        }
+    }
+
+    /// <summary>
+    /// Remove the selected item from the main inventory or weapon inventory and update the inventory HUD accordingly
+    /// </summary>
     private void RemoveItemFromInv()
     {
         if (actionInProgress == false)
@@ -315,6 +344,7 @@ public class InventoryHandler : MonoBehaviour
                 {
                     if(GetComponent<Player>().CurrentWeapon != null && GetComponent<Player>().CurrentWeapon == weaponToRemove)
                     {
+                        WeaponReloadInterrupt();
                         GetComponent<SpriteRenderer>().sprite = PlayerOriginalImage;
                         GetComponent<Player>().CurrentWeapon = null;
                         InventoryHUD.OnWeaponUnEquip();
@@ -344,6 +374,9 @@ public class InventoryHandler : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Iterate to the next item. It will iterate through the main and weapon inventory
+    /// </summary>
     private void IterateRightList()
     {
         if (actionInProgress == false)
@@ -379,6 +412,9 @@ public class InventoryHandler : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Iterate to the previous item. It will iterate through the main and weapon inventory
+    /// </summary>
     private void IterateLeftList()
     {
         if (actionInProgress == false)

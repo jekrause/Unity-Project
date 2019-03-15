@@ -1,10 +1,10 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 
 public abstract class Weapon : Item
 {
     protected const int MAX_STACK_SIZE = 1;
     protected float weight;
-    protected bool IsEquipped;
 
     public Sprite PlayerImage;
     public Bullet bullet;
@@ -16,9 +16,9 @@ public abstract class Weapon : Item
 
     public override bool UseItem(Player player)
     {
-        if(this is IRangedWeapon)
+        if(this is RangedWeapon)
         {
-            ((IRangedWeapon)this).Fire();
+            ((RangedWeapon)this).Fire();
         }
         else
         {
@@ -27,14 +27,6 @@ public abstract class Weapon : Item
         return true;
     }
 
-}
-
-interface IRangedWeapon
-{
-
-    void Fire();
-
-    void Reload();
 }
 
 interface IMeleeWeapon

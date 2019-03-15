@@ -1,22 +1,14 @@
 ﻿using UnityEngine;
 
-public class RocketLauncher : Weapon, IRangedWeapon
+public class RocketLauncher : RangedWeapon
 {
-    protected float projDamage = 50f;
-    protected float projSpeed = 300f;
 
-    public RocketLauncher() { weight = 4; }
-
-    public void Fire()
-    {
-        var x = Instantiate(bullet, this.ShootPosition.position, ShootPosition.rotation);
-        x.SetDamage(projDamage);
-        x.GetComponent<Rigidbody2D>().AddForce(x.transform.right * projSpeed);
-    }
-
-    public void Reload()
-    {
-        throw new System.NotImplementedException();
+    public RocketLauncher() {
+        projDamage = 50f;
+        projSpeed = 300f;
+        weight = 4;
+        ReloadTime = 5;
+        AmmoClip = new AmmoClip(100, 50);
     }
 
 }

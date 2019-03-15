@@ -1,24 +1,13 @@
 ﻿using UnityEngine;
 
 
-public class Sniper : Weapon, IRangedWeapon
+public class Sniper : RangedWeapon
 {
-
-    protected float projDamage = 40f;
-    protected float projSpeed = 1000;
-
-    public Sniper() { weight = 2; }
-
-    public void Fire()
-    {
-        var x = Instantiate(bullet, this.ShootPosition.position, ShootPosition.rotation);
-        x.SetDamage(projDamage);
-        x.GetComponent<Rigidbody2D>().AddForce(x.transform.right * projSpeed);
+    public Sniper() {
+        projDamage = 40f;
+        projSpeed = 1000;
+        weight = 2;
+        AmmoClip = new AmmoClip(200, 25);
+        ReloadTime = 4;
     }
-
-    public void Reload()
-    {
-        throw new System.NotImplementedException();
-    }
-
 }

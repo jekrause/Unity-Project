@@ -1,22 +1,13 @@
 ﻿using UnityEngine;
 
-public class HandGun : Weapon, IRangedWeapon
+public class HandGun : RangedWeapon
 {
-    protected float projDamage = 5f;
-    protected float projSpeed = 500;
-
-    public HandGun() { weight = 0; }
-
-    public void Fire()
-    {
-        var x = Instantiate(bullet, this.ShootPosition.position, ShootPosition.rotation);
-        x.SetDamage(projDamage);
-        x.GetComponent<Rigidbody2D>().AddForce(x.transform.right * projSpeed);
-    }
-
-    public void Reload()
-    {
-        throw new System.NotImplementedException();
+    public HandGun() {
+        projDamage = 5f;
+        projSpeed = 500;
+        weight = 0;
+        ReloadTime = 2;
+        AmmoClip = new AmmoClip(12, 1);
     }
 
 }
