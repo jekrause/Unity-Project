@@ -7,13 +7,13 @@ public abstract class RangedWeapon : Weapon
     protected float projSpeed;
     protected float ReloadTime;
     public bool IsReloading { get; protected set; }
-    protected bool CancelReload;
+    protected bool ReloadCancel;
     protected AmmoClip AmmoClip;
 
 
     public virtual void Fire()
     {
-        if (!AmmoClip.IsEmpty())
+        if (AmmoClip.EnoughAmmoToFire())
         {
             var x = Instantiate(bullet, this.ShootPosition.position, ShootPosition.rotation);
             x.SetDamage(projDamage);
@@ -24,13 +24,13 @@ public abstract class RangedWeapon : Weapon
         else
         {
             // Fire OnReloadMessage Event
-            if (IsReloading && !CancelReload)
+            if (IsReloading && !ReloadCancel)
             {
                 Debug.Log(this.name + " is still reloading");
             }
             else
             {
-                Debug.Log("Empty clip, need to reload " + this.name + "\nAmmoUsePerBullet: " + AmmoClip.AMMO_USE_PER_BULLET + ", but in clip: " + AmmoClip.CurrentAmmo );
+                Debug.Log("Not enough ammo in clip to fire, need to reload " + this.name + "\nAmmoUsePerBullet: " + AmmoClip.AMMO_USE_PER_BULLET + ", but in clip: " + AmmoClip.CurrentAmmo );
             }
             
         }
@@ -45,16 +45,14 @@ public abstract class RangedWeapon : Weapon
             IsReloading = true;
             Debug.Log(this.name + ": Reloading...");
             yield return new WaitForSeconds(ReloadTime);
-            if (CancelReload)
+            if (ReloadCancel)
             {
-                Debug.Log(this.name + ": Reload interrupted.");
-                CancelReload = false;
+                ReloadCancel = false;
             }
             else
             {
                 AmmoClip.LoadAmmunition(ammunition);
                 Debug.Log(this.name + ": Reload finished.");
-            
             }
             IsReloading = false;
         }
@@ -66,7 +64,8 @@ public abstract class RangedWeapon : Weapon
     {
         if (IsReloading)
         {
-            CancelReload = true;
+            ReloadCancel = true;
+            Debug.Log(this.name + ": Reload interrupted.");
         }
     }
 }
@@ -79,7 +78,7 @@ public class AmmoClip
 
     public AmmoClip(int maxClipSize, int ammoPerBullet)
     {
-        if (maxClipSize >= 1)
+        if (maxClipSize >= 1 && ammoPerBullet > 0 && ammoPerBullet <= maxClipSize)
         {
             MAX_CLIP_SIZE = maxClipSize;
             AMMO_USE_PER_BULLET = ammoPerBullet;
@@ -87,24 +86,24 @@ public class AmmoClip
         }
         else
         {
-            throw new System.ArgumentException("Cannot have negative clip");
+            throw new System.ArgumentException("AmmoClip() Constructor: Invalid argument given.");
         }
     }
 
     public void LoadAmmunition(Ammunition ammunition)
     {
-        int amountLeft = ammunition.Amount - MAX_CLIP_SIZE;
-        if (amountLeft < 0)
+        if(CurrentAmmo + ammunition.Amount > MAX_CLIP_SIZE)
         {
-            CurrentAmmo = amountLeft >= 0 ? amountLeft : 0;
-            ammunition.Amount = 0;
-        }
-        else
-        {
+            int amountLeft = (CurrentAmmo + ammunition.Amount) - MAX_CLIP_SIZE;
             CurrentAmmo = MAX_CLIP_SIZE;
             ammunition.Amount = amountLeft;
         }
-        
+        else
+        {
+            CurrentAmmo += ammunition.Amount;
+            ammunition.Amount = 0;
+        }
+        Debug.Log("Ammunition left on player: " + ammunition.Amount);
     }
 
     public void Decrement()
@@ -115,4 +114,6 @@ public class AmmoClip
     public bool IsEmpty() { return this.CurrentAmmo <= 0; }
 
     public bool IsFull() { return this.CurrentAmmo == MAX_CLIP_SIZE; }
+
+    public bool EnoughAmmoToFire() { return this.CurrentAmmo >= AMMO_USE_PER_BULLET; }
 }

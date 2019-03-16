@@ -180,14 +180,14 @@ public class InventoryHandler : MonoBehaviour
 
     private void EquipNextWeapon()
     {
-        WeaponReloadInterrupt();
+        InterruptWeaponReload();
         WeaponInventory.GetNextItem();
         UseItemFromWeaponInv();
     }
 
     private void EquipPrevWeapon()
     {
-        WeaponReloadInterrupt();
+        InterruptWeaponReload();
         WeaponInventory.GetPrevItem();
         UseItemFromWeaponInv();
     }
@@ -270,7 +270,7 @@ public class InventoryHandler : MonoBehaviour
         {
             if(GetComponent<Player>().CurrentWeapon != null && GetComponent<Player>().CurrentWeapon == weaponToUse) // unequip their weapon
             {
-                WeaponReloadInterrupt();
+                InterruptWeaponReload();
                 GetComponent<SpriteRenderer>().sprite = PlayerOriginalImage;
                 GetComponent<Player>().CurrentWeapon = null;
                 InventoryHUD.OnWeaponUnEquip();
@@ -285,7 +285,7 @@ public class InventoryHandler : MonoBehaviour
         }
         else // no weapon in slot, so use player orginal image
         {
-            WeaponReloadInterrupt();
+            InterruptWeaponReload();
             GetComponent<SpriteRenderer>().sprite = PlayerOriginalImage;
             GetComponent<Player>().CurrentWeapon = null;
             InventoryHUD.OnWeaponUnEquip();
@@ -296,7 +296,7 @@ public class InventoryHandler : MonoBehaviour
     /// Called when player attempts to drop, swap or unequip their current weapon in the case
     /// that the gun is currently reloading
     /// </summary>
-    private void WeaponReloadInterrupt()
+    private void InterruptWeaponReload()
     {
         Weapon playerWeapon = (Weapon)GetComponent<Player>().CurrentWeapon;
         if (playerWeapon != null && playerWeapon is RangedWeapon)
@@ -312,6 +312,7 @@ public class InventoryHandler : MonoBehaviour
     {
         if (actionInProgress == false)
         {
+            actionInProgress = true;
             if (IteratingMainInv)
             {
                 int slotNum = MainInventory.GetCurrentSlotNum();
@@ -326,7 +327,6 @@ public class InventoryHandler : MonoBehaviour
                             ObjectsPickedUp[i].transform.position = transform.position;
                             ObjectsPickedUp[i].SetActive(true);
                             MainInventory.RemoveItem(slotNum, false);
-                            actionInProgress = true;
                             StartCoroutine(DelayReadingInput());
                             itemIndex = i;
                             break;
@@ -344,7 +344,7 @@ public class InventoryHandler : MonoBehaviour
                 {
                     if(GetComponent<Player>().CurrentWeapon != null && GetComponent<Player>().CurrentWeapon == weaponToRemove)
                     {
-                        WeaponReloadInterrupt();
+                        InterruptWeaponReload();
                         GetComponent<SpriteRenderer>().sprite = PlayerOriginalImage;
                         GetComponent<Player>().CurrentWeapon = null;
                         InventoryHUD.OnWeaponUnEquip();
@@ -358,7 +358,6 @@ public class InventoryHandler : MonoBehaviour
                             ObjectsPickedUp[i].transform.position = transform.position;
                             ObjectsPickedUp[i].SetActive(true);
                             WeaponInventory.RemoveItem(slotNum, false);
-                            actionInProgress = true;
                             StartCoroutine(DelayReadingInput());
                             itemIndex = i;
                             break;
@@ -369,7 +368,6 @@ public class InventoryHandler : MonoBehaviour
                 }
 
             }
-
 
         }
     }

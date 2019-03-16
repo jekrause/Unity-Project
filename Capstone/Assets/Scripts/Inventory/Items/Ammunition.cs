@@ -4,7 +4,7 @@ using System.Collections;
 public class Ammunition
 {
     public int Amount;
-    public readonly int MAX_CAPACITY = 200;
+    public readonly int MAX_CAPACITY = 500; 
 
     public Ammunition(int amount)
     {
