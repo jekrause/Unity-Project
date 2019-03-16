@@ -30,6 +30,7 @@ public abstract class Player : MonoBehaviour
     //attacking
     public Item basicWeapon;
     public Item CurrentWeapon;
+    public Transform shootPosition;
     public Ammunition Ammunition = new Ammunition(500);
     private bool AxisButtonInUse;
 

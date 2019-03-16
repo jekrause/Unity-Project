@@ -11,11 +11,11 @@ public abstract class RangedWeapon : Weapon
     protected AmmoClip AmmoClip;
 
 
-    public virtual void Fire()
+    public virtual void Fire(Player player)
     {
         if (AmmoClip.EnoughAmmoToFire())
         {
-            var x = Instantiate(bullet, this.ShootPosition.position, ShootPosition.rotation);
+            var x = Instantiate(bullet, player.shootPosition.position, player.shootPosition.rotation);
             x.SetDamage(projDamage);
             x.GetComponent<Rigidbody2D>().AddForce(x.transform.right * projSpeed);
             AmmoClip.Decrement();

@@ -40,6 +40,5 @@ public class Bullet : MonoBehaviour
     public void SetDamage(float dmg)
     {
         damage = dmg;
-        print("damage set to " + damage);
     }
 }

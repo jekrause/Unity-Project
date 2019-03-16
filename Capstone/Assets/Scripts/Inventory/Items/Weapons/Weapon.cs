@@ -8,7 +8,6 @@ public abstract class Weapon : Item
 
     public Sprite PlayerImage;
     public Bullet bullet;
-    public Transform ShootPosition;
 
     public override Type GetItemType() { return Type.WEAPON; }
 
@@ -18,7 +17,7 @@ public abstract class Weapon : Item
     {
         if(this is RangedWeapon)
         {
-            ((RangedWeapon)this).Fire();
+            ((RangedWeapon)this).Fire(player);
         }
         else
         {

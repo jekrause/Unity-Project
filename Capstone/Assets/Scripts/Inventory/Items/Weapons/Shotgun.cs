@@ -14,20 +14,22 @@ public class Shotgun : RangedWeapon
     public Shotgun() {
         weight = 3;
         projDamage = 10f;
-        projSpeed = 1000;
+        projSpeed = 10;
         AmmoClip = new AmmoClip(25, 5);
         ReloadTime = 4;
     }
 
-    public override void Fire()
+    public override void Fire(Player player)
     {
         if (AmmoClip.EnoughAmmoToFire())
         {
             Bullet[] bulletArr = new Bullet[5];
 
+     
+
             for (int i = 0; i < bulletArr.Length; i++)
             {
-                bulletArr[i] = Instantiate(bullet, this.ShootPosition.position, ShootPosition.rotation * Quaternion.Euler(projAngles[i]));
+                bulletArr[i] = Instantiate(bullet, player.shootPosition.position, player.shootPosition.rotation * Quaternion.Euler(projAngles[i]));
             }
             foreach (Bullet b in bulletArr)
             {
