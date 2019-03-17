@@ -58,26 +58,40 @@ public abstract class Player : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
     }
 
-    // Update is called once per frame
-    protected virtual void Update()
+    protected void FixedUpdate()
     {
-
-        //check for less than 1 so we can simply subtract enemy damage rather than checking for 0.
-        if (fHP < 1f)
-        {
-            Death();
-        }
-
         //movement
-
+        GetMovementInput();
         getRotationPosition();
         rb.MovePosition(rb.position + velocity * Time.deltaTime); // move the player after updating user input
 
         GetAttackInput();
     }
 
-    // Must be implemented in other subclasses
-    protected abstract void GetMovementInput();
+    // Update is called once per frame
+    protected virtual void Update()
+    {
+        //check for less than 1 so we can simply subtract enemy damage rather than checking for 0.
+        if (fHP < 1f)
+        {
+            Death();
+        }
+
+    }
+
+    protected void GetMovementInput()
+    {
+        try
+        {
+            float moveHorizontal = Input.GetAxis(myControllerInput.LeftHorizontalAxis);
+            float moveVertical = Input.GetAxis(myControllerInput.LeftVerticalAxis);
+            velocity = new Vector2(moveHorizontal, moveVertical)* fMoveRate; 
+        }
+        catch
+        {
+
+        }
+    }
 
     private void getRotationPosition()
     {
@@ -146,12 +160,8 @@ public abstract class Player : MonoBehaviour
 
     protected void Death()
     {
-        Settings.NumOfPlayers--;
-        if (Settings.NumOfPlayers == 0)
-        {
-            //TODO: Call game over screen
-        }
-        Destroy(gameObject);
+        EventAggregator.GetInstance().Publish(new OnPlayerDeathEvent(playerNumber));
+        gameObject.SetActive(false);
     }
 
     protected void GetAttackInput()
@@ -168,7 +178,6 @@ public abstract class Player : MonoBehaviour
                     CurrentWeapon.UseItem(this);
                     AxisButtonInUse = true;
                 }
-                
 
             }
             else if ((Input.GetButtonDown(myControllerInput.LeftButton) && myControllerInput.inputType == InputType.KEYBOARD) // prevents multiple calls on keyboard

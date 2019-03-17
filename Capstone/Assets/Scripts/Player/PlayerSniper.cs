@@ -20,22 +20,6 @@ public class PlayerSniper : Player
     protected override void Update()
     {
 
-        GetMovementInput();
-        base.Update();
-    }
-
-    protected override void GetMovementInput()
-    {
-        try
-        {
-            float moveHorizontal = Input.GetAxis(myControllerInput.LeftHorizontalAxis);
-            float moveVertical = Input.GetAxis(myControllerInput.LeftVerticalAxis);
-            velocity = new Vector2(moveHorizontal, moveVertical) * fMoveRate;
-        }
-        catch
-        {
-
-        }
     }
 
 }
