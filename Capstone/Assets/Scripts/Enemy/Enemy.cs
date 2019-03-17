@@ -12,6 +12,8 @@ public class Enemy : MonoBehaviour
      */
 
     public enum MovementTypeEnum {Patrol, Chase, Safe};
+    public enum RayCastDir { Left45 = 0, Left20 = 1, Forward = 2, Right20 = 3, Right45 = 4 } //raycast angles from player's transform position
+
     // Start is called before the first frame update
     public const int iBaseAttackRate = 1;
     protected float fHP = 100f;
@@ -23,6 +25,8 @@ public class Enemy : MonoBehaviour
     protected float fSpeed = 3f;
     protected float fWaitTime;
     protected float fStartWaitTime = 3f;
+    protected float fVisionDistance = 5f;
+
     /*
      * Variables for Patrol AI
      */
@@ -37,6 +41,7 @@ public class Enemy : MonoBehaviour
     protected GameObject playerTarget; //the player being attacked (JEK: we might want to use this rather than just the vector "p_location")
     private Vector2 p_location; // the player being attacked 
 
+    protected RaycastHit2D[] raycasts = new RaycastHit2D[5]; //raycast results list
 
 
     void Start()
@@ -57,9 +62,8 @@ public class Enemy : MonoBehaviour
             Object.Destroy(gameObject);
             Destroy(this);
         }
-        
-        //movement
-        switch(aiMvmt)
+
+        switch (aiMvmt)
         {
             case MovementTypeEnum.Patrol:
                 MvmtPatrol();
@@ -70,6 +74,11 @@ public class Enemy : MonoBehaviour
             case MovementTypeEnum.Safe:
                 MvmtSafe();
                 break;
+        }
+
+        if (EnemyRayCast())
+        {
+   
         }
 
     }
@@ -127,6 +136,17 @@ public class Enemy : MonoBehaviour
     private void setPlayerLocation()
     {
         p_location = gameObject.GetComponent("Player").transform.position;
+    }
+
+    private bool EnemyRayCast()
+    {
+        raycasts[(int)RayCastDir.Forward] = Physics2D.Raycast(transform.position, transform.right, fVisionDistance);
+        if(raycasts[(int)RayCastDir.Forward].collider != null)
+        {
+            Debug.Log("raycast forward hit " + raycasts[(int)RayCastDir.Forward].collider.tag);
+        }
+        
+        return false;
     }
 
 }
