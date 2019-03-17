@@ -27,14 +27,17 @@ public class Enemy : MonoBehaviour
      * Variables for Patrol AI
      */
     private int iRandomSpot;
-    public Vector2[] moveSpots = new Vector2[5]; //could be used if we want the Patrol AI to move between set spots
+    public Vector2[] moveSpots = new Vector2[5]; //could be used if we want the Patrol AI to move between set spots. Alternatively, fill this with key points on the map
 
     //Rigidbody2D rb; // for enemyposition
 
     //private Vector2 e_location; // this enemies location;
 
     private Rigidbody2D rb;
-    private Vector2 p_location; // the player being attacked
+    protected GameObject playerTarget; //the player being attacked (JEK: we might want to use this rather than just the vector "p_location")
+    private Vector2 p_location; // the player being attacked 
+
+
 
     void Start()
     {
@@ -68,13 +71,13 @@ public class Enemy : MonoBehaviour
                 MvmtSafe();
                 break;
         }
+
     }
 
     protected void MvmtPatrol()
     {
-        transform.position = Vector2.MoveTowards(transform.position, moveSpots[iRandomSpot], fSpeed * Time.deltaTime);
         //check if we've reached our destination
-        if(Vector2.Distance(transform.position, moveSpots[iRandomSpot]) < 0.2f)
+        if (Vector2.Distance(transform.position, moveSpots[iRandomSpot]) < 0.2f)
         {
             if(fWaitTime <= 0)
             {
@@ -85,6 +88,14 @@ public class Enemy : MonoBehaviour
             {
                 fWaitTime -= Time.deltaTime;
             }
+        }
+        else
+        {
+            transform.position = Vector2.MoveTowards(transform.position, moveSpots[iRandomSpot], fSpeed * Time.deltaTime);
+
+            Vector2 dir = moveSpots[iRandomSpot] - (Vector2)transform.position;
+            var angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+            transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
         }
     }
 
