@@ -38,7 +38,7 @@ public class InventoryHUD : MonoBehaviour
         {
             string platformButton = input == InputType.KEYBOARD ? "E" : input == InputType.PS4_CONTROLLER ? "X" : "A";
             PickUpMessage = "-Press '" + platformButton + "' to pick up item-";
-            PickUpWepMessage = "-Press '" + platformButton + "' to pick up weapon-\n-Hold '" + platformButton + "' to equip weapon - ";
+            PickUpWepMessage = "-Press '" + platformButton + "' to pick up weapon-\n-Hold '" + platformButton + "' to equip weapon- ";
         }
 
         if (isWeapon)
