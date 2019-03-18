@@ -15,6 +15,7 @@ public class InventoryHUD : MonoBehaviour
     private EventAggregator eventAggregator = EventAggregator.GetInstance();
     private bool IsInvToggled;
     private string PickUpMessage;
+    private string PickUpWepMessage;
     private string ActionMessage;
     private bool IteratingMainInv = true;
     private int MainInvIndex = 0;
@@ -28,15 +29,27 @@ public class InventoryHUD : MonoBehaviour
 
     }
 
-    public void ShowPickUpItemMsg(InputType input)
+    public void ShowPickUpItemMsg(InputType input, bool isWeapon)
     {
         if(inputType == InputType.NONE) inputType = input;
+
+        // initialize messages
         if (PickUpMessage == null && input != InputType.NONE)
         {
             string platformButton = input == InputType.KEYBOARD ? "E" : input == InputType.PS4_CONTROLLER ? "X" : "A";
             PickUpMessage = "-Press '" + platformButton + "' to pick up item-";
+            PickUpWepMessage = "-Press '" + platformButton + "' to pick up weapon-\n-Hold '" + platformButton + "' to equip weapon - ";
+        }
+
+        if (isWeapon)
+        {
+            MessagePanel.transform.Find("PickUpItemText").GetComponent<Text>().text = PickUpWepMessage;
+        }
+        else
+        {
             MessagePanel.transform.Find("PickUpItemText").GetComponent<Text>().text = PickUpMessage;
         }
+
         MessagePanel.SetActive(true);
     }
 
@@ -238,11 +251,14 @@ public class InventoryHUD : MonoBehaviour
 
     public void OnWeaponStow(Item item, int weaponSlot, int mainInvSlot)
     {
-        // remove from main inventory hud
-        mainInvSlot--;
-        MainInvSlots[MainInvIndex].transform.Find("ItemSelected").Find("Item").GetComponent<Image>().sprite = null;
-        MainInvSlots[MainInvIndex].transform.Find("ItemSelected").Find("Background").gameObject.SetActive(false);
-
+        if(mainInvSlot != -1)
+        {
+            // remove from main inventory hud
+            mainInvSlot--;
+            MainInvSlots[MainInvIndex].transform.Find("ItemSelected").Find("Item").GetComponent<Image>().sprite = null;
+            MainInvSlots[MainInvIndex].transform.Find("ItemSelected").Find("Background").gameObject.SetActive(false);
+        }
+        
         // add it to weapon hud
         WeaponInvSlotUsed++;
         WeaponInvSlots[weaponSlot].transform.Find("WeaponItemSelected").Find("WeaponItem").GetComponent<Image>().sprite = item.Image;

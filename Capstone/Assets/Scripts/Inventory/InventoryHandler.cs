@@ -20,6 +20,10 @@ public class InventoryHandler : MonoBehaviour
     private bool IteratingMainInv = true;
     private Item EquippedWeapon;
 
+    // item pick up timer
+    private int timerButtonHeldDown;
+    private bool buttonHeldDown = false;
+
     // Use this for initialization
     void Start()
     {
@@ -112,9 +116,24 @@ public class InventoryHandler : MonoBehaviour
             }
             else
             {
-                if (Input.GetButtonDown(myControllerInput.DownButton) || Input.GetButton(myControllerInput.DownButton)) // add item
+                if (!Input.GetButtonDown(myControllerInput.DownButton) && Input.GetButton(myControllerInput.DownButton)) // add item
                 {
-                    AddItem();
+                    if(timerButtonHeldDown >= 22)
+                    {
+                        timerButtonHeldDown = 0;
+                        buttonHeldDown = true;
+                        AddItem();
+                    }
+                    timerButtonHeldDown++;
+                }
+                else if (Input.GetButtonUp(myControllerInput.DownButton))
+                {
+                    if (!buttonHeldDown)
+                    {
+                        AddItem();
+                    }
+                    buttonHeldDown = false;
+                    timerButtonHeldDown = 0;
                 }
                 else if (Input.GetButtonDown(myControllerInput.RBumper) || Input.GetButton(myControllerInput.RBumper)) // equip weapon equipment from the next right slot
                 {
@@ -152,7 +171,8 @@ public class InventoryHandler : MonoBehaviour
             if (itemOnGround != null)
             {
                 ItemFocused = true;
-                InventoryHUD.ShowPickUpItemMsg(myControllerInput.inputType);
+                bool isWeapon = itemOnGround.GetItemType() == Item.Type.WEAPON;
+                InventoryHUD.ShowPickUpItemMsg(myControllerInput.inputType, isWeapon);
             }
         }
         
@@ -198,10 +218,26 @@ public class InventoryHandler : MonoBehaviour
         {
             if (itemOnGround != null)
             {
-                int slot = MainInventory.AddItem(itemOnGround);
+                int slot;
+
+                if(itemOnGround.GetItemType() == Item.Type.WEAPON && buttonHeldDown) // attempt equip weapon on the spot
+                    slot = WeaponInventory.AddItem(itemOnGround);
+                else
+                    slot = MainInventory.AddItem(itemOnGround);
+
                 if (slot != -1)
                 {
-                    InventoryHUD.OnItemAdd(itemOnGround, slot, MainInventory.GetQuantityInSlot(slot));
+                    if (itemOnGround.GetItemType() == Item.Type.WEAPON && buttonHeldDown)
+                    {
+                        InventoryHUD.OnWeaponStow(itemOnGround, slot, -1);
+                        if(GetComponent<Player>().CurrentWeapon == null)
+                        {
+                            GetComponent<SpriteRenderer>().sprite = ((Weapon)itemOnGround).PlayerImage;
+                            GetComponent<Player>().CurrentWeapon = (Weapon)itemOnGround;
+                        }
+                    }   
+                    else
+                        InventoryHUD.OnItemAdd(itemOnGround, slot, MainInventory.GetQuantityInSlot(slot));
 
                     // disable game object
                     itemOnGround.gameObject.SetActive(false);
@@ -233,6 +269,11 @@ public class InventoryHandler : MonoBehaviour
                 {
                     MainInventory.RemoveItem(mainInvSlot, true);
                     InventoryHUD.OnWeaponStow(itemToUse, weaponSlot, mainInvSlot);
+                    if (GetComponent<Player>().CurrentWeapon == null)
+                    {
+                        GetComponent<SpriteRenderer>().sprite = ((Weapon)itemOnGround).PlayerImage;
+                        GetComponent<Player>().CurrentWeapon = (Weapon)itemOnGround;
+                    }
                     eventAggregator.Publish(new OnWeaponEquipEvent(playerNumber, (Weapon)itemToUse));
                     Debug.Log("InventoryHandler: Weapon stowed Successfully");
                 }
@@ -291,6 +332,8 @@ public class InventoryHandler : MonoBehaviour
             InventoryHUD.OnWeaponUnEquip();
         }
     }
+
+    
 
     /// <summary>
     /// Called when player attempts to drop, swap or unequip their current weapon in the case
@@ -368,7 +411,7 @@ public class InventoryHandler : MonoBehaviour
                 }
 
             }
-
+            StartCoroutine(DelayReadingInput());
         }
     }
 
