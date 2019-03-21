@@ -5,7 +5,7 @@ public abstract class RangedWeapon : Weapon
 {
     protected float projDamage;
     protected float projSpeed;
-    protected float ReloadTime;
+    public float ReloadTime { get; protected set; }
     public bool IsReloading { get; protected set; }
     protected bool ReloadCancel;
     protected AmmoClip AmmoClip;
@@ -15,7 +15,7 @@ public abstract class RangedWeapon : Weapon
     {
         if (AmmoClip.EnoughAmmoToFire())
         {
-            if (IsReloading) ReloadingInterrupted();
+            if (IsReloading) ReloadingInterrupted(player.playerNumber);
             
             var x = Instantiate(bullet, player.shootPosition.position, player.shootPosition.rotation);
             x.SetDamage(projDamage);
@@ -39,14 +39,15 @@ public abstract class RangedWeapon : Weapon
 
     }
 
-    public IEnumerator Reload(Ammunition ammunition)
+    public IEnumerator Reload(int playerNumber, Ammunition ammunition)
     {
         if (AmmoClip.IsFull() || IsReloading) yield break; // if already reloading, then return
         else
         {
             IsReloading = true;
             Debug.Log(this.name + ": Reloading...");
-            for(float timer = ReloadTime; timer > 0; timer -= 1)
+            EventAggregator.GetInstance().Publish<OnWeaponReloadEvent>(new OnWeaponReloadEvent(playerNumber, this));
+            for (float timer = ReloadTime; timer > 0; timer -= 1)
             {
                 if (ReloadCancel)
                 {
@@ -64,10 +65,11 @@ public abstract class RangedWeapon : Weapon
     }
 
     // In the case the player switch or drop the weapon while it is reloading
-    public void ReloadingInterrupted()
+    public void ReloadingInterrupted(int playerNumber)
     {
         if (IsReloading && ReloadCancel == false)
         {
+            EventAggregator.GetInstance().Publish<OnWeaponReloadCancelEvent>(new OnWeaponReloadCancelEvent(playerNumber, true));
             ReloadCancel = true;
             Debug.Log(this.name + ": Reload interrupted.");
         }

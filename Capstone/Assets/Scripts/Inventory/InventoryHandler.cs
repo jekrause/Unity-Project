@@ -216,7 +216,7 @@ public class InventoryHandler : MonoBehaviour
                         if(player.CurrentWeapon == null)
                         {
                             GetComponent<SpriteRenderer>().sprite = ((Weapon)itemOnGround).PlayerImage;
-                            player.CurrentWeapon = (Weapon)itemOnGround;
+                            player.CurrentWeapon = itemOnGround;
                         }
                     }   
                     else
@@ -255,7 +255,7 @@ public class InventoryHandler : MonoBehaviour
                     if (player.CurrentWeapon == null)
                     {
                         GetComponent<SpriteRenderer>().sprite = ((Weapon)itemOnGround).PlayerImage;
-                        player.CurrentWeapon = (Weapon)itemOnGround;
+                        player.CurrentWeapon = itemOnGround;
                     }
                     eventAggregator.Publish(new OnWeaponEquipEvent(playerNumber, (Weapon)itemToUse));
                     Debug.Log("InventoryHandler: Weapon stowed Successfully");
@@ -326,7 +326,7 @@ public class InventoryHandler : MonoBehaviour
         Weapon playerWeapon = (Weapon)player.CurrentWeapon;
         if (playerWeapon != null && playerWeapon is RangedWeapon)
         {
-            ((RangedWeapon)playerWeapon).ReloadingInterrupted();
+            ((RangedWeapon)playerWeapon).ReloadingInterrupted(player.playerNumber);
         }
     }
 

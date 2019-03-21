@@ -35,5 +35,19 @@ public class OnPlayerDeathEvent
     public OnPlayerDeathEvent(int playerNum) {this.playerNum = playerNum; }
 }
 
+public class OnWeaponReloadEvent
+{
+    public Weapon Weapon;
+    public int playerNum { get; set; }
+    public OnWeaponReloadEvent(int playerNum, Weapon Weapon) { this.playerNum = playerNum; this.Weapon = Weapon; }
+}
+
+public class OnWeaponReloadCancelEvent
+{
+    public bool cancel;
+    public int playerNum { get; set; }
+    public OnWeaponReloadCancelEvent(int playerNum, bool cancel) { this.playerNum = playerNum;  this.cancel = cancel; }
+}
+
 // other events to add...
 

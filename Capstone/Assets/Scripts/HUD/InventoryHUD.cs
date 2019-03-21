@@ -4,8 +4,8 @@ using UnityEngine.UI;
 
 public class InventoryHUD : MonoBehaviour
 {
-    [SerializeField] public List<GameObject> MainInvSlots = new List<GameObject>(6);
-    [SerializeField] public List<GameObject> WeaponInvSlots = new List<GameObject>(3);
+    public List<GameObject> MainInvSlots = new List<GameObject>(6);
+    public List<GameObject> WeaponInvSlots = new List<GameObject>(3);
     [SerializeField] public GameObject MainInventoryPanel;
     [SerializeField] public GameObject WeaponInventoryPanel;
     [SerializeField] public GameObject MessagePanel;

@@ -192,7 +192,9 @@ public abstract class Player : MonoBehaviour
                     }
                     else
                     {
-                        StartCoroutine(((RangedWeapon)CurrentWeapon).Reload(Ammunition));
+                       
+                        StartCoroutine(((RangedWeapon)CurrentWeapon).Reload(playerNumber, Ammunition));
+   
                     }
                     
                 }
