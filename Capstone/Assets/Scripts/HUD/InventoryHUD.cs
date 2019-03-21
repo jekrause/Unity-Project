@@ -249,11 +249,13 @@ public class InventoryHUD : MonoBehaviour
             {
                 if(WeaponEquippedIndex != -1 && WeaponEquippedIndex == WeaponInvIndex)
                 {
+                    WeaponInvSlots[WeaponEquippedIndex].transform.GetChild(0).GetComponent<Image>().color = Color.green;
                     WeaponInvSlots[WeaponEquippedIndex].transform.GetChild(0).gameObject.SetActive(true);
                 }
                 else
                 {
                     WeaponInvSlots[WeaponInvIndex].transform.GetChild(0).gameObject.SetActive(false);
+                    WeaponInvSlots[WeaponInvIndex].transform.GetChild(0).GetComponent<Image>().color = Color.green;
                 }
                 
             }
