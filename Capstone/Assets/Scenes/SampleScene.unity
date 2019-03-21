@@ -1976,6 +1976,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: DirtTerrain
       objectReference: {fileID: 0}
+    - target: {fileID: 226835606788724107, guid: d131f69d989d982428f517878c753bb0,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3118226763943177153, guid: d131f69d989d982428f517878c753bb0,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -12556,14 +12561,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d1ab59f11f415624e8dd903029fd974c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  map: {fileID: 0}
+  map: {fileID: 2800000, guid: 91342f8996112bc4db2abf1fff7ddfc0, type: 3}
   colorMappings:
-  - color: {r: 1, g: 0.6, b: 0.20000002, a: 0}
+  - color: {r: 1, g: 1, b: 1, a: 1}
     prefab: {fileID: 226835606788724107, guid: d131f69d989d982428f517878c753bb0, type: 3}
-  - color: {r: 0.40000004, g: 0.40000004, b: 0, a: 0}
+  - color: {r: 0, g: 0, b: 0, a: 1}
     prefab: {fileID: 8026239469096838889, guid: 65410d78d57605b4cbb17ac27cabe6e4,
       type: 3}
-  - color: {r: 0.8000001, g: 1, b: 0.6, a: 0}
+  - color: {r: 0.8000001, g: 1, b: 0.6, a: 1}
     prefab: {fileID: 6492613220130155023, guid: 80aec5c34fdd6494d94821c67752085a,
       type: 3}
 --- !u!4 &1924044203
