@@ -5,8 +5,9 @@ using System.Collections;
 public class InventoryHandler : MonoBehaviour
 {
     private int playerNumber;
+    private Player player;
     private MyControllerInput myControllerInput;
-    private bool actionInProgress; // to elminate multiple button press
+    private bool actionInProgress; // to elminate multiple calls on a long button press
     private bool InventoryHUDFocused;
     private Item itemOnGround;
     private List<GameObject> ObjectsPickedUp = new List<GameObject>();
@@ -18,7 +19,8 @@ public class InventoryHandler : MonoBehaviour
     private Inventory WeaponInventory;
     private Sprite PlayerOriginalImage;
     private bool IteratingMainInv = true;
-    private Item EquippedWeapon;
+    private int EquippedWeaponSlot; // index of the current weapon equipped
+    private int WeaponSlotIndex; // Used for iterating through weapon inventory when inventory is toggled only!
 
     // item pick up timer
     private int timerButtonHeldDown;
@@ -28,10 +30,11 @@ public class InventoryHandler : MonoBehaviour
     void Start()
     {
         // get player info
-        playerNumber = GetComponent<Player>().playerNumber;
-        myControllerInput = GetComponent<Player>().myControllerInput;
-        MainInventory = GetComponent<Player>().MainInventory;
-        WeaponInventory = GetComponent<Player>().WeaponInventory;
+        player = GetComponent<Player>();
+        playerNumber = player.playerNumber;
+        myControllerInput = player.myControllerInput;
+        MainInventory = player.MainInventory;
+        WeaponInventory = player.WeaponInventory;
         PlayerOriginalImage = GetComponent<SpriteRenderer>().sprite;
         if(MainInventory == null || WeaponInventory == null)
         {
@@ -53,23 +56,19 @@ public class InventoryHandler : MonoBehaviour
         if (myControllerInput.inputType != InputType.NONE)
         {
 
-            if (Input.GetButtonDown(myControllerInput.UpButton) || Input.GetButton(myControllerInput.UpButton))
+            if ((Input.GetButtonDown(myControllerInput.UpButton) && myControllerInput.inputType == InputType.KEYBOARD) // prevents multiple calls on keyboard
+                    || (Input.GetButton(myControllerInput.UpButton) && myControllerInput.inputType != InputType.KEYBOARD))
             {
-                if (actionInProgress == false)
-                {
-                    InventoryHUDFocused = !InventoryHUDFocused; // toggle inventory selection
-                    InventoryHUD.InventoryToggled(InventoryHUDFocused, myControllerInput.inputType);
-                    if (InventoryHUDFocused) InventoryHUD.RemovePickUpItemMsg();
-                    Debug.Log("Inventory toggled");
-                    actionInProgress = true;
-                    StartCoroutine(DelayReadingInput());
-                }
+
+                InventoryHUDFocused = !InventoryHUDFocused; // toggle inventory selection
+                InventoryHUD.InventoryToggled(InventoryHUDFocused, myControllerInput.inputType);
+                if (InventoryHUDFocused) InventoryHUD.RemovePickUpItemMsg();
+                Debug.Log("Inventory toggled");
 
             }
 
             if (InventoryHUDFocused) // user has inventory toggled on
             {
-
                 if(Settings.OS == "Windows"){
                     if (Input.GetAxis(myControllerInput.DPadX_Windows) > 0) // D-Pad right, iterate throught item inventory
                     {
@@ -92,26 +91,22 @@ public class InventoryHandler : MonoBehaviour
                     }
                 }
                
-                if (Input.GetButtonDown(myControllerInput.RightButton) || Input.GetButton(myControllerInput.RightButton)) // item remove
+                if ((Input.GetButtonDown(myControllerInput.RightButton) && myControllerInput.inputType == InputType.KEYBOARD) // prevents multiple calls on keyboard
+                        || (Input.GetButton(myControllerInput.RightButton) && myControllerInput.inputType != InputType.KEYBOARD)) // item remove
                 {
                     RemoveItemFromInv();
                 }
-                else if (Input.GetButtonDown(myControllerInput.DownButton) || Input.GetButton(myControllerInput.DownButton)) // use item
+                else if ((Input.GetButtonDown(myControllerInput.DownButton) && myControllerInput.inputType == InputType.KEYBOARD) // prevents multiple calls on keyboard
+                        || (Input.GetButton(myControllerInput.DownButton) && myControllerInput.inputType != InputType.KEYBOARD)) // use item
                 {
-                    if (!actionInProgress)
+                    if (IteratingMainInv)
                     {
-                        if (IteratingMainInv)
-                        {
-                            UseItemFromMainInv();
-                        }
-                        else
-                        {
-                            UseItemFromWeaponInv();
-                        }
-                        actionInProgress = true;
-                        StartCoroutine(DelayReadingInput());
+                        UseItemFromMainInv();
                     }
-                    
+                    else
+                    {
+                        UseItemFromWeaponInv(WeaponSlotIndex);
+                    }
                 }
             }
             else
@@ -135,31 +130,27 @@ public class InventoryHandler : MonoBehaviour
                     buttonHeldDown = false;
                     timerButtonHeldDown = 0;
                 }
-                else if (Input.GetButtonDown(myControllerInput.RBumper) || Input.GetButton(myControllerInput.RBumper)) // equip weapon equipment from the next right slot
+                else if (Input.GetButtonDown(myControllerInput.RBumper) && myControllerInput.inputType == InputType.KEYBOARD
+                        || (Input.GetButton(myControllerInput.RBumper) && myControllerInput.inputType != InputType.KEYBOARD)) // equip weapon equipment from the next right slot
                 {
-                    if (!actionInProgress)
-                    {
-                        EquipNextWeapon();
-                        actionInProgress = true;
-                        StartCoroutine(DelayReadingInput());
-                    }
-                    
+                    EquipNextWeapon();
                 }
-                else if (Input.GetButtonDown(myControllerInput.LBumper) || Input.GetButton(myControllerInput.LBumper)) // equip weapon equipment from the next left slot
+                else if ((Input.GetButtonDown(myControllerInput.LBumper) && myControllerInput.inputType == InputType.KEYBOARD)
+                        || (Input.GetButton(myControllerInput.LBumper) && myControllerInput.inputType != InputType.KEYBOARD)) // equip weapon equipment from the next left slot
                 {
-                    if (!actionInProgress)
-                    {
-                        EquipPrevWeapon();
-                        actionInProgress = true;
-                        StartCoroutine(DelayReadingInput());
-                    }
+                     EquipPrevWeapon();
                 }
+            }
+
+            if(Input.GetAxis(myControllerInput.DPadX_Windows) == 0 && Input.GetAxis(myControllerInput.DPadY_Windows) == 0)
+            {
+                actionInProgress = false; // user let go of button, so action is no longer in progress
             }
         }
         else
         {
             //check if user has bind controller
-            myControllerInput = GetComponent<Player>().myControllerInput;
+            myControllerInput = player.myControllerInput;
         }
     }
 
@@ -190,26 +181,18 @@ public class InventoryHandler : MonoBehaviour
         }
     }
 
-    private IEnumerator DelayReadingInput()
-    {
-
-        yield return new WaitForSeconds(.25f);
-        actionInProgress = false;
-
-    }
-
     private void EquipNextWeapon()
     {
         InterruptWeaponReload();
-        WeaponInventory.GetNextItem();
-        UseItemFromWeaponInv();
+        EquippedWeaponSlot = ++EquippedWeaponSlot >= WeaponInventory.MAX_SLOT_SIZE ? 0 : EquippedWeaponSlot;
+        UseItemFromWeaponInv(EquippedWeaponSlot);
     }
 
     private void EquipPrevWeapon()
     {
         InterruptWeaponReload();
-        WeaponInventory.GetPrevItem();
-        UseItemFromWeaponInv();
+        EquippedWeaponSlot = --EquippedWeaponSlot < 0 ? WeaponInventory.MAX_SLOT_SIZE - 1 : EquippedWeaponSlot;
+        UseItemFromWeaponInv(EquippedWeaponSlot);
     }
 
     private void AddItem()
@@ -230,10 +213,10 @@ public class InventoryHandler : MonoBehaviour
                     if (itemOnGround.GetItemType() == Item.Type.WEAPON && buttonHeldDown)
                     {
                         InventoryHUD.OnWeaponStow(itemOnGround, slot, -1);
-                        if(GetComponent<Player>().CurrentWeapon == null)
+                        if(player.CurrentWeapon == null)
                         {
                             GetComponent<SpriteRenderer>().sprite = ((Weapon)itemOnGround).PlayerImage;
-                            GetComponent<Player>().CurrentWeapon = (Weapon)itemOnGround;
+                            player.CurrentWeapon = (Weapon)itemOnGround;
                         }
                     }   
                     else
@@ -269,10 +252,10 @@ public class InventoryHandler : MonoBehaviour
                 {
                     MainInventory.RemoveItem(mainInvSlot, true);
                     InventoryHUD.OnWeaponStow(itemToUse, weaponSlot, mainInvSlot);
-                    if (GetComponent<Player>().CurrentWeapon == null)
+                    if (player.CurrentWeapon == null)
                     {
                         GetComponent<SpriteRenderer>().sprite = ((Weapon)itemOnGround).PlayerImage;
-                        GetComponent<Player>().CurrentWeapon = (Weapon)itemOnGround;
+                        player.CurrentWeapon = (Weapon)itemOnGround;
                     }
                     eventAggregator.Publish(new OnWeaponEquipEvent(playerNumber, (Weapon)itemToUse));
                     Debug.Log("InventoryHandler: Weapon stowed Successfully");
@@ -289,7 +272,7 @@ public class InventoryHandler : MonoBehaviour
                 {
                     InventoryHUD.OnItemRemove(MainInventory.GetQuantityInSlot(mainInvSlot));
                     ObjectsPickedUp.Remove(itemToUse.gameObject);
-                    if (MainInventory.GetCurrentItem() == null)
+                    if (MainInventory.GetItemInSlot(mainInvSlot) == null)
                         Destroy(itemToUse.gameObject);
                 }
 
@@ -302,25 +285,24 @@ public class InventoryHandler : MonoBehaviour
     /// Attempt to equip a weapon from weapon inventory slot. If the slot is empty, the player will be replaced
     /// by the original sprite (no weapon). Otherwise, it will equip or unequip the weapon currently selected.
     /// </summary>
-    private void UseItemFromWeaponInv()
+    private void UseItemFromWeaponInv(int weaponSlot)
     {
-        Weapon weaponToUse = (Weapon) WeaponInventory.GetCurrentItem();
-        int weaponInvSlot = WeaponInventory.GetCurrentSlotNum();
+        Weapon weaponToUse = (Weapon) WeaponInventory.GetItemInSlot(weaponSlot);
 
         if(weaponToUse != null)
         {
-            if(GetComponent<Player>().CurrentWeapon != null && GetComponent<Player>().CurrentWeapon == weaponToUse) // unequip their weapon
+            if(player.CurrentWeapon != null && player.CurrentWeapon == weaponToUse) // unequip their weapon
             {
                 InterruptWeaponReload();
                 GetComponent<SpriteRenderer>().sprite = PlayerOriginalImage;
-                GetComponent<Player>().CurrentWeapon = null;
+                player.CurrentWeapon = null;
                 InventoryHUD.OnWeaponUnEquip();
             }
             else // equip weapon
             {
-                InventoryHUD.OnWeaponEquip(weaponInvSlot);
+                InventoryHUD.OnWeaponEquip(weaponSlot);
                 GetComponent<SpriteRenderer>().sprite = weaponToUse.PlayerImage;
-                GetComponent<Player>().CurrentWeapon = weaponToUse;
+                player.CurrentWeapon = weaponToUse;
             }
             
         }
@@ -328,7 +310,7 @@ public class InventoryHandler : MonoBehaviour
         {
             InterruptWeaponReload();
             GetComponent<SpriteRenderer>().sprite = PlayerOriginalImage;
-            GetComponent<Player>().CurrentWeapon = null;
+            player.CurrentWeapon = null;
             InventoryHUD.OnWeaponUnEquip();
         }
     }
@@ -341,7 +323,7 @@ public class InventoryHandler : MonoBehaviour
     /// </summary>
     private void InterruptWeaponReload()
     {
-        Weapon playerWeapon = (Weapon)GetComponent<Player>().CurrentWeapon;
+        Weapon playerWeapon = (Weapon)player.CurrentWeapon;
         if (playerWeapon != null && playerWeapon is RangedWeapon)
         {
             ((RangedWeapon)playerWeapon).ReloadingInterrupted();
@@ -353,7 +335,7 @@ public class InventoryHandler : MonoBehaviour
     /// </summary>
     private void RemoveItemFromInv()
     {
-        if (actionInProgress == false)
+        if (!actionInProgress)
         {
             actionInProgress = true;
             if (IteratingMainInv)
@@ -370,7 +352,6 @@ public class InventoryHandler : MonoBehaviour
                             ObjectsPickedUp[i].transform.position = transform.position;
                             ObjectsPickedUp[i].SetActive(true);
                             MainInventory.RemoveItem(slotNum, false);
-                            StartCoroutine(DelayReadingInput());
                             itemIndex = i;
                             break;
                         }
@@ -381,18 +362,17 @@ public class InventoryHandler : MonoBehaviour
             }
             else
             {
-                int slotNum = WeaponInventory.GetCurrentSlotNum();
-                Weapon weaponToRemove = (Weapon) WeaponInventory.GetCurrentItem();
+                Weapon weaponToRemove = (Weapon) WeaponInventory.GetItemInSlot(WeaponSlotIndex);
                 if (weaponToRemove != null)
                 {
-                    if(GetComponent<Player>().CurrentWeapon != null && GetComponent<Player>().CurrentWeapon == weaponToRemove)
+                    if(player.CurrentWeapon != null && player.CurrentWeapon == weaponToRemove)
                     {
                         InterruptWeaponReload();
                         GetComponent<SpriteRenderer>().sprite = PlayerOriginalImage;
-                        GetComponent<Player>().CurrentWeapon = null;
+                        player.CurrentWeapon = null;
                         InventoryHUD.OnWeaponUnEquip();
                     }
-                    WeaponInventory.RemoveItem(slotNum, true);
+                    WeaponInventory.RemoveItem(WeaponSlotIndex, true);
                     int itemIndex = 0;
                     for (int i = 0; i < ObjectsPickedUp.Count; i++)
                     {
@@ -400,18 +380,16 @@ public class InventoryHandler : MonoBehaviour
                         {
                             ObjectsPickedUp[i].transform.position = transform.position;
                             ObjectsPickedUp[i].SetActive(true);
-                            WeaponInventory.RemoveItem(slotNum, false);
-                            StartCoroutine(DelayReadingInput());
+                            WeaponInventory.RemoveItem(WeaponSlotIndex, false);
                             itemIndex = i;
                             break;
                         }
                     }
-                    InventoryHUD.OnItemRemove(WeaponInventory.GetQuantityInSlot(slotNum));
+                    InventoryHUD.OnItemRemove(WeaponInventory.GetQuantityInSlot(WeaponSlotIndex));
                     ObjectsPickedUp.RemoveAt(itemIndex);
                 }
 
             }
-            StartCoroutine(DelayReadingInput());
         }
     }
 
@@ -420,12 +398,11 @@ public class InventoryHandler : MonoBehaviour
     /// </summary>
     private void IterateRightList()
     {
-        if (actionInProgress == false)
+        if (!actionInProgress)
         {
             bool oldIteringMainInv = IteratingMainInv;
             IteratingMainInv = InventoryHUD.IterateRight(); // return true if iterating main inv
             actionInProgress = true;
-            StartCoroutine(DelayReadingInput());
 
             if(oldIteringMainInv == IteratingMainInv)
             {
@@ -435,7 +412,7 @@ public class InventoryHandler : MonoBehaviour
                 }
                 else
                 {
-                    WeaponInventory.GetNextItem();
+                    WeaponSlotIndex = ++WeaponSlotIndex >= WeaponInventory.MAX_SLOT_SIZE ? 0 : WeaponSlotIndex;
                 }
             }
             else
@@ -446,7 +423,7 @@ public class InventoryHandler : MonoBehaviour
                 }
                 else
                 {
-                    WeaponInventory.GetFirstItem();
+                    WeaponSlotIndex = 0;
                 }
             }
 
@@ -458,12 +435,11 @@ public class InventoryHandler : MonoBehaviour
     /// </summary>
     private void IterateLeftList()
     {
-        if (actionInProgress == false)
+        if (!actionInProgress)
         {
             bool oldIteringMainInv = IteratingMainInv;
             IteratingMainInv = InventoryHUD.IterateLeft(); // return true if iterating main inv
             actionInProgress = true;
-            StartCoroutine(DelayReadingInput());
 
             if (oldIteringMainInv == IteratingMainInv)
             {
@@ -473,7 +449,7 @@ public class InventoryHandler : MonoBehaviour
                 }
                 else
                 {
-                    WeaponInventory.GetPrevItem();
+                    WeaponSlotIndex = --WeaponSlotIndex < 0 ? WeaponInventory.MAX_SLOT_SIZE - 1 : WeaponSlotIndex;
                 }
             }
             else
@@ -484,7 +460,7 @@ public class InventoryHandler : MonoBehaviour
                 }
                 else
                 {
-                    WeaponInventory.GetLastItem();
+                    WeaponSlotIndex = WeaponInventory.MAX_SLOT_SIZE - 1;
                 }
             }
         }
