@@ -43,6 +43,8 @@ public class Enemy : MonoBehaviour
 
     protected RaycastHit2D[] raycasts = new RaycastHit2D[5]; //raycast results list
 
+    //Health bar
+    protected HealthBarHandler HealthBarHandler;
 
     void Start()
     {
@@ -51,6 +53,8 @@ public class Enemy : MonoBehaviour
         FillMoveSpots();
         aiMvmt = MovementTypeEnum.Patrol;
         rb = GetComponent<Rigidbody2D>();
+        HealthBarHandler = GetComponent<HealthBarHandler>();
+        HealthBarHandler.SetMaxHP(fHP);
     }
 
     // Update is called once per frame
@@ -131,6 +135,7 @@ public class Enemy : MonoBehaviour
     protected void Damaged(float f)
     {
         fHP -= f;
+        HealthBarHandler.OnDamaged(fHP);
     }
 
     private void setPlayerLocation()
@@ -138,12 +143,22 @@ public class Enemy : MonoBehaviour
         p_location = gameObject.GetComponent("Player").transform.position;
     }
 
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        Player player = collision.collider.GetComponent<Player>();
+        if (player != null)
+        {
+            player.Damaged(10); // simple test
+        }
+    }
+
     private bool EnemyRayCast()
     {
         raycasts[(int)RayCastDir.Forward] = Physics2D.Raycast(transform.position, transform.right, fVisionDistance);
         if(raycasts[(int)RayCastDir.Forward].collider != null)
         {
-            Debug.Log("raycast forward hit " + raycasts[(int)RayCastDir.Forward].collider.tag);
+            if(raycasts[(int)RayCastDir.Forward].collider.gameObject.tag != "Untagged")
+                Debug.Log("raycast forward hit " + raycasts[(int)RayCastDir.Forward].collider.tag);
         }
         
         return false;

@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2530201906675230624}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Transform
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -42,7 +42,7 @@ GameObject:
   - component: {fileID: 7252386806360497482}
   - component: {fileID: 8977492525920178878}
   - component: {fileID: 8963691438377782676}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Handgun
   m_TagString: Weapon
   m_Icon: {fileID: 0}
@@ -98,8 +98,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: -449872189
+  m_SortingLayer: 2
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: d1435be4623ab4d058f40757ff6d28e7, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -125,8 +125,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Image: {fileID: 21300000, guid: d1435be4623ab4d058f40757ff6d28e7, type: 3}
+  PlayerImage: {fileID: 0}
   bullet: {fileID: 2338026660133703715, guid: 92cfefeb70e1bc940babcdb62c9c91b6, type: 3}
-  ShootPosition: {fileID: 2530201906675230624}
 --- !u!61 &8963691438377782676
 BoxCollider2D:
   m_ObjectHideFlags: 0

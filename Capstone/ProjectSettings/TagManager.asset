@@ -24,8 +24,8 @@ TagManager:
   - 
   - Items
   - Player
-  - 
-  - 
+  - Ground
+  - Bullet
   - 
   - 
   - 
@@ -50,8 +50,14 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Ground
+    uniqueID: 3185186219
+    locked: 0
   - name: Items
     uniqueID: 3845095107
+    locked: 0
+  - name: Bullet
+    uniqueID: 1574983757
     locked: 0
   - name: Player
     uniqueID: 1383078145

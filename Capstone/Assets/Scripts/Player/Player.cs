@@ -32,7 +32,6 @@ public abstract class Player : MonoBehaviour
     public Item CurrentWeapon;
     public Transform shootPosition;
     public Ammunition Ammunition = new Ammunition(500);
-    private bool AxisButtonInUse;
 
     // mouse
     private Vector2 direction;
@@ -170,13 +169,12 @@ public abstract class Player : MonoBehaviour
         {
             if (Input.GetAxis(myControllerInput.RTrigger) == 1 && Time.time > fAttackTime)
             {
-                if(CurrentWeapon != null && !AxisButtonInUse) // prevent multiple calls while holding the button
+                if (CurrentWeapon != null)
                 {
                     print("weapon inventory size = " + WeaponInventory.GetNumOfSlotUsed());
                     print("Trying to fire " + CurrentWeapon.name);
                     fAttackTime = Time.time + 1 / iBaseAttackRate;
                     CurrentWeapon.UseItem(this);
-                    AxisButtonInUse = true;
                 }
 
             }
@@ -184,25 +182,21 @@ public abstract class Player : MonoBehaviour
                         || (Input.GetButton(myControllerInput.LeftButton) && myControllerInput.inputType != InputType.KEYBOARD)) // only work with xbox and ps4
             {
                 // Reload 
-                if(CurrentWeapon != null && CurrentWeapon is RangedWeapon)
+                if (CurrentWeapon != null && CurrentWeapon is RangedWeapon)
                 {
-                    if(Ammunition.Amount <= 0)
+                    if (Ammunition.Amount <= 0)
                     {
                         Debug.Log("I have no more ammunition");
                     }
                     else
                     {
-                       
+
                         StartCoroutine(((RangedWeapon)CurrentWeapon).Reload(playerNumber, Ammunition));
-   
+
                     }
-                    
+
                 }
-                
-            }
-            if(Input.GetAxis(myControllerInput.RTrigger) <= 0) // if player let go of holding the trigger button
-            {
-                AxisButtonInUse = false;
+
             }
         }
         catch (System.ArgumentException)
@@ -216,11 +210,7 @@ public abstract class Player : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        Player player = collision.collider.GetComponent<Player>();
-        if (player != null)
-        {
-            Damaged(10);
-        }
+
     }
 
     public float GetMoveRate()

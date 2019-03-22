@@ -8,6 +8,7 @@ public class AssaultRifle : RangedWeapon
         AmmoClip = new AmmoClip(25, 1);
         weight = 2;
         projDamage = 10f;
+        projSpeed = 650f;
     }
 
     

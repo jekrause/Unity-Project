@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 677472128296597099}
   - component: {fileID: 677472128296597098}
   - component: {fileID: 677472128296597093}
-  m_Layer: 5
+  m_Layer: 10
   m_Name: EndStar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -66,8 +66,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: -1549084955
-  m_SortingLayer: 0
+  m_SortingLayerID: -1109781077
+  m_SortingLayer: 1
   m_SortingOrder: 1
   m_Sprite: {fileID: 21300000, guid: 9a5babf2f9fc11240aac9afb64ea7a68, type: 3}
   m_Color: {r: 0.03835971, g: 0.4811321, b: 0.015886446, a: 1}

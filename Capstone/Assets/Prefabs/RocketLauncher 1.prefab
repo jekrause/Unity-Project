@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4970427373688987281}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Transform
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -42,7 +42,7 @@ GameObject:
   - component: {fileID: 4517859099669363927}
   - component: {fileID: 3868839086124798667}
   - component: {fileID: 6061381929267859570}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: RocketLauncher 1
   m_TagString: Weapon
   m_Icon: {fileID: 0}
@@ -98,8 +98,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: -449872189
+  m_SortingLayer: 2
   m_SortingOrder: 2
   m_Sprite: {fileID: 21300000, guid: f67ee539a3f707947ab406d410ca856e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -127,7 +127,6 @@ MonoBehaviour:
   Image: {fileID: 21300000, guid: f67ee539a3f707947ab406d410ca856e, type: 3}
   PlayerImage: {fileID: 21300000, guid: 2b2254bc1e9894bdc8323eddf0f19cfd, type: 3}
   bullet: {fileID: 5111930284792508334, guid: 853e294866df6064ca3ad5ab3a1f8488, type: 3}
-  ShootPosition: {fileID: 4970427373688987281}
 --- !u!61 &6061381929267859570
 BoxCollider2D:
   m_ObjectHideFlags: 0
