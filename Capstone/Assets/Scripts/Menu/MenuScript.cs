@@ -7,8 +7,12 @@ public class MenuScript : MonoBehaviour
 {
     public GameObject mainmenu;
     public GameObject titlescreen;
-    public GameObject howmanymenu;
+    //public GameObject howmanymenu;
+    public GameObject characterselectmenu;
     public static Vector2Int menuSelect;
+    public MyControllerInput myControllerInput;
+
+    private Player Player1;// = MenuInputSelector.playerLists[0];
 
     private int totalMenuItemsX;
     private int totalMenuItemsY;
@@ -20,7 +24,8 @@ public class MenuScript : MonoBehaviour
         //deactivate all menus besides titlescreen
         titlescreen.SetActive(true);
         mainmenu.SetActive(false);
-        howmanymenu.SetActive(false);
+        //howmanymenu.SetActive(false);
+        characterselectmenu.SetActive(false);
         currentMenu = titlescreen;
 
         //set menu select variables to 0
@@ -30,65 +35,122 @@ public class MenuScript : MonoBehaviour
         totalMenuItemsX = 1;
         totalMenuItemsY = 1;
 
+       
     }
 
 
     // Start is called before the first frame update
-    //void Start()
-    //{
-    //
-    //}
+    void Start()
+    {
+        //Player1 = MenuInputSelector.playerLists[0];
+    }
 
 
     private void Update()
     {
 
-        menuNavigate();
+
+        if(currentMenu != characterselectmenu)
+        {
+            menuNavigate();
+        }
+
+
+
 
     }
 
 
     private void menuNavigate()
     {
-        if (Input.GetKeyDown(KeyCode.UpArrow))
-        {
-            menuSelect.y = menuSelect.y + 1;
-            if (menuSelect.y > totalMenuItemsY - 1)
-            {
-                menuSelect.y = 0;
-            }
-            Debug.Log("menuSelect.y = " + menuSelect.y);
-        }
 
-        if (Input.GetKeyDown(KeyCode.DownArrow))
-        {
-            menuSelect.y = menuSelect.y - 1;
-            if (menuSelect.y < 0)
-            {
-                menuSelect.y = totalMenuItemsY - 1;
-            }
-            Debug.Log("menuSelect.y = " + menuSelect.y);
-        }
+        //if (Player1.myControllerInput.inputType == InputType.KEYBOARD) 
+        //{ 
 
-        if (Input.GetKeyDown(KeyCode.RightArrow))
-        {
-            menuSelect.x = menuSelect.x + 1;
-            if (menuSelect.x > totalMenuItemsX - 1)
+            if (Input.GetKeyDown(KeyCode.UpArrow))
             {
-                menuSelect.x = 0;
+                menuSelect.y = menuSelect.y + 1;
+                if (menuSelect.y > totalMenuItemsY - 1)
+                {
+                    menuSelect.y = 0;
+                }
+                Debug.Log("menuSelect.y = " + menuSelect.y);
             }
-            Debug.Log("menuSelect.x = " + menuSelect.x);
-        }
 
-        if (Input.GetKeyDown(KeyCode.LeftArrow))
-        {
-            menuSelect.x = menuSelect.x - 1;
-            if (menuSelect.x < 0)
+            if (Input.GetKeyDown(KeyCode.DownArrow))
             {
-                menuSelect.x = totalMenuItemsX - 1;
+                menuSelect.y = menuSelect.y - 1;
+                if (menuSelect.y < 0)
+                {
+                    menuSelect.y = totalMenuItemsY - 1;
+                }
+                Debug.Log("menuSelect.y = " + menuSelect.y);
             }
-            Debug.Log("menuSelect.x = " + menuSelect.x);
+
+            if (Input.GetKeyDown(KeyCode.RightArrow))
+            {
+                menuSelect.x = menuSelect.x + 1;
+                if (menuSelect.x > totalMenuItemsX - 1)
+                {
+                    menuSelect.x = 0;
+                }
+                Debug.Log("menuSelect.x = " + menuSelect.x);
+            }
+
+            if (Input.GetKeyDown(KeyCode.LeftArrow))
+            {
+                menuSelect.x = menuSelect.x - 1;
+                if (menuSelect.x < 0)
+                {
+                    menuSelect.x = totalMenuItemsX - 1;
+                }
+                Debug.Log("menuSelect.x = " + menuSelect.x);
+            }
+
+        /*}
+        else
+        {
+            if (Input.GetButtonDown("UpButton"))
+            {
+                menuSelect.y = menuSelect.y + 1;
+                if (menuSelect.y > totalMenuItemsY - 1)
+                {
+                    menuSelect.y = 0;
+                }
+                Debug.Log("menuSelect.y = " + menuSelect.y);
+            }
+
+            if (Input.GetButtonDown("DownButton"))
+            {
+                menuSelect.y = menuSelect.y - 1;
+                if (menuSelect.y < 0)
+                {
+                    menuSelect.y = totalMenuItemsY - 1;
+                }
+                Debug.Log("menuSelect.y = " + menuSelect.y);
+            }
+
+            if (Input.GetButtonDown("RightButton"))
+            {
+                menuSelect.x = menuSelect.x + 1;
+                if (menuSelect.x > totalMenuItemsX - 1)
+                {
+                    menuSelect.x = 0;
+                }
+                Debug.Log("menuSelect.x = " + menuSelect.x);
+            }
+
+            if (Input.GetButtonDown("LeftButton"))
+            {
+                menuSelect.x = menuSelect.x - 1;
+                if (menuSelect.x < 0)
+                {
+                    menuSelect.x = totalMenuItemsX - 1;
+                }
+                Debug.Log("menuSelect.x = " + menuSelect.x);
+            }
         }
+        */
     }
 
 
@@ -115,15 +177,16 @@ public class MenuScript : MonoBehaviour
         totalMenuItemsY = 2;
     }
 
-    public void GotoHowManyPlayersMenu()
+
+    public void GotoCharacterSelectMenu()
     {
         menuSelect.x = 0;
         menuSelect.y = 0;
-        howmanymenu.SetActive(true);
+        characterselectmenu.SetActive(true);
         currentMenu.SetActive(false);
-        currentMenu = howmanymenu;
-        totalMenuItemsX = 4;
-        totalMenuItemsY = 2;
+        currentMenu = characterselectmenu;
+        totalMenuItemsX = 1;
+        totalMenuItemsY = 1;
     }
 
     public void GotoLevel(int howManyPlayers)

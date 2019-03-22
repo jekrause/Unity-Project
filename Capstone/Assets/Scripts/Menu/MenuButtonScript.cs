@@ -8,10 +8,12 @@ public class MenuButtonScript : MonoBehaviour
 {
     public Vector2Int buttonID;
     public UnityEvent gotoMenu;
+    private Player Player1;
+
     // Start is called before the first frame update
     void Start()
     {
-
+        //Player1 = MenuInputSelector.playerLists[0];
     }
 
     // Update is called once per frame
@@ -66,7 +68,7 @@ public class MenuButtonScript : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 gotoMenu.Invoke();
-                Debug.Log("Should have did command!");
+                //Debug.Log("Should have did command!");
             }
         }
         else
