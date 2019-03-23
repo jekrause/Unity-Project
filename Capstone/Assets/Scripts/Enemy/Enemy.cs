@@ -51,6 +51,10 @@ public class Enemy : MonoBehaviour
     //Health bar
     protected HealthBarHandler HealthBarHandler;
 
+    protected Collider2D[] players; //  possible players in range of minDist
+
+    private float minDistance = 5f; // closest a enemy will be in Safe Movement
+
     void Start()
     {
         fWaitTime = fStartWaitTime;
@@ -60,11 +64,13 @@ public class Enemy : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         HealthBarHandler = GetComponent<HealthBarHandler>();
         HealthBarHandler.SetMaxHP(fHP);
+
+
     }
 
     // Update is called once per frame
     void Update()
-    {
+    {        
         //death 
         if(fHP <= 0)
         {
@@ -85,6 +91,13 @@ public class Enemy : MonoBehaviour
                 break;
         }
 
+        /*
+        if(fHP < 101 && SafteyRadius())
+        {
+            aiMvmt = MovementTypeEnum.Safe;
+        }
+        */
+
         if (EnemyRayCast() > -1)
         {
             aiMvmt = MovementTypeEnum.Chase;
@@ -93,7 +106,7 @@ public class Enemy : MonoBehaviour
         {
             aiMvmt = MovementTypeEnum.Patrol;
         }
-
+        
         if(aiMvmt == MovementTypeEnum.Chase && playerTarget != null && Time.time > fAttackTime)
         {
             //face player
@@ -108,9 +121,9 @@ public class Enemy : MonoBehaviour
             x.GetComponent<Rigidbody2D>().AddForce(x.transform.right * 500);
 
             fAttackTime = Time.time + 1 / iBaseAttackRate;
-        }
-
+        }        
     }
+    
 
     protected void MvmtPatrol()
     {
@@ -142,9 +155,20 @@ public class Enemy : MonoBehaviour
         transform.position = Vector2.MoveTowards(transform.position, playerTarget.transform.position, fSpeed * Time.deltaTime);
     }
 
-    protected void MvmtSafe()
+    protected void MvmtSafe()// Should be used when enemy has low health?
     {
+        if(Vector2.Distance(transform.position, playerTarget.transform.position) < minDistance)
+        {
+            transform.LookAt(2 * transform.position - playerTarget.transform.position);
+            transform.position += transform.forward * fSpeed * Time.deltaTime;
+            Debug.Log("Player is too close.");
 
+        }
+
+        else
+        {
+            transform.LookAt(playerTarget.transform.position);
+        }
     }
 
     private void FillMoveSpots()
@@ -196,6 +220,28 @@ public class Enemy : MonoBehaviour
         
         playerTarget = null;
         return -1;
+    }
+
+    private bool SafteyRadius()
+    {
+        players = Physics2D.OverlapCircleAll(transform.position, minDistance);
+        if(players.Length > 0)
+        {
+            playerTarget = gameObject;
+            playerTarget.transform.position = Vector2.zero;
+            foreach(Collider2D player in players)
+            {
+                if(player.gameObject.tag == "Player")
+                {
+                    playerTarget.transform.position += player.transform.position;
+                }
+            }
+
+            return true;
+        }
+        playerTarget = null;
+
+        return false;
     }
 
 }
