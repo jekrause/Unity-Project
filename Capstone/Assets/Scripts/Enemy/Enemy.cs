@@ -25,7 +25,7 @@ public class Enemy : MonoBehaviour
     protected float fSpeed = 3f;
     protected float fWaitTime;
     protected float fStartWaitTime = 3f;
-    protected float fVisionDistance = 5f;
+    protected float fVisionDistance = 150f;
 
     /*
      * Variables for Patrol AI
@@ -40,6 +40,11 @@ public class Enemy : MonoBehaviour
     private Rigidbody2D rb;
     protected GameObject playerTarget; //the player being attacked (JEK: we might want to use this rather than just the vector "p_location")
     private Vector2 p_location; // the player being attacked 
+
+    //Weapon
+    public Transform shootPosition;
+    public Bullet bullet;
+    protected float fAttackTime = 3;
 
     protected RaycastHit2D[] raycasts = new RaycastHit2D[5]; //raycast results list
 
@@ -80,9 +85,29 @@ public class Enemy : MonoBehaviour
                 break;
         }
 
-        if (EnemyRayCast())
+        if (EnemyRayCast() > -1)
         {
-   
+            aiMvmt = MovementTypeEnum.Chase;
+        }
+        else
+        {
+            aiMvmt = MovementTypeEnum.Patrol;
+        }
+
+        if(aiMvmt == MovementTypeEnum.Chase && playerTarget != null && Time.time > fAttackTime)
+        {
+            //face player
+            Vector2 dir = playerTarget.transform.position - transform.position;
+            var angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+            transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+
+            //shoot straight
+            var x = Instantiate(bullet, this.shootPosition.position, this.shootPosition.rotation);
+            x.SetDamage(30);
+            x.SetTarget("Player");
+            x.GetComponent<Rigidbody2D>().AddForce(x.transform.right * 500);
+
+            fAttackTime = Time.time + 1 / iBaseAttackRate;
         }
 
     }
@@ -114,7 +139,7 @@ public class Enemy : MonoBehaviour
 
     protected void MvmtChase()
     {
-        rb.MovePosition(rb.position + p_location * Time.deltaTime);
+        transform.position = Vector2.MoveTowards(transform.position, playerTarget.transform.position, fSpeed * Time.deltaTime);
     }
 
     protected void MvmtSafe()
@@ -152,16 +177,25 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    private bool EnemyRayCast()
+    private int EnemyRayCast()
     {
         raycasts[(int)RayCastDir.Forward] = Physics2D.Raycast(transform.position, transform.right, fVisionDistance);
-        if(raycasts[(int)RayCastDir.Forward].collider != null)
+        raycasts[(int)RayCastDir.Left20] = Physics2D.Raycast(transform.position, Quaternion.AngleAxis(20, transform.forward) * transform.right, fVisionDistance);
+        raycasts[(int)RayCastDir.Left45] = Physics2D.Raycast(transform.position, Quaternion.AngleAxis(45, transform.forward) * transform.right, fVisionDistance);
+        raycasts[(int)RayCastDir.Right20] = Physics2D.Raycast(transform.position, Quaternion.AngleAxis(-20, transform.forward) * transform.right, fVisionDistance);
+        raycasts[(int)RayCastDir.Right45] = Physics2D.Raycast(transform.position, Quaternion.AngleAxis(-45, transform.forward) * transform.right, fVisionDistance);
+
+        for(int ii = 0; ii<5; ii++)
         {
-            if(raycasts[(int)RayCastDir.Forward].collider.gameObject.tag != "Untagged")
-                Debug.Log("raycast forward hit " + raycasts[(int)RayCastDir.Forward].collider.tag);
+            if(raycasts[ii].collider!=null  && raycasts[ii].collider.gameObject.tag == "Player")
+            {
+                playerTarget = raycasts[ii].collider.gameObject;
+                return ii;
+            }
         }
         
-        return false;
+        playerTarget = null;
+        return -1;
     }
 
 }

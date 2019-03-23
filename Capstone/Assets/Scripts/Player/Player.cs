@@ -148,6 +148,7 @@ public abstract class Player : MonoBehaviour
 
     public bool Damaged(float f)
     {
+        Debug.Log("Received " + f + " damage");
         if (fHP > 0)
         {
             fHP -= f;

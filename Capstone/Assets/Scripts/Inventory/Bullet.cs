@@ -6,6 +6,7 @@ public class Bullet : MonoBehaviour
 {
 
     protected float damage = 10;
+    protected string targetTag = "Player";
 
     // Start is called before the first frame update
     void Start()
@@ -22,23 +23,22 @@ public class Bullet : MonoBehaviour
     void OnTriggerEnter2D(Collider2D col)
     {
         print("collided with " + col.tag);
-        if (col.gameObject.tag == "Weapon" || col.gameObject.tag == "Player" || col.gameObject.tag == "Untagged")
-        {
-            return;
-        }
 
-        if (col.gameObject.tag == "Enemy")
+        if (col.gameObject.tag == targetTag)
         {
-            print("Player did " + damage + " damage");
+            Debug.Log("sending Damage message to " + col.tag);
             col.gameObject.SendMessage("Damaged", damage);
+            Destroy(gameObject);
         }
-        
-        Destroy(gameObject);
-
     }
 
     public void SetDamage(float dmg)
     {
         damage = dmg;
+    }
+
+    public void SetTarget(string tag)
+    {
+        targetTag = tag;
     }
 }
