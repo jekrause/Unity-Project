@@ -179,8 +179,8 @@ public abstract class Player : MonoBehaviour
                 }
 
             }
-            else if ((Input.GetButtonDown(myControllerInput.LeftButton) && myControllerInput.inputType == InputType.KEYBOARD) // prevents multiple calls on keyboard
-                        || (Input.GetButton(myControllerInput.LeftButton) && myControllerInput.inputType != InputType.KEYBOARD)) // only work with xbox and ps4
+
+            if (Input.GetButtonDown(myControllerInput.LeftButton))
             {
                 // Reload 
                 if (CurrentWeapon != null && CurrentWeapon is RangedWeapon)

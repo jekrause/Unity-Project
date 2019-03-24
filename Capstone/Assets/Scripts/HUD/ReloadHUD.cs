@@ -10,15 +10,17 @@ public class ReloadHUD : MonoBehaviour, ISubscriber<OnWeaponReloadEvent>, ISubsc
     private float maxReloadTime;
     private bool stillReloading;
     private Image FillColor;
+    private GameObject ReloadCanvas;
 
     // Start is called before the first frame update
     void Start()
     {
-        ReloadBar = transform.GetChild(0).GetComponent<Slider>();
+        ReloadCanvas = transform.GetChild(0).gameObject;
+        ReloadBar = transform.GetChild(0).GetChild(0).GetComponent<Slider>(); // transform/ReloadPanel/ReloadBar
         ReloadBar.value = 0;
         EventAggregator.GetInstance().Register<OnWeaponReloadEvent>(this);
         EventAggregator.GetInstance().Register<OnWeaponReloadCancelEvent>(this);
-        FillColor = transform.GetChild(0).GetChild(1).GetChild(0).GetComponent<Image>();
+        FillColor = transform.GetChild(0).GetChild(0).GetChild(1).GetChild(0).GetComponent<Image>();  // transform/ReloadPanel/ReloadBar/FillArea/Fill
     }
 
     // Update is called once per frame
@@ -29,7 +31,7 @@ public class ReloadHUD : MonoBehaviour, ISubscriber<OnWeaponReloadEvent>, ISubsc
 
     private IEnumerator OnReloadStart()
     {
-        ReloadBar.gameObject.SetActive(true);
+        ReloadCanvas.SetActive(true);
         stillReloading = true;
         while (stillReloading && ReloadBar.value < 1)
         {
@@ -59,7 +61,7 @@ public class ReloadHUD : MonoBehaviour, ISubscriber<OnWeaponReloadEvent>, ISubsc
 
     private void OnReloadEnd()
     {
-        ReloadBar.gameObject.SetActive(false);
+        ReloadCanvas.SetActive(false);
         stillReloading = false;
         FillColor.color = Color.red;
         ReloadBar.value = 0;

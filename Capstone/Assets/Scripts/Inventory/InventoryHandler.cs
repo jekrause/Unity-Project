@@ -36,13 +36,13 @@ public class InventoryHandler : MonoBehaviour
         MainInventory = player.MainInventory;
         WeaponInventory = player.WeaponInventory;
         PlayerOriginalImage = GetComponent<SpriteRenderer>().sprite;
-        if(MainInventory == null || WeaponInventory == null)
+        if (MainInventory == null || WeaponInventory == null)
         {
             throw new System.MissingFieldException("Inventory Handler: Player should have Inventory as a field");
         }
         eventAggregator = EventAggregator.GetInstance();
-        
-       
+
+
     }
 
     // Update is called once per frame
@@ -56,8 +56,7 @@ public class InventoryHandler : MonoBehaviour
         if (myControllerInput.inputType != InputType.NONE)
         {
 
-            if ((Input.GetButtonDown(myControllerInput.UpButton) && myControllerInput.inputType == InputType.KEYBOARD) // prevents multiple calls on keyboard
-                    || (Input.GetButton(myControllerInput.UpButton) && myControllerInput.inputType != InputType.KEYBOARD))
+            if (Input.GetButtonDown(myControllerInput.UpButton))
             {
 
                 InventoryHUDFocused = !InventoryHUDFocused; // toggle inventory selection
@@ -69,7 +68,8 @@ public class InventoryHandler : MonoBehaviour
 
             if (InventoryHUDFocused) // user has inventory toggled on
             {
-                if(Settings.OS == "Windows"){
+                if (Settings.OS == "Windows")
+                {
                     if (Input.GetAxis(myControllerInput.DPadX_Windows) > 0) // D-Pad right, iterate throught item inventory
                     {
                         IterateRightList();
@@ -90,14 +90,12 @@ public class InventoryHandler : MonoBehaviour
                         IterateLeftList();
                     }
                 }
-               
-                if ((Input.GetButtonDown(myControllerInput.RightButton) && myControllerInput.inputType == InputType.KEYBOARD) // prevents multiple calls on keyboard
-                        || (Input.GetButton(myControllerInput.RightButton) && myControllerInput.inputType != InputType.KEYBOARD)) // item remove
+
+                if (Input.GetButtonDown(myControllerInput.RightButton)) // item remove
                 {
                     RemoveItemFromInv();
                 }
-                else if ((Input.GetButtonDown(myControllerInput.DownButton) && myControllerInput.inputType == InputType.KEYBOARD) // prevents multiple calls on keyboard
-                        || (Input.GetButton(myControllerInput.DownButton) && myControllerInput.inputType != InputType.KEYBOARD)) // use item
+                else if (Input.GetButtonDown(myControllerInput.DownButton)) // use item
                 {
                     if (IteratingMainInv)
                     {
@@ -111,9 +109,9 @@ public class InventoryHandler : MonoBehaviour
             }
             else
             {
-                if (!Input.GetButtonDown(myControllerInput.DownButton) && Input.GetButton(myControllerInput.DownButton)) // add item
+                if (Input.GetButton(myControllerInput.DownButton)) // add item
                 {
-                    if(timerButtonHeldDown >= 22)
+                    if (timerButtonHeldDown >= 32)
                     {
                         timerButtonHeldDown = 0;
                         buttonHeldDown = true;
@@ -123,26 +121,25 @@ public class InventoryHandler : MonoBehaviour
                 }
                 else if (Input.GetButtonUp(myControllerInput.DownButton))
                 {
-                    if (!buttonHeldDown)
+                    if(timerButtonHeldDown < 32)
                     {
                         AddItem();
+                        buttonHeldDown = false;
+                        timerButtonHeldDown = 0;
                     }
-                    buttonHeldDown = false;
-                    timerButtonHeldDown = 0;
+                    
                 }
-                else if (Input.GetButtonDown(myControllerInput.RBumper) && myControllerInput.inputType == InputType.KEYBOARD
-                        || (Input.GetButton(myControllerInput.RBumper) && myControllerInput.inputType != InputType.KEYBOARD)) // equip weapon equipment from the next right slot
+                else if (Input.GetButtonDown(myControllerInput.RBumper)) // equip weapon equipment from the next right slot
                 {
                     EquipNextWeapon();
                 }
-                else if ((Input.GetButtonDown(myControllerInput.LBumper) && myControllerInput.inputType == InputType.KEYBOARD)
-                        || (Input.GetButton(myControllerInput.LBumper) && myControllerInput.inputType != InputType.KEYBOARD)) // equip weapon equipment from the next left slot
+                else if (Input.GetButtonDown(myControllerInput.LBumper)) // equip weapon equipment from the next left slot
                 {
-                     EquipPrevWeapon();
+                    EquipPrevWeapon();
                 }
             }
 
-            if(Input.GetAxis(myControllerInput.DPadX_Windows) == 0 && Input.GetAxis(myControllerInput.DPadY_Windows) == 0)
+            if (Input.GetAxis(myControllerInput.DPadX_Windows) == 0 && Input.GetAxis(myControllerInput.DPadY_Windows) == 0)
             {
                 actionInProgress = false; // user let go of button, so action is no longer in progress
             }
@@ -166,8 +163,8 @@ public class InventoryHandler : MonoBehaviour
                 InventoryHUD.ShowPickUpItemMsg(myControllerInput.inputType, isWeapon);
             }
         }
-        
- 
+
+
     }
 
     private void OnCollisionExit2D(Collision2D collision)
@@ -203,7 +200,7 @@ public class InventoryHandler : MonoBehaviour
             {
                 int slot;
 
-                if(itemOnGround.GetItemType() == Item.Type.WEAPON && buttonHeldDown) // attempt equip weapon on the spot
+                if (itemOnGround.GetItemType() == Item.Type.WEAPON && buttonHeldDown) // attempt equip weapon on the spot
                     slot = WeaponInventory.AddItem(itemOnGround);
                 else
                     slot = MainInventory.AddItem(itemOnGround);
@@ -213,12 +210,12 @@ public class InventoryHandler : MonoBehaviour
                     if (itemOnGround.GetItemType() == Item.Type.WEAPON && buttonHeldDown)
                     {
                         InventoryHUD.OnWeaponStow(itemOnGround, slot, -1);
-                        if(player.CurrentWeapon == null)
+                        if (player.CurrentWeapon == null)
                         {
                             GetComponent<SpriteRenderer>().sprite = ((Weapon)itemOnGround).PlayerImage;
                             player.CurrentWeapon = itemOnGround;
                         }
-                    }   
+                    }
                     else
                         InventoryHUD.OnItemAdd(itemOnGround, slot, MainInventory.GetQuantityInSlot(slot));
 
@@ -287,11 +284,11 @@ public class InventoryHandler : MonoBehaviour
     /// </summary>
     private void UseItemFromWeaponInv(int weaponSlot)
     {
-        Weapon weaponToUse = (Weapon) WeaponInventory.GetItemInSlot(weaponSlot);
+        Weapon weaponToUse = (Weapon)WeaponInventory.GetItemInSlot(weaponSlot);
 
-        if(weaponToUse != null)
+        if (weaponToUse != null)
         {
-            if(player.CurrentWeapon != null && player.CurrentWeapon == weaponToUse) // unequip their weapon
+            if (player.CurrentWeapon != null && player.CurrentWeapon == weaponToUse) // unequip their weapon
             {
                 InterruptWeaponReload();
                 GetComponent<SpriteRenderer>().sprite = PlayerOriginalImage;
@@ -304,7 +301,7 @@ public class InventoryHandler : MonoBehaviour
                 GetComponent<SpriteRenderer>().sprite = weaponToUse.PlayerImage;
                 player.CurrentWeapon = weaponToUse;
             }
-            
+
         }
         else // no weapon in slot, so use player orginal image
         {
@@ -315,7 +312,7 @@ public class InventoryHandler : MonoBehaviour
         }
     }
 
-    
+
 
     /// <summary>
     /// Called when player attempts to drop, swap or unequip their current weapon in the case
@@ -362,10 +359,10 @@ public class InventoryHandler : MonoBehaviour
             }
             else
             {
-                Weapon weaponToRemove = (Weapon) WeaponInventory.GetItemInSlot(WeaponSlotIndex);
+                Weapon weaponToRemove = (Weapon)WeaponInventory.GetItemInSlot(WeaponSlotIndex);
                 if (weaponToRemove != null)
                 {
-                    if(player.CurrentWeapon != null && player.CurrentWeapon == weaponToRemove)
+                    if (player.CurrentWeapon != null && player.CurrentWeapon == weaponToRemove)
                     {
                         InterruptWeaponReload();
                         GetComponent<SpriteRenderer>().sprite = PlayerOriginalImage;
@@ -404,7 +401,7 @@ public class InventoryHandler : MonoBehaviour
             IteratingMainInv = InventoryHUD.IterateRight(); // return true if iterating main inv
             actionInProgress = true;
 
-            if(oldIteringMainInv == IteratingMainInv)
+            if (oldIteringMainInv == IteratingMainInv)
             {
                 if (IteratingMainInv)
                 {

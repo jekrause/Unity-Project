@@ -22,8 +22,12 @@ public class WarpStar : MonoBehaviour
 
             ((Player)other.gameObject.GetComponent("Player")).SetLocation(xPos, yPos);
             */
-            ((Player)other.gameObject.GetComponent("Player")).transform.position = destination.transform.position;
-            Debug.Log("Entered WarpStar");
+            if(other.gameObject.GetComponent<Player>() != null)
+            {
+                ((Player)other.gameObject.GetComponent("Player")).transform.position = destination.transform.position;
+                Debug.Log("Entered WarpStar");
+            }
+            
 
                 //Vector2 pos = destination.transform.position;
                 //((Player)other.gameObject.GetComponent("Player")).SetLocation(0, 0);
