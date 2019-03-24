@@ -25,7 +25,9 @@ public class Enemy : MonoBehaviour
     protected float fSpeed = 3f;
     protected float fWaitTime;
     protected float fStartWaitTime = 3f;
+    //protected float fVisionDistance = 150f;
     protected float fVisionDistance = 150f;
+
 
     /*
      * Variables for Patrol AI
@@ -39,7 +41,7 @@ public class Enemy : MonoBehaviour
 
     private Rigidbody2D rb;
     protected GameObject playerTarget; //the player being attacked (JEK: we might want to use this rather than just the vector "p_location")
-    private Vector2 p_location; // the player being attacked 
+    //private Vector2 p_location; // the player being attacked 
 
     //Weapon
     public Transform shootPosition;
@@ -53,7 +55,8 @@ public class Enemy : MonoBehaviour
 
     protected Collider2D[] players; //  possible players in range of minDist
 
-    private float minDistance = 5f; // closest a enemy will be in Safe Movement
+    protected float minDistance = 4f; // closest a enemy will be in Safe Movement
+    bool withInMinDistance = true; // poor bug evasion, but works
 
     void Start()
     {
@@ -91,14 +94,14 @@ public class Enemy : MonoBehaviour
                 break;
         }
 
-        /*
-        if(fHP < 101 && SafteyRadius())
+
+        if(fHP < 10 && SafteyRadius() > -1)
         {
             aiMvmt = MovementTypeEnum.Safe;
         }
-        */
+        
 
-        if (EnemyRayCast() > -1)
+        else if (EnemyRayCast() > -1)
         {
             aiMvmt = MovementTypeEnum.Chase;
         }
@@ -107,7 +110,8 @@ public class Enemy : MonoBehaviour
             aiMvmt = MovementTypeEnum.Patrol;
         }
         
-        if(aiMvmt == MovementTypeEnum.Chase && playerTarget != null && Time.time > fAttackTime)
+        if(((aiMvmt == MovementTypeEnum.Chase && playerTarget != null) ||
+           (aiMvmt == MovementTypeEnum.Safe && !withInMinDistance)) && Time.time > fAttackTime)
         {
             //face player
             Vector2 dir = playerTarget.transform.position - transform.position;
@@ -157,19 +161,27 @@ public class Enemy : MonoBehaviour
 
     protected void MvmtSafe()// Should be used when enemy has low health?
     {
-        if(Vector2.Distance(transform.position, playerTarget.transform.position) < minDistance)
+
+        if (Vector2.Distance(transform.position, playerTarget.transform.position) < minDistance)
         {
+            withInMinDistance = true;
+            transform.position = Vector2.MoveTowards(transform.position, playerTarget.transform.position, fSpeed * Time.deltaTime * -1f);
             transform.LookAt(2 * transform.position - playerTarget.transform.position);
-            transform.position += transform.forward * fSpeed * Time.deltaTime;
-            Debug.Log("Player is too close.");
-
+            //transform.LookAt(playerTarget.transform.position);
+            //transform.position += transform.forward * fSpeed * Time.deltaTime;
+            //Debug.Log("Player is within minDistance.");
         }
 
-        else
+        else 
         {
+            //Debug.Log("Players outside minDistance.");
             transform.LookAt(playerTarget.transform.position);
+            withInMinDistance = false;
         }
+
+        Debug.Log(playerTarget.transform.position);
     }
+
 
     private void FillMoveSpots()
     {
@@ -187,10 +199,12 @@ public class Enemy : MonoBehaviour
         HealthBarHandler.OnDamaged(fHP);
     }
 
+    /*
     private void setPlayerLocation()
     {
         p_location = gameObject.GetComponent("Player").transform.position;
     }
+    */
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
@@ -222,26 +236,38 @@ public class Enemy : MonoBehaviour
         return -1;
     }
 
-    private bool SafteyRadius()
+    private int SafteyRadius()
     {
-        players = Physics2D.OverlapCircleAll(transform.position, minDistance);
-        if(players.Length > 0)
+        players = Physics2D.OverlapCircleAll(transform.position, fVisionDistance);
+        int numPlayers = 0;
+        if (players.Length > 0)
         {
-            playerTarget = gameObject;
+            playerTarget = new GameObject();
             playerTarget.transform.position = Vector2.zero;
             foreach(Collider2D player in players)
             {
                 if(player.gameObject.tag == "Player")
                 {
                     playerTarget.transform.position += player.transform.position;
+                    ++numPlayers;
+                    Debug.Log("Player position: " + player.transform.position);
+
                 }
             }
 
-            return true;
-        }
-        playerTarget = null;
+            //Debug.Log("Players in radius = " + numPlayers);
+            if (numPlayers > 0)
+            {
+                playerTarget.transform.position /= numPlayers; // Average out the positions of all players
+                Debug.Log("PlayerTarget position: " + playerTarget.transform.position);
+                return numPlayers;
+            }
 
-        return false;
+        }
+        Destroy(playerTarget);
+
+        playerTarget = null;
+        return -1;
     }
 
 }
