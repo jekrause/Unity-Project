@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
 
@@ -81,11 +81,11 @@ public class InventoryHandler : MonoBehaviour
                 }
                 else
                 {
-                    if (Input.GetButton(myControllerInput.DPadRight_Mac))
+                    if (Input.GetButtonDown(myControllerInput.DPadRight_Mac))
                     {
                         IterateRightList();
                     }
-                    else if (Input.GetButton(myControllerInput.DPadLeft_Mac))
+                    else if (Input.GetButtonDown(myControllerInput.DPadLeft_Mac))
                     {
                         IterateLeftList();
                     }
