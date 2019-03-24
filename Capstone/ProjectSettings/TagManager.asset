@@ -53,6 +53,9 @@ TagManager:
   - name: Ground
     uniqueID: 3185186219
     locked: 0
+  - name: BodiesOfWater
+    uniqueID: 2088406965
+    locked: 0
   - name: Items
     uniqueID: 3845095107
     locked: 0
