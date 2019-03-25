@@ -4,20 +4,23 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
-
     protected float damage = 10;
-    protected string targetTag = "Player";
+    protected string targetTag = "Enemy";
+    protected Vector2 spawnPosition;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        spawnPosition = transform.position;
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        if(Vector2.Distance(spawnPosition, transform.position) > 100)
+        {
+            Destroy(gameObject);
+        }
     }
 
     void OnTriggerEnter2D(Collider2D col)
