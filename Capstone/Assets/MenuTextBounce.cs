@@ -31,7 +31,7 @@ public class MenuTextBounce : MonoBehaviour
             if (moveCount > maxMoveTime)
             {
                 moveUp = false;
-                Debug.Log("movingDown");
+                //Debug.Log("movingDown");
             }
 
         }
@@ -43,7 +43,7 @@ public class MenuTextBounce : MonoBehaviour
             if (moveCount < 0)
             {
                 moveUp = true;
-                Debug.Log("movingUp");
+                //Debug.Log("movingUp");
             }
         }
 

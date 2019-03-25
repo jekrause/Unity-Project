@@ -12,6 +12,7 @@ public class MenuPlayerButtonScript : MonoBehaviour
     public PlayerMenuScript.PlayerMenuNode nextButtons;
     //public bool ignoreHighlight = false;
     private int PlayerNum;
+    private string OS = Settings.OS;
 
 
     // Start is called before the first frame update
@@ -40,57 +41,66 @@ public class MenuPlayerButtonScript : MonoBehaviour
     }
 
 
-    private void highlightButton(bool highlight)
+    private void pressSelectButton(int playerIndex)
     {
-        if (highlight == true)
+        if (MenuInputSelector.menuControl[playerIndex] != null)
         {
-            //if (ignoreHighlight == false)
-            //{
-                if (GetComponent<Image>().enabled == false)
-                {
-                    GetComponent<Image>().enabled = true;
-                    //Debug.Log("PLayerNum = " + PlayerNum);
-                }
-            //}
-            if (PlayerNum == 1)
+            if (MenuInputSelector.menuControl[playerIndex].inputType == InputType.KEYBOARD)
             {
                 if (Input.GetKeyDown(KeyCode.Space))
                 {
                     gotoMenu.Invoke();
-                    //Debug.Log("Should have did command!");
                 }
+            }
+            else
+            {
+                if (OS.Equals("Mac"))
+                {
+                    if (Input.GetButtonDown(MenuInputSelector.menuControl[playerIndex].DownButton))
+                    {
+                        gotoMenu.Invoke();
+                    }
+                }
+                //else Windows(Xbox controller) or PS4
+                //...
+            }
+        }
+    }
+
+    private void highlightButton(bool highlight)
+    {
+        if (highlight == true)
+        {
+
+            if (GetComponent<Image>().enabled == false)
+            {
+                GetComponent<Image>().enabled = true;
+                //Debug.Log("PLayerNum = " + PlayerNum);
+            }
+            
+            if (PlayerNum == 1)
+            {
+                pressSelectButton(0);
             }
             else if (PlayerNum == 2)
             {
-                if (Input.GetKeyDown(KeyCode.E))
-                {
-                    gotoMenu.Invoke();
-                }
+                pressSelectButton(1);
             }
             else if (PlayerNum == 3)
             {
-                if (Input.GetKeyDown(KeyCode.Y))
-                {
-                    gotoMenu.Invoke();
-                }
+                pressSelectButton(2);
             }
             else if (PlayerNum == 4)
             {
-                if (Input.GetKeyDown(KeyCode.O))
-                {
-                    gotoMenu.Invoke();
-                }
+                pressSelectButton(3);
             }
         }
         else
         {
-            //if (ignoreHighlight == false)
-            //{
-                if (GetComponent<Image>().enabled == true)
-                {
-                    GetComponent<Image>().enabled = false;
-                }
-            //}
+            if (GetComponent<Image>().enabled == true)
+            {
+                GetComponent<Image>().enabled = false;
+            }
         }
 
     }

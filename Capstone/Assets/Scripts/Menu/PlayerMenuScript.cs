@@ -17,6 +17,15 @@ public class PlayerMenuScript : MonoBehaviour
     public int currentButton;
     public string playerName;
     public string playerClass;
+    private string OS = Settings.OS;
+
+    //for windows gamepad checks
+    private bool axisResetXPos = true;
+    private bool axisResetYPos = true;
+    private bool axisResetXNeg = true;
+    private bool axisResetYNeg = true;
+
+    private int playerInputIndex = 1;
 
     [System.Serializable]
     public class PlayerMenuNode
@@ -120,164 +129,151 @@ public class PlayerMenuScript : MonoBehaviour
     private void Update()
     {
 
-        menuNavigate(playerNum);
+        //menuNavigate(playerNum);
 
+        //to back a to title screen for now
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            UnAssignAllInputs();
+            playerInputIndex = 1;
+            Start();
+        }
+
+
+        if (MenuInputSelector.menuControl[playerInputIndex] == null)
+        {
+            // listen for a button press from connected controllers
+            BindPlayerInput();
+            //playerInputIndex++;
+            //Debug.Log("Player " + (playerInputIndex + 1) + " has joined!");
+        }
+        //else
+        //{
+        //    playerInputIndex++;
+        //}
+
+        menuNavigate(playerNum);
     }
 
 
+    private bool axisPressed(bool check, string axisName, float buttonValue)
+    {
+        if (buttonValue > 0)
+        {
+            if (Input.GetAxis(axisName) >= buttonValue)
+            {
+                check = false;
+            }
+            if (Input.GetAxis(axisName) < 0.1 && check == false)
+            {
+                check = true;
+            }
+        }
+        else
+        {
+            if (Input.GetAxis(axisName) <= buttonValue)
+            {
+                check = false;
+            }
+            if (Input.GetAxis(axisName) > -0.1 && check == false)
+            {
+                check = true;
+            }
+        }
+        return check;
+    }
+
+    private void pressDirection(int playerIndex)
+    {
+        if (MenuInputSelector.menuControl[playerIndex] != null)
+        {
+            if (MenuInputSelector.menuControl[playerIndex].inputType == InputType.KEYBOARD)
+            {
+
+                if (Input.GetKeyDown(KeyCode.UpArrow))
+                {
+                    GotoNextButton(nextButtons.upButton);
+                }
+
+                if (Input.GetKeyDown(KeyCode.DownArrow))
+                {
+                    GotoNextButton(nextButtons.downButton);
+                }
+
+                if (Input.GetKeyDown(KeyCode.RightArrow))
+                {
+                    GotoNextButton(nextButtons.rightButton);
+                }
+
+                if (Input.GetKeyDown(KeyCode.LeftArrow))
+                {
+                    GotoNextButton(nextButtons.leftButton);
+                }
+            }
+            else
+            {
+                if (OS.Equals("Mac"))
+                {
+                    if (Input.GetButtonDown(MenuInputSelector.menuControl[playerIndex].DPadUp_Mac))
+                    {
+                        GotoNextButton(nextButtons.upButton);
+                    }
+
+                    if (Input.GetButtonDown(MenuInputSelector.menuControl[playerIndex].DPadDown_Mac))
+                    {
+                        GotoNextButton(nextButtons.downButton);
+                    }
+
+                    if (Input.GetButtonDown(MenuInputSelector.menuControl[playerIndex].DPadRight_Mac))
+                    {
+                        GotoNextButton(nextButtons.rightButton);
+                    }
+
+                    if (Input.GetButtonDown(MenuInputSelector.menuControl[playerIndex].DPadLeft_Mac))
+                    {
+                        GotoNextButton(nextButtons.leftButton);
+                    }
+                }
+                else   //for xbox(windows) and PS4
+                {
+                    if (axisPressed(axisResetYPos, MenuInputSelector.menuControl[playerIndex].DPadY_Windows, 1))
+                    {
+                        GotoNextButton(nextButtons.upButton);
+                    }
+                    if (axisPressed(axisResetYNeg, MenuInputSelector.menuControl[playerIndex].DPadY_Windows, -1))
+                    {
+                        GotoNextButton(nextButtons.downButton);
+                    }
+                    if (axisPressed(axisResetXPos, MenuInputSelector.menuControl[playerIndex].DPadX_Windows, 1))
+                    {
+                        GotoNextButton(nextButtons.rightButton);
+                    }
+                    if (axisPressed(axisResetXNeg, MenuInputSelector.menuControl[playerIndex].DPadX_Windows, -1))
+                    {
+                        GotoNextButton(nextButtons.leftButton);
+                    }
+                }
+            }
+        }
+    }
+
     private void menuNavigate(int player)
     {
-        if (player == 1) { //using this check for testing at the moment
-
-            if (Input.GetKeyDown(KeyCode.UpArrow))
-            {
-                GotoNextButton(nextButtons.upButton);
-                //Debug.Log("HeyPlayer1!!!");
-                //PrintCurrentDebug();
-
-            }
-
-            if (Input.GetKeyDown(KeyCode.DownArrow))
-            {
-                GotoNextButton(nextButtons.downButton);
-
-                //PrintCurrentDebug();
-            }
-
-            if (Input.GetKeyDown(KeyCode.RightArrow))
-            {
-                GotoNextButton(nextButtons.rightButton);
-
-                //PrintCurrentDebug();
-            }
-
-            if (Input.GetKeyDown(KeyCode.LeftArrow))
-            {
-                GotoNextButton(nextButtons.leftButton);
-
-                //PrintCurrentDebug();
-            }
-
-        }else if (player == 2)
-        { //using this check for testing at the moment
-
-            if (Input.GetKeyDown(KeyCode.W))
-            {
-                Debug.Log("Player2 nextup = "+ nextButtons.upButton.name+
-                          "\nPlayer2 nextdown = " + nextButtons.downButton.name+
-                          "\nPlayer2 nextright = " + nextButtons.rightButton.name+
-                          "\nPlayer2 nextleft = " + nextButtons.leftButton.name +"\n");
-                Debug.Log("ButtonIDold = " + nextButtons.upButton.GetComponentInChildren<MenuPlayerButtonScript>().buttonID);
-                GotoNextButton(nextButtons.upButton);
-                Debug.Log("ButtonIDafter = " + nextButtons.upButton.GetComponentInChildren<MenuPlayerButtonScript>().buttonID);
-                //Debug.Log("HeyPlayer2!!!");
-                //PrintCurrentDebug();
-
-            }
-
-            if (Input.GetKeyDown(KeyCode.S))
-            {
-                Debug.Log("Player2 nextup = " + nextButtons.upButton.name +
-                          "\nPlayer2 nextdown = " + nextButtons.downButton.name +
-                          "\nPlayer2 nextright = " + nextButtons.rightButton.name +
-                          "\nPlayer2 nextleft = " + nextButtons.leftButton.name + "\n");
-                Debug.Log("ButtonIDold = " + nextButtons.upButton.GetComponentInChildren<MenuPlayerButtonScript>().buttonID);
-                GotoNextButton(nextButtons.downButton);
-                Debug.Log("ButtonIDafter = " + nextButtons.upButton.GetComponentInChildren<MenuPlayerButtonScript>().buttonID);
-
-                //PrintCurrentDebug();
-            }
-
-            if (Input.GetKeyDown(KeyCode.D))
-            {
-                Debug.Log("Player2 nextup = " + nextButtons.upButton.name +
-                          "\nPlayer2 nextdown = " + nextButtons.downButton.name +
-                          "\nPlayer2 nextright = " + nextButtons.rightButton.name +
-                          "\nPlayer2 nextleft = " + nextButtons.leftButton.name + "\n");
-                Debug.Log("ButtonIDold = " + nextButtons.upButton.GetComponentInChildren<MenuPlayerButtonScript>().buttonID);
-                GotoNextButton(nextButtons.rightButton);
-                Debug.Log("ButtonIDafter = " + nextButtons.upButton.GetComponentInChildren<MenuPlayerButtonScript>().buttonID);
-
-                //PrintCurrentDebug();
-            }
-
-            if (Input.GetKeyDown(KeyCode.A))
-            {
-                Debug.Log("Player2 nextup = " + nextButtons.upButton.name +
-                          "\nPlayer2 nextdown = " + nextButtons.downButton.name +
-                          "\nPlayer2 nextright = " + nextButtons.rightButton.name +
-                          "\nPlayer2 nextleft = " + nextButtons.leftButton.name + "\n");
-                Debug.Log("ButtonIDold = " + nextButtons.upButton.GetComponentInChildren<MenuPlayerButtonScript>().buttonID);
-                GotoNextButton(nextButtons.leftButton);
-                Debug.Log("ButtonIDafter = " + nextButtons.upButton.GetComponentInChildren<MenuPlayerButtonScript>().buttonID);
-
-                //PrintCurrentDebug();
-            }
-
-        }else if (player == 3)
-        { //using this check for testing at the moment
-
-            if (Input.GetKeyDown(KeyCode.T))
-            {
-                GotoNextButton(nextButtons.upButton);
-                //Debug.Log("Hey!!!");
-                //PrintCurrentDebug();
-
-            }
-
-            if (Input.GetKeyDown(KeyCode.G))
-            {
-                GotoNextButton(nextButtons.downButton);
-
-                //PrintCurrentDebug();
-            }
-
-            if (Input.GetKeyDown(KeyCode.H))
-            {
-                GotoNextButton(nextButtons.rightButton);
-
-                //PrintCurrentDebug();
-            }
-
-            if (Input.GetKeyDown(KeyCode.F))
-            {
-                GotoNextButton(nextButtons.leftButton);
-
-                //PrintCurrentDebug();
-            }
-
-        }else if (player == 4)
-        { //using this check for testing at the moment
-
-            if (Input.GetKeyDown(KeyCode.I))
-            {
-                GotoNextButton(nextButtons.upButton);
-                //Debug.Log("Hey!!!");
-                //PrintCurrentDebug();
-
-            }
-
-            if (Input.GetKeyDown(KeyCode.K))
-            {
-                GotoNextButton(nextButtons.downButton);
-
-                //PrintCurrentDebug();
-            }
-
-            if (Input.GetKeyDown(KeyCode.L))
-            {
-                GotoNextButton(nextButtons.rightButton);
-
-                //PrintCurrentDebug();
-            }
-
-            if (Input.GetKeyDown(KeyCode.J))
-            {
-                GotoNextButton(nextButtons.leftButton);
-
-                //PrintCurrentDebug();
-            }
-
+        if (player == 1)
+        { 
+            pressDirection(0);
+        }
+        else if (player == 2)
+        { 
+            pressDirection(1);
+        }
+        else if (player == 3)
+        { 
+            pressDirection(2);
+        }
+        else if (player == 4)
+        { 
+            pressDirection(3);
         }
     }
 
@@ -372,26 +368,6 @@ public class PlayerMenuScript : MonoBehaviour
         //currentButton = 0;
     }
 
-/*
-    public void SetPlayerClass(int playerNum, int classNum)
-    {
-        switch (playerNum)
-        {
-            case 0: //player1
-                Settings.playerClasses[0] = classNum;
-                break;
-            case 1: //player2
-                Settings.playerClasses[1] = classNum;
-                break;
-            case 2: //player3
-                Settings.playerClasses[2] = classNum;
-                break;
-            case 3: //player4
-                Settings.playerClasses[3] = classNum;
-                break;
-        }
-    }
-*/
 
     private void PrintCurrentDebug()
     {
@@ -421,6 +397,116 @@ public class PlayerMenuScript : MonoBehaviour
                 break;
         }
         return output;
+    }
+
+
+    private void BindPlayerInput()
+    {
+        if (Input.GetKeyDown(KeyCode.Space) && !Settings.inputAssigned[0])
+        {
+            print("Keyboard Detected");
+            //bind to player inputs to keyboard
+            MenuInputSelector.menuControl[playerInputIndex] = new MyControllerInput(InputType.KEYBOARD, 1);
+
+            //playerLists[index].myControllerInput = new MyControllerInput(InputType.KEYBOARD, 1);
+            Settings.inputAssigned[0] = true;
+            //transform.GetChild(index).GetComponentInChildren<TextMesh>().text = "P" + (index + 1) + " (Keyboard input)";
+        }
+        else if (Input.GetButton("J1PS4_DownButton_" + Settings.OS) && !Settings.inputAssigned[1])
+        {
+            print("PS4 Joystick 1 Detected");
+            //bind player's inputs to PS4 controller
+            MenuInputSelector.menuControl[playerInputIndex] = new MyControllerInput(InputType.PS4_CONTROLLER, 1);
+
+            //playerLists[index].myControllerInput = new MyControllerInput(InputType.PS4_CONTROLLER, 1);
+            Settings.inputAssigned[1] = true;
+            //transform.GetChild(index).GetComponentInChildren<TextMesh>().text = "P" + (index + 1) + " (PS4 input)";
+
+        }
+        else if (Input.GetButton("J2PS4_DownButton_" + Settings.OS) && !Settings.inputAssigned[2])
+        {
+            print("PS4 Joystick 2 detected");
+            //bind to player inputs to PS4 2nd controller
+            MenuInputSelector.menuControl[playerInputIndex] = new MyControllerInput(InputType.PS4_CONTROLLER, 2);
+
+            //playerLists[index].myControllerInput = new MyControllerInput(InputType.PS4_CONTROLLER, 2);
+            Settings.inputAssigned[2] = true;
+            //transform.GetChild(index).GetComponentInChildren<TextMesh>().text = "P" + (index + 1) + " (PS4 input)";
+
+        }
+        else if (Input.GetButton("J3PS4_DownButton_" + Settings.OS) && !Settings.inputAssigned[3])
+        {
+            print("PS4 Joystick 3 detected");
+            MenuInputSelector.menuControl[playerInputIndex] = new MyControllerInput(InputType.PS4_CONTROLLER, 3);
+
+            //playerLists[index].myControllerInput = new MyControllerInput(InputType.PS4_CONTROLLER, 3);
+            Settings.inputAssigned[3] = true;
+            //transform.GetChild(index).GetComponentInChildren<TextMesh>().text = "P" + (index + 1) + " (PS4 input)";
+        }
+        else if (Input.GetButton("J4PS4_DownButton_" + Settings.OS) && !Settings.inputAssigned[4])
+        {
+            print("PS4 Joystick 4 detected");
+            MenuInputSelector.menuControl[playerInputIndex] = new MyControllerInput(InputType.PS4_CONTROLLER, 4);
+
+            //playerLists[index].myControllerInput = new MyControllerInput(InputType.PS4_CONTROLLER, 4);
+            Settings.inputAssigned[4] = true;
+            //transform.GetChild(index).GetComponentInChildren<TextMesh>().text = "P" + (index + 1) + " (PS4 input)";
+        }
+        else if (Input.GetButton("J1XBOX_DownButton_" + Settings.OS) && !Settings.inputAssigned[1])
+        {
+            print("XBOX Joystick 1 Detected");
+            MenuInputSelector.menuControl[playerInputIndex] = new MyControllerInput(InputType.XBOX_CONTROLLER, 1);
+
+            //playerLists[index].myControllerInput = new MyControllerInput(InputType.XBOX_CONTROLLER, 1);
+            Settings.inputAssigned[1] = true;
+            Debug.Log("Player " + (playerInputIndex + 1) + " has joined!");
+            playerInputIndex++;
+            //transform.GetChild(index).GetComponentInChildren<TextMesh>().text = "P" + (index + 1) + " (XBOX input)";
+        }
+        else if (Input.GetButton("J2XBOX_DownButton_" + Settings.OS) && !Settings.inputAssigned[2])
+        {
+            print("XBOX Joystick 2 Detected");
+            MenuInputSelector.menuControl[playerInputIndex] = new MyControllerInput(InputType.XBOX_CONTROLLER, 2);
+
+            //playerLists[index].myControllerInput = new MyControllerInput(InputType.XBOX_CONTROLLER, 2);
+            Settings.inputAssigned[2] = true;
+            Debug.Log("Player " + (playerInputIndex + 1) + " has joined!");
+            //transform.GetChild(index).GetComponentInChildren<TextMesh>().text = "P" + (index + 1) + " (XBOX input)";
+        }
+        else if (Input.GetButton("J3XBOX_DownButton_" + Settings.OS) && !Settings.inputAssigned[3])
+        {
+            print("XBOX Joystick 3 Detected");
+            MenuInputSelector.menuControl[playerInputIndex] = new MyControllerInput(InputType.XBOX_CONTROLLER, 3);
+
+            //playerLists[index].myControllerInput = new MyControllerInput(InputType.XBOX_CONTROLLER, 3);
+            Settings.inputAssigned[3] = true;
+            Debug.Log("Player " + (playerInputIndex + 1) + " has joined!");
+            //transform.GetChild(index).GetComponentInChildren<TextMesh>().text = "P" + (index + 1) + " (XBOX input)";
+        }
+        else if (Input.GetButton("J4XBOX_DownButton_" + Settings.OS) && !Settings.inputAssigned[4])
+        {
+            print("XBOX Joystick 4 Detected");
+            MenuInputSelector.menuControl[playerInputIndex] = new MyControllerInput(InputType.XBOX_CONTROLLER, 4);
+
+            //playerLists[index].myControllerInput = new MyControllerInput(InputType.XBOX_CONTROLLER, 4);
+            Settings.inputAssigned[4] = true;
+            Debug.Log("Player " + (playerInputIndex + 1) + " has joined!");
+            //transform.GetChild(index).GetComponentInChildren<TextMesh>().text = "P" + (index + 1) + " (XBOX input)";
+        }
+
+    }
+
+    private void UnAssignAllInputs()
+    {
+        MenuInputSelector.menuControl[0] = null;
+        MenuInputSelector.menuControl[1] = null;
+        MenuInputSelector.menuControl[2] = null;
+        MenuInputSelector.menuControl[3] = null;
+        Settings.inputAssigned[0] = false;
+        Settings.inputAssigned[1] = false;
+        Settings.inputAssigned[2] = false;
+        Settings.inputAssigned[3] = false;
+        Settings.inputAssigned[4] = false;
     }
 
 }

@@ -8,7 +8,8 @@ public class MenuButtonScript : MonoBehaviour
 {
     public Vector2Int buttonID;
     public UnityEvent gotoMenu;
-    private Player Player1;
+    private string OS = Settings.OS;
+    //private Player Player1;
 
     // Start is called before the first frame update
     void Start()
@@ -55,6 +56,28 @@ public class MenuButtonScript : MonoBehaviour
     }
 
 
+    private void pressSelectButton(int playerIndex)
+    {
+        if (MenuInputSelector.menuControl[playerIndex] != null)
+        {
+            if (MenuInputSelector.menuControl[playerIndex].inputType == InputType.KEYBOARD)
+            {
+                if (Input.GetKeyDown(KeyCode.Space))
+                {
+                    gotoMenu.Invoke();
+                    //Debug.Log("Should have did command!");
+                }
+            }
+            else
+            {
+                //same for windows and mac
+                if (Input.GetButtonDown(MenuInputSelector.menuControl[0].DownButton))
+                {
+                    gotoMenu.Invoke();
+                }
+            }
+        }
+    }
 
 
     private void highlightButton(bool highlight)
@@ -65,11 +88,17 @@ public class MenuButtonScript : MonoBehaviour
             {
                 GetComponent<Image>().enabled = true;
             }
-            if (Input.GetKeyDown(KeyCode.Space))
+
+            //old other
+            /*if (MenuInputSelector.menuControl[0] != null)
             {
-                gotoMenu.Invoke();
-                //Debug.Log("Should have did command!");
-            }
+                if (Input.GetButtonDown(MenuInputSelector.menuControl[0].DownButton))
+                {
+                    gotoMenu.Invoke();
+                }
+            }*/
+
+            pressSelectButton(0);
         }
         else
         {
