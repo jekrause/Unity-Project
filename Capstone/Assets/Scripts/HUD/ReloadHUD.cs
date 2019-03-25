@@ -40,7 +40,7 @@ public class ReloadHUD : MonoBehaviour, ISubscriber<OnWeaponReloadEvent>, ISubsc
 
             if (!stillReloading)
             {
-                OnReloadStart();
+                OnReloadEnd();
                 break;
             }
 

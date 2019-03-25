@@ -47,14 +47,14 @@ public abstract class RangedWeapon : Weapon
             IsReloading = true;
             Debug.Log(this.name + ": Reloading...");
             EventAggregator.GetInstance().Publish<OnWeaponReloadEvent>(new OnWeaponReloadEvent(playerNumber, this));
-            for (float timer = ReloadTime; timer > 0; timer -= 1)
+            for (float timer = ReloadTime; timer > 0; timer -= 0.25f)
             {
                 if (ReloadCancel)
                 {
                     IsReloading = ReloadCancel = false;
                     yield break;
                 }
-                yield return new WaitForSeconds(1);
+                yield return new WaitForSeconds(0.25f);
             }
 
             AmmoClip.LoadAmmunition(ammunition);
