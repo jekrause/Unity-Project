@@ -41,12 +41,14 @@ public class LevelGenerator : MonoBehaviour
     {
         Color pixelColor = terrainMap.GetPixel(x, y);
 
+        
         if(pixelColor.a == 0) // The pixel is transparent.
         {
             return;
         }
+        
 
-        //Debug.Log(pixelColor);
+        //Debug.Log(ColorUtility.ToHtmlStringRGB(pixelColor));
 
         foreach(ColorToPrefab colorTerrainMapping in colorTerrainMappings)
         {
@@ -65,12 +67,14 @@ public class LevelGenerator : MonoBehaviour
 
         Color pixelColor = obstacleMap.GetPixel(x, y);
 
+        /*
         if (pixelColor.a == 0) // The pixel is transparent.
         {
             return;
         }
+        */
 
-        Debug.Log(pixelColor);
+        Debug.Log(ColorUtility.ToHtmlStringRGB(pixelColor));
 
         foreach (ColorToPrefab colorObstacleMapping in colorObstacleMappings)
         {
