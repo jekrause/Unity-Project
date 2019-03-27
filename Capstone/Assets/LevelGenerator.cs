@@ -22,6 +22,7 @@ public class LevelGenerator : MonoBehaviour
 
     void GenerateLevel()
     {
+
         for(int x = 0; x < terrainMap.width; x++) // may need to be x++
         {
             for(int y = 0; y < terrainMap.height; y++)
@@ -29,22 +30,24 @@ public class LevelGenerator : MonoBehaviour
                 GenerateTerrainTile(x, y);
             }
         }
-
+        
         for (int x = obstacleMap.width-1; x >= 0; x--) // reversed to draw trees closer last
         {
-            for (int y = obstacleMap.width-1; y >= 0; y--)
+            for (int y = obstacleMap.height-1; y >= 0; y--)
             {
                 GenerateObstacle(x, y);
             }
         }
 
+        
         for (int x = obstacleMap.width - 1; x >= 0; x--)
         {
-            for (int y = obstacleMap.width - 1; y >= 0; y--)
+            for (int y = obstacleMap.height - 1; y >= 0; y--)
             {
                 GenerateEnemy(x, y);
             }
         }
+        
     }
 
     void GenerateTerrainTile(int x, int y)
@@ -137,11 +140,11 @@ public class LevelGenerator : MonoBehaviour
                 Debug.Log("Enemy found");
             }
             else
-            Debug.Log(" pixelColor: " + pixelColor + " colorObstacleMapping: " + colorEnemyMapping.color);
+                Debug.Log(" pixelColor: " + pixelColor + " colorEnemyMapping: " + colorEnemyMapping.color);
         }
     }
 
-        private bool IsEqualColor(Color x, Color y)
+    private bool IsEqualColor(Color x, Color y)
     {
         int i, j, k, l;
         i = (int)(100 * x.r);
@@ -158,4 +161,10 @@ public class LevelGenerator : MonoBehaviour
         return i == p && j == q && k == r && l == s;
     }
 
+    /*
+    public static void Main(string[] args)
+    {
+        GenerateLevel();
+    }
+    */
 }
