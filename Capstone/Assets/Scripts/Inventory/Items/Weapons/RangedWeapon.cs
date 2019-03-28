@@ -8,7 +8,7 @@ public abstract class RangedWeapon : Weapon
     public float ReloadTime { get; protected set; }
     public bool IsReloading { get; protected set; }
     protected bool ReloadCancel;
-    protected AmmoClip AmmoClip;
+    public AmmoClip AmmoClip { get; protected set; }
 
 
     public virtual void Fire(Player player)

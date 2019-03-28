@@ -22,6 +22,10 @@ public class InventoryHandler : MonoBehaviour
     private int EquippedWeaponSlot; // index of the current weapon equipped
     private int WeaponSlotIndex; // Used for iterating through weapon inventory when inventory is toggled only!
 
+    private string PickUpItemMessage;
+    private string EquippableWepMessage;
+    private string SalvageWepMessage;
+
     // item pick up timer
     private int timerButtonHeldDown;
     private bool buttonHeldDown = false;
@@ -147,8 +151,23 @@ public class InventoryHandler : MonoBehaviour
         else
         {
             //check if user has bind controller
-            myControllerInput = player.myControllerInput;
-        }
+            if(player.myControllerInput.inputType != InputType.NONE && myControllerInput.inputType == InputType.NONE)
+            {
+                myControllerInput = player.myControllerInput;
+
+                // initialize messages
+                if (myControllerInput.inputType == InputType.NONE) PickUpItemMessage = "-Press (N/A): Pick Up-";
+                else{
+                    InputType input = myControllerInput.inputType;
+                    string platformButton = input == InputType.KEYBOARD ? "E" : input == InputType.PS4_CONTROLLER ? "X" : "A";
+                    PickUpItemMessage = "-Press '" + platformButton + "' : Pick Up-";
+                    EquippableWepMessage = "-Press '" + platformButton + "' : Pick Up-\n-Hold '" + platformButton + "' : Equip- ";
+                    SalvageWepMessage = "-Press '" + platformButton + "' : Pick Up-\n-Hold '" + platformButton + "' : Salvage For Ammo- ";
+                }
+
+            }
+                
+        }   
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -159,8 +178,22 @@ public class InventoryHandler : MonoBehaviour
             if (itemOnGround != null)
             {
                 ItemFocused = true;
-                bool isWeapon = itemOnGround.GetItemType() == Item.Type.WEAPON;
-                InventoryHUD.ShowPickUpItemMsg(myControllerInput.inputType, isWeapon);
+                if (player.CanEquipWeapon(itemOnGround))
+                {
+                    InventoryHUD.ShowPickUpItemMsg(EquippableWepMessage);
+                }
+                else
+                {
+                    if(itemOnGround.GetItemType() == Item.Type.WEAPON)
+                    {
+                        InventoryHUD.ShowPickUpItemMsg(SalvageWepMessage);
+                    }
+                    else
+                    {
+                        InventoryHUD.ShowPickUpItemMsg(PickUpItemMessage);
+                    }
+                }
+                    
             }
         }
 
@@ -198,14 +231,36 @@ public class InventoryHandler : MonoBehaviour
         {
             if (itemOnGround != null)
             {
-                int slot;
+                int slot = -1;
 
                 if (itemOnGround.GetItemType() == Item.Type.WEAPON && buttonHeldDown) // attempt equip weapon on the spot
-                    slot = WeaponInventory.AddItem(itemOnGround);
-                else
+                    if (player.CanEquipWeapon(itemOnGround))
+                    {
+                        slot = WeaponInventory.AddItem(itemOnGround);
+                    }
+                    else
+                    {
+                        if(itemOnGround is RangedWeapon)
+                        {
+                            bool salvagedSuccess = player.Ammunition.Add(((RangedWeapon)itemOnGround).AmmoClip.CurrentAmmo);
+                            if (salvagedSuccess)
+                            {
+                                Destroy(itemOnGround.gameObject);
+                                ItemFocused = false;
+                                InventoryHUD.RemovePickUpItemMsg();
+                                Debug.Log("InventoryHandler: " + itemOnGround.GetType() + " weapon salvaged for ammo.");
+                            }
+                            else
+                            {
+                                Debug.Log("InventoryHandler: Cannot salvage weapon, Im already maxed out on ammo");
+                            }
+                        }
+                        
+                    }  
+                else // it is either a quest item or healing item
                     slot = MainInventory.AddItem(itemOnGround);
 
-                if (slot != -1)
+                if (slot != -1) // if item added succesfully to inventory
                 {
                     if (itemOnGround.GetItemType() == Item.Type.WEAPON && buttonHeldDown)
                     {
@@ -217,7 +272,9 @@ public class InventoryHandler : MonoBehaviour
                         }
                     }
                     else
+                    {
                         InventoryHUD.OnItemAdd(itemOnGround, slot, MainInventory.GetQuantityInSlot(slot));
+                    }
 
                     // disable game object
                     itemOnGround.gameObject.SetActive(false);
@@ -244,23 +301,30 @@ public class InventoryHandler : MonoBehaviour
             if (itemToUse.GetItemType() == Item.Type.WEAPON)
             {
                 // equip weapon
-                int weaponSlot = WeaponInventory.AddItem(itemToUse);
-                if (weaponSlot != -1)
+                if (player.CanEquipWeapon(itemToUse))
                 {
-                    MainInventory.RemoveItem(mainInvSlot, true);
-                    InventoryHUD.OnWeaponStow(itemToUse, weaponSlot, mainInvSlot);
-                    if (player.CurrentWeapon == null)
+                    int weaponSlot = WeaponInventory.AddItem(itemToUse);
+                    if (weaponSlot != -1)
                     {
-                        GetComponent<SpriteRenderer>().sprite = ((Weapon)itemOnGround).PlayerImage;
-                        player.CurrentWeapon = itemOnGround;
+                        MainInventory.RemoveItem(mainInvSlot, true);
+                        InventoryHUD.OnWeaponStow(itemToUse, weaponSlot, mainInvSlot);
+                        if (player.CurrentWeapon == null)
+                        {
+                            GetComponent<SpriteRenderer>().sprite = ((Weapon)itemOnGround).PlayerImage;
+                            player.CurrentWeapon = itemOnGround;
+                        }
+                        eventAggregator.Publish(new OnWeaponEquipEvent(playerNumber, (Weapon)itemToUse));
+                        Debug.Log("InventoryHandler: Weapon stowed Successfully");
                     }
-                    eventAggregator.Publish(new OnWeaponEquipEvent(playerNumber, (Weapon)itemToUse));
-                    Debug.Log("InventoryHandler: Weapon stowed Successfully");
+                    else
+                    {
+                        // equip failed due to full weapon inventory, do nothing
+                        Debug.Log("InventoryHandler: Weapon inventory full, could not store weapon into weapon inventory");
+                    }
                 }
                 else
                 {
-                    // equip failed due to full weapon inventory, do nothing
-                    Debug.Log("InventoryHandler: Weapon inventory full, could not store weapon");
+                    Debug.Log("InventoryHandler: " + player.GetType() + " cannot equip " + itemToUse.GetType() + " weapon type.");
                 }
             }
             else

@@ -209,6 +209,8 @@ public abstract class Player : MonoBehaviour
         }
     }
 
+    public abstract bool CanEquipWeapon(Item item);
+
     private void OnCollisionEnter2D(Collision2D collision)
     {
 

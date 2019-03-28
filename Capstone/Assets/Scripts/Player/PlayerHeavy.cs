@@ -27,5 +27,6 @@ public class PlayerHeavy : Player
 
     }
 
+    public override bool CanEquipWeapon(Item item) { return item is HandGun || item is Dagger || item is RocketLauncher; }
 
 }

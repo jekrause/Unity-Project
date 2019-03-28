@@ -19,4 +19,5 @@ public class PlayerShotgun : Player
 
     }
 
+    public override bool CanEquipWeapon(Item item) { return item is HandGun || item is Dagger || item is Shotgun; }
 }

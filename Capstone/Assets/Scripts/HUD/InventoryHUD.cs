@@ -14,8 +14,6 @@ public class InventoryHUD : MonoBehaviour
     private InputType inputType = InputType.NONE;
     private EventAggregator eventAggregator = EventAggregator.GetInstance();
     private bool IsInvToggled;
-    private string PickUpMessage;
-    private string PickUpWepMessage;
     private string ActionMessage;
     private bool IteratingMainInv = true;
     private int MainInvIndex = 0;
@@ -33,31 +31,9 @@ public class InventoryHUD : MonoBehaviour
 
     }
 
-    public void ShowPickUpItemMsg(InputType input, bool isWeapon)
+    public void ShowPickUpItemMsg(string message)
     {
-        if(inputType == InputType.NONE) inputType = input;
-
-        // initialize messages
-        if (PickUpMessage == null && input != InputType.NONE)
-        {
-            string platformButton = input == InputType.KEYBOARD ? "E" : input == InputType.PS4_CONTROLLER ? "X" : "A";
-            PickUpMessage = "-Press '" + platformButton + "' : Pick Up-";
-            PickUpWepMessage = "-Press '" + platformButton + "' : Pick Up-\n-Hold '" + platformButton + "' : Equip- ";
-        }
-        else if(input == InputType.NONE)
-        {
-            PickUpMessage = "-Press (N/A): Pick Up-";
-        }
-
-        if (isWeapon)
-        {
-            MessagePanel.transform.Find("PickUpItemText").GetComponent<Text>().text = PickUpWepMessage;
-        }
-        else
-        {
-            MessagePanel.transform.Find("PickUpItemText").GetComponent<Text>().text = PickUpMessage;
-        }
-
+        MessagePanel.transform.Find("PickUpItemText").GetComponent<Text>().text = message;
         MessagePanel.SetActive(true);
     }
 

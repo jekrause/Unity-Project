@@ -19,9 +19,15 @@ public class Ammunition
     }
 
     
-    public void Add(int amount)
+    public bool Add(int amount)
     {
-        Amount = Amount + amount >= MAX_CAPACITY ? MAX_CAPACITY : Amount;
+        if (this.Amount == MAX_CAPACITY) return false;
+        else
+        {
+            Amount = Amount + amount >= MAX_CAPACITY ? MAX_CAPACITY : Amount;
+            return true;
+        }
+       
     }
 
    
