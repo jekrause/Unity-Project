@@ -22,12 +22,6 @@ public class MenuScript : MonoBehaviour
 
     private int player1InputAssigned = 0;
 
-    //for windows gamepad checks
-    private bool axisResetXPos = true;
-    private bool axisResetYPos = true;
-    private bool axisResetXNeg = true;
-    private bool axisResetYNeg = true;
-
 
     private void Awake()
     {
@@ -80,33 +74,7 @@ public class MenuScript : MonoBehaviour
         }
 
     }
-
-    private bool axisPressed(bool check, string axisName, float buttonValue)
-    {
-        if (buttonValue > 0)
-        {
-            if (Input.GetAxis(axisName) >= buttonValue)
-            {
-                check = false;
-            }
-            if (Input.GetAxis(axisName) < 0.1 && check == false)
-            {
-                check = true;
-            }
-        }
-        else
-        {
-            if (Input.GetAxis(axisName) <= buttonValue)
-            {
-                check = false;
-            }
-            if (Input.GetAxis(axisName) > -0.1 && check == false)
-            {
-                check = true;
-            }
-        }
-        return check;
-    }
+    
 
     private void pressDirection(int playerIndex)
     {
@@ -206,41 +174,56 @@ public class MenuScript : MonoBehaviour
                 {
                     // for xbox(windows) and PS4
 
-                    if (axisPressed(axisResetYPos,MenuInputSelector.menuControl[playerIndex].DPadY_Windows, 1) == true)//upbuttonpressed
+                    if (!PlayerMenuScript.playerAxisInUse[playerIndex] && MenuInputSelector.menuControl[playerIndex] != null)
                     {
-                        menuSelect.y = menuSelect.y + 1;
-                        if (menuSelect.y > totalMenuItemsY - 1)
+                        PlayerMenuScript.playerAxisInUse[playerIndex] = true;
+                        if (Input.GetAxis(MenuInputSelector.menuControl[playerIndex].DPadY_Windows) > 0)
                         {
-                            menuSelect.y = 0;
+                            menuSelect.y = menuSelect.y + 1;
+                            if (menuSelect.y > totalMenuItemsY - 1)
+                            {
+                                menuSelect.y = 0;
+                            }
+                            Debug.Log("menuSelect.y = " + menuSelect.y);
                         }
-                        Debug.Log("menuSelect.y = " + menuSelect.y);
+                        if (Input.GetAxis(MenuInputSelector.menuControl[playerIndex].DPadY_Windows) < 0)
+                        {
+                            menuSelect.y = menuSelect.y - 1;
+                            if (menuSelect.y < 0)
+                            {
+                                menuSelect.y = totalMenuItemsY - 1;
+                            }
+                            Debug.Log("menuSelect.y = " + menuSelect.y);
+                        }
+
+                        if (Input.GetAxis(MenuInputSelector.menuControl[playerIndex].DPadX_Windows) > 0)
+                        {
+                            menuSelect.x = menuSelect.x + 1;
+                            if (menuSelect.x > totalMenuItemsX - 1)
+                            {
+                                menuSelect.x = 0;
+                            }
+                            Debug.Log("menuSelect.x = " + menuSelect.x);
+                        }
+
+                        if (Input.GetAxis(MenuInputSelector.menuControl[playerIndex].DPadX_Windows) < 0)
+                        {
+                            menuSelect.x = menuSelect.x - 1;
+                            if (menuSelect.x < 0)
+                            {
+                                menuSelect.x = totalMenuItemsX - 1;
+                            }
+                            Debug.Log("menuSelect.x = " + menuSelect.x);
+                        }
+
                     }
-                    if (axisPressed(axisResetYNeg, MenuInputSelector.menuControl[playerIndex].DPadY_Windows, -1) == true)//upbuttonpressed
+
+                    if (MenuInputSelector.menuControl[playerIndex] != null
+                        && (Input.GetAxis(MenuInputSelector.menuControl[playerIndex].DPadY_Windows) == 0 && Input.GetAxis(MenuInputSelector.menuControl[playerIndex].DPadX_Windows) == 0))
                     {
-                        menuSelect.y = menuSelect.y - 1;
-                        if (menuSelect.y < 0)
-                        {
-                            menuSelect.y = totalMenuItemsY - 1;
-                        }
-                        Debug.Log("menuSelect.y = " + menuSelect.y);
-                    }
-                    if (axisPressed(axisResetXPos, MenuInputSelector.menuControl[playerIndex].DPadX_Windows, 1) == true)//upbuttonpressed
-                    {
-                        menuSelect.x = menuSelect.x + 1;
-                        if (menuSelect.x > totalMenuItemsX - 1)
-                        {
-                            menuSelect.x = 0;
-                        }
-                        Debug.Log("menuSelect.x = " + menuSelect.x);
-                    }
-                    if (axisPressed(axisResetXNeg, MenuInputSelector.menuControl[playerIndex].DPadX_Windows, 1) == true)//upbuttonpressed
-                    {
-                        menuSelect.x = menuSelect.x - 1;
-                        if (menuSelect.x < 0)
-                        {
-                            menuSelect.x = totalMenuItemsX - 1;
-                        }
-                        Debug.Log("menuSelect.x = " + menuSelect.x);
+                        // if player is not pressing any axis, reset boolean to allow us to check user input again. 
+                        // The player shouldn't be pressing more than 1 D-Pad button at the same time when searching.
+                        PlayerMenuScript.playerAxisInUse[playerIndex] = false;
                     }
 
                 }

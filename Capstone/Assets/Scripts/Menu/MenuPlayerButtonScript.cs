@@ -54,15 +54,11 @@ public class MenuPlayerButtonScript : MonoBehaviour
             }
             else
             {
-                if (OS.Equals("Mac"))
+                // no need to check for mac os as DownButton work for both platform
+                if (Input.GetButtonDown(MenuInputSelector.menuControl[playerIndex].DownButton))
                 {
-                    if (Input.GetButtonDown(MenuInputSelector.menuControl[playerIndex].DownButton))
-                    {
-                        gotoMenu.Invoke();
-                    }
+                    gotoMenu.Invoke();
                 }
-                //else Windows(Xbox controller) or PS4
-                //...
             }
         }
     }

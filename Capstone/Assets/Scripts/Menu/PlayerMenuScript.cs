@@ -20,10 +20,7 @@ public class PlayerMenuScript : MonoBehaviour
     private string OS = Settings.OS;
 
     //for windows gamepad checks
-    private bool axisResetXPos = true;
-    private bool axisResetYPos = true;
-    private bool axisResetXNeg = true;
-    private bool axisResetYNeg = true;
+    public static bool[] playerAxisInUse = new bool[4];
 
     private int playerInputIndex = 1;
 
@@ -156,33 +153,6 @@ public class PlayerMenuScript : MonoBehaviour
     }
 
 
-    private bool axisPressed(bool check, string axisName, float buttonValue)
-    {
-        if (buttonValue > 0)
-        {
-            if (Input.GetAxis(axisName) >= buttonValue)
-            {
-                check = false;
-            }
-            if (Input.GetAxis(axisName) < 0.1 && check == false)
-            {
-                check = true;
-            }
-        }
-        else
-        {
-            if (Input.GetAxis(axisName) <= buttonValue)
-            {
-                check = false;
-            }
-            if (Input.GetAxis(axisName) > -0.1 && check == false)
-            {
-                check = true;
-            }
-        }
-        return check;
-    }
-
     private void pressDirection(int playerIndex)
     {
         if (MenuInputSelector.menuControl[playerIndex] != null)
@@ -236,21 +206,36 @@ public class PlayerMenuScript : MonoBehaviour
                 }
                 else   //for xbox(windows) and PS4
                 {
-                    if (axisPressed(axisResetYPos, MenuInputSelector.menuControl[playerIndex].DPadY_Windows, 1))
+                    if (!playerAxisInUse[playerIndex] && MenuInputSelector.menuControl[playerIndex] != null)
                     {
-                        GotoNextButton(nextButtons.upButton);
+                        playerAxisInUse[playerIndex] = true;
+                        if (Input.GetAxis(MenuInputSelector.menuControl[playerIndex].DPadY_Windows) > 0)
+                        {
+                            GotoNextButton(nextButtons.upButton);
+                        }
+                        if (Input.GetAxis(MenuInputSelector.menuControl[playerIndex].DPadY_Windows) < 0)
+                        {
+                            GotoNextButton(nextButtons.downButton);
+                        }
+
+                        if (Input.GetAxis(MenuInputSelector.menuControl[playerIndex].DPadX_Windows) > 0)
+                        {
+                            GotoNextButton(nextButtons.rightButton);
+                        }
+
+                        if (Input.GetAxis(MenuInputSelector.menuControl[playerIndex].DPadX_Windows) < 0)
+                        {
+                            GotoNextButton(nextButtons.leftButton);
+                        }
+
                     }
-                    if (axisPressed(axisResetYNeg, MenuInputSelector.menuControl[playerIndex].DPadY_Windows, -1))
+
+                    if (MenuInputSelector.menuControl[playerIndex] != null 
+                        && (Input.GetAxis(MenuInputSelector.menuControl[playerIndex].DPadY_Windows) == 0 && Input.GetAxis(MenuInputSelector.menuControl[playerIndex].DPadX_Windows) == 0))
                     {
-                        GotoNextButton(nextButtons.downButton);
-                    }
-                    if (axisPressed(axisResetXPos, MenuInputSelector.menuControl[playerIndex].DPadX_Windows, 1))
-                    {
-                        GotoNextButton(nextButtons.rightButton);
-                    }
-                    if (axisPressed(axisResetXNeg, MenuInputSelector.menuControl[playerIndex].DPadX_Windows, -1))
-                    {
-                        GotoNextButton(nextButtons.leftButton);
+                        // if player is not pressing any axis, reset boolean to allow us to check user input again. 
+                        // The player shouldn't be pressing more than 1 D-Pad button at the same time when searching.
+                        playerAxisInUse[playerIndex] = false;
                     }
                 }
             }
