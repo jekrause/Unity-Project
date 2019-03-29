@@ -11,6 +11,7 @@ public class Bullet : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        AudioManager.Play("AssaultFire");
         spawnPosition = transform.position;
     }
 
@@ -32,6 +33,7 @@ public class Bullet : MonoBehaviour
             Debug.Log("sending Damage message to " + col.tag);
             col.gameObject.SendMessage("Damaged", damage);
             Destroy(gameObject);
+            AudioManager.Play("BulletHit");
         }
     }
 

@@ -10,11 +10,13 @@ public class AudioManager : MonoBehaviour
     public static Sound[] soundsGlob;
     public  Sound[] sounds;
 
-    public static AudioManager instance;
+    //public static AudioManager instance;  //may not need this
 
     void Awake()
     {
 
+        //may not need this, so commented out for now
+        /*
         if (instance == null)
         {
             instance = this;
@@ -26,6 +28,7 @@ public class AudioManager : MonoBehaviour
         }
 
         DontDestroyOnLoad(gameObject);
+        */
 
         soundsGlob = sounds;
 
