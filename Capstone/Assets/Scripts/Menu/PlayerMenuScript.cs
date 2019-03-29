@@ -107,11 +107,11 @@ public class PlayerMenuScript : MonoBehaviour
         nextButtons = currentMenu.GetComponent<PlayerMenuInitialButtonScript>().initialButton.GetComponentInChildren<MenuPlayerButtonScript>().nextButtons;
         //nextButtons = initialButton.GetComponent<PlayerMenuInitialButtonScript>().initialButton.GetComponentInChildren<MenuPlayerButtonScript>().nextButtons;
 
-        Debug.Log("Player2 nextup = " + nextButtons.upButton.name +
-                          "\nPlayer2 nextdown = " + nextButtons.downButton.name +
-                          "\nPlayer2 nextright = " + nextButtons.rightButton.name +
-                          "\nPlayer2 nextleft = " + nextButtons.leftButton.name + "\n");
-        Debug.Log("ButtonIDold = " + nextButtons.upButton.GetComponentInChildren<MenuPlayerButtonScript>().buttonID);
+        //Debug.Log("Player2 nextup = " + nextButtons.upButton.name +
+        //                  "\nPlayer2 nextdown = " + nextButtons.downButton.name +
+        //                  "\nPlayer2 nextright = " + nextButtons.rightButton.name +
+        //                  "\nPlayer2 nextleft = " + nextButtons.leftButton.name + "\n");
+        //Debug.Log("ButtonIDold = " + nextButtons.upButton.GetComponentInChildren<MenuPlayerButtonScript>().buttonID);
 
         createNameMenu.SetActive(false);
         selectNameMenu.SetActive(false);
@@ -239,6 +239,7 @@ public class PlayerMenuScript : MonoBehaviour
                     }
                 }
             }
+
         }
     }
 
@@ -265,6 +266,10 @@ public class PlayerMenuScript : MonoBehaviour
     //helper for gotomenu methods
     private void GotoMenuHelper(GameObject nextmenu)
     {
+        if (nextmenu != newGameOrLoadMenu)  //play different sound when joining game
+        {
+            AudioManager.Play("Select");    //put this here for now for rest of menus
+        }
         nextmenu.SetActive(true);
         currentMenu.SetActive(false);
         currentMenu = nextmenu;
@@ -299,10 +304,12 @@ public class PlayerMenuScript : MonoBehaviour
 
         if (playerName.Equals(""))  //cannot load blank name
         {
+            AudioManager.Play("Wait");
             Debug.Log("Cannot load Blank Name!!!");
         }
         else if (selectNameMenu.transform.parent.parent.GetComponent<CSSTopMenuScript>().NameIsTaken(playerName,playerNum))
         {
+            AudioManager.Play("Wait");
             Debug.Log("Name is already taken!");
         }
         else
@@ -321,7 +328,13 @@ public class PlayerMenuScript : MonoBehaviour
 
     private void GotoNextButton(GameObject next)
     {
-        currentButton = next.GetComponentInChildren<MenuPlayerButtonScript>().buttonID;
+        int nextButton = next.GetComponentInChildren<MenuPlayerButtonScript>().buttonID;
+        if (currentButton != nextButton)
+        {
+            AudioManager.Play("Move");
+            currentButton = nextButton;
+        }
+        //currentButton = next.GetComponentInChildren<MenuPlayerButtonScript>().buttonID;
         nextButtons = next.GetComponentInChildren<MenuPlayerButtonScript>().nextButtons;
     }
 
@@ -333,16 +346,19 @@ public class PlayerMenuScript : MonoBehaviour
 
         if (playerReadyScreen.transform.parent.parent.GetComponent<CSSTopMenuScript>().AllPlayersReady())
         {
+            AudioManager.Play("StartLevel");
             SceneManager.LoadScene("SampleScene");
         }
         else
         {
+            AudioManager.Play("Wait");
             Debug.Log("Not all players are ready yet!!");
         }
     }
 
     public void JoinGame()
     {
+        AudioManager.Play("Joined");
         joinScreen.SetActive(false);
         playerNumText.SetActive(true);
         Settings.NumOfPlayers = Settings.NumOfPlayers + 1;

@@ -80,47 +80,65 @@ public class MenuScript : MonoBehaviour
     {
         if (MenuInputSelector.menuControl[playerIndex] != null)
         {
+            bool isPressed = false; //if a button is pressed than play sound
+
             if (MenuInputSelector.menuControl[playerIndex].inputType == InputType.KEYBOARD)
             {
 
                 if (Input.GetKeyDown(KeyCode.UpArrow))
                 {
+                    int oldMenuSelect = menuSelect.y;
                     menuSelect.y = menuSelect.y + 1;
                     if (menuSelect.y > totalMenuItemsY - 1)
                     {
                         menuSelect.y = 0;
                     }
-                    Debug.Log("menuSelect.y = " + menuSelect.y);
+                    if (oldMenuSelect != menuSelect.y)
+                    {
+                        isPressed = true;
+                    }
                 }
 
                 if (Input.GetKeyDown(KeyCode.DownArrow))
                 {
+                    int oldMenuSelect = menuSelect.y;
                     menuSelect.y = menuSelect.y - 1;
                     if (menuSelect.y < 0)
                     {
                         menuSelect.y = totalMenuItemsY - 1;
                     }
-                    Debug.Log("menuSelect.y = " + menuSelect.y);
+                    if (oldMenuSelect != menuSelect.y)
+                    {
+                        isPressed = true;
+                    }
                 }
 
                 if (Input.GetKeyDown(KeyCode.RightArrow))
                 {
+                    int oldMenuSelect = menuSelect.x;
                     menuSelect.x = menuSelect.x + 1;
                     if (menuSelect.x > totalMenuItemsX - 1)
                     {
                         menuSelect.x = 0;
                     }
-                    Debug.Log("menuSelect.x = " + menuSelect.x);
+                    if (oldMenuSelect != menuSelect.x)
+                    {
+                        isPressed = true;
+                    }
                 }
 
                 if (Input.GetKeyDown(KeyCode.LeftArrow))
                 {
+                    int oldMenuSelect = menuSelect.x;
                     menuSelect.x = menuSelect.x - 1;
                     if (menuSelect.x < 0)
                     {
                         menuSelect.x = totalMenuItemsX - 1;
                     }
-                    Debug.Log("menuSelect.x = " + menuSelect.x);
+                    if (oldMenuSelect != menuSelect.x)
+                    {
+                        isPressed = true;
+                    }
                 }
 
             }
@@ -132,42 +150,58 @@ public class MenuScript : MonoBehaviour
 
                     if (Input.GetButtonDown(MenuInputSelector.menuControl[playerIndex].DPadUp_Mac))
                     {
+                        int oldMenuSelect = menuSelect.y;
                         menuSelect.y = menuSelect.y + 1;
                         if (menuSelect.y > totalMenuItemsY - 1)
                         {
                             menuSelect.y = 0;
                         }
-                        Debug.Log("menuSelect.y = " + menuSelect.y);
+                        if (oldMenuSelect != menuSelect.y)
+                        {
+                            isPressed = true;
+                        }
                     }
 
                     if (Input.GetButtonDown(MenuInputSelector.menuControl[playerIndex].DPadDown_Mac))
                     {
+                        int oldMenuSelect = menuSelect.y;
                         menuSelect.y = menuSelect.y - 1;
                         if (menuSelect.y < 0)
                         {
                             menuSelect.y = totalMenuItemsY - 1;
                         }
-                        Debug.Log("menuSelect.y = " + menuSelect.y);
+                        if (oldMenuSelect != menuSelect.y)
+                        {
+                            isPressed = true;
+                        }
                     }
 
                     if (Input.GetButtonDown(MenuInputSelector.menuControl[playerIndex].DPadRight_Mac))
                     {
+                        int oldMenuSelect = menuSelect.x;
                         menuSelect.x = menuSelect.x + 1;
                         if (menuSelect.x > totalMenuItemsX - 1)
                         {
                             menuSelect.x = 0;
                         }
-                        Debug.Log("menuSelect.x = " + menuSelect.x);
+                        if (oldMenuSelect != menuSelect.x)
+                        {
+                            isPressed = true;
+                        }
                     }
 
                     if (Input.GetButtonDown(MenuInputSelector.menuControl[playerIndex].DPadLeft_Mac))
                     {
+                        int oldMenuSelect = menuSelect.x;
                         menuSelect.x = menuSelect.x - 1;
                         if (menuSelect.x < 0)
                         {
                             menuSelect.x = totalMenuItemsX - 1;
                         }
-                        Debug.Log("menuSelect.x = " + menuSelect.x);
+                        if (oldMenuSelect != menuSelect.x)
+                        {
+                            isPressed = true;
+                        }
                     }
                 }
                 else
@@ -179,41 +213,57 @@ public class MenuScript : MonoBehaviour
                         PlayerMenuScript.playerAxisInUse[playerIndex] = true;
                         if (Input.GetAxis(MenuInputSelector.menuControl[playerIndex].DPadY_Windows) > 0)
                         {
+                            int oldMenuSelect = menuSelect.y;
                             menuSelect.y = menuSelect.y + 1;
                             if (menuSelect.y > totalMenuItemsY - 1)
                             {
                                 menuSelect.y = 0;
                             }
-                            Debug.Log("menuSelect.y = " + menuSelect.y);
+                            if (oldMenuSelect != menuSelect.y)
+                            {
+                                isPressed = true;
+                            }
                         }
                         if (Input.GetAxis(MenuInputSelector.menuControl[playerIndex].DPadY_Windows) < 0)
                         {
+                            int oldMenuSelect = menuSelect.y;
                             menuSelect.y = menuSelect.y - 1;
                             if (menuSelect.y < 0)
                             {
                                 menuSelect.y = totalMenuItemsY - 1;
                             }
-                            Debug.Log("menuSelect.y = " + menuSelect.y);
+                            if (oldMenuSelect != menuSelect.y)
+                            {
+                                isPressed = true;
+                            }
                         }
 
                         if (Input.GetAxis(MenuInputSelector.menuControl[playerIndex].DPadX_Windows) > 0)
                         {
+                            int oldMenuSelect = menuSelect.x;
                             menuSelect.x = menuSelect.x + 1;
                             if (menuSelect.x > totalMenuItemsX - 1)
                             {
                                 menuSelect.x = 0;
                             }
-                            Debug.Log("menuSelect.x = " + menuSelect.x);
+                            if (oldMenuSelect != menuSelect.x)
+                            {
+                                isPressed = true;
+                            }
                         }
 
                         if (Input.GetAxis(MenuInputSelector.menuControl[playerIndex].DPadX_Windows) < 0)
                         {
+                            int oldMenuSelect = menuSelect.x;
                             menuSelect.x = menuSelect.x - 1;
                             if (menuSelect.x < 0)
                             {
                                 menuSelect.x = totalMenuItemsX - 1;
                             }
-                            Debug.Log("menuSelect.x = " + menuSelect.x);
+                            if (oldMenuSelect != menuSelect.x)
+                            {
+                                isPressed = true;
+                            }
                         }
 
                     }
@@ -230,6 +280,11 @@ public class MenuScript : MonoBehaviour
 
             }
 
+            if (isPressed == true)
+            {
+                AudioManager.Play("Move");
+            }
+
         }
     }
 
@@ -242,6 +297,7 @@ public class MenuScript : MonoBehaviour
 
     public void GotoTitleScreen()
     {
+        AudioManager.Play("Back");
         previousMenu = titlescreen;
         menuSelect.x = 0;
         menuSelect.y = 0;
@@ -257,6 +313,14 @@ public class MenuScript : MonoBehaviour
 
     public void GotoMainMenu()
     {
+        if (currentMenu == characterselectmenu)
+        {
+            AudioManager.Play("Back");
+        }
+        else
+        {
+            AudioManager.Play("Select");
+        }
         previousMenu = titlescreen;
         menuSelect.x = 0;
         menuSelect.y = 0;
@@ -270,6 +334,7 @@ public class MenuScript : MonoBehaviour
 
     public void GotoCharacterSelectMenu()
     {
+        AudioManager.Play("Select");
         previousMenu = mainmenu;
         menuSelect.x = 0;
         menuSelect.y = 0;
