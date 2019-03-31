@@ -25,7 +25,6 @@ public class Enemy : MonoBehaviour
     protected float fSpeed = 3f;
     protected float fWaitTime;
     protected float fStartWaitTime = 3f;
-    //protected float fVisionDistance = 150f;
     protected float fVisionDistance = 150f;
 
 
@@ -49,6 +48,7 @@ public class Enemy : MonoBehaviour
     protected float fAttackTime = 3;
 
     protected RaycastHit2D[] raycasts = new RaycastHit2D[5]; //raycast results list
+    protected bool[] blockedPaths = new bool[5]; //array for the directions in the RayCastDir enum. Index will be true if blocked, false if clear.
 
     //Health bar
     protected HealthBarHandler HealthBarHandler;
@@ -94,14 +94,13 @@ public class Enemy : MonoBehaviour
                 break;
         }
 
+        EnemyRayCast();
 
-        if(fHP < 10 && SafteyRadius() > -1)
+        if (fHP < 10 && SafteyRadius() > -1)
         {
             aiMvmt = MovementTypeEnum.Safe;
         }
-        
-
-        else if (EnemyRayCast() > -1)
+        else if (playerTarget != null)
         {
             aiMvmt = MovementTypeEnum.Chase;
         }
@@ -138,6 +137,7 @@ public class Enemy : MonoBehaviour
             {
                 iRandomSpot = Random.Range(0, moveSpots.Length);
                 fWaitTime = fStartWaitTime;
+                Debug.Log("Patrol new spot is " + iRandomSpot);
             }
             else
             {
@@ -215,25 +215,55 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    private int EnemyRayCast()
+    private GameObject EnemyRayCast()
     {
+        int indexPlayerFoundAt = -1;
+
+        //try to cast to an existing enemy
+        if(playerTarget != null)
+        {
+            var angle = Mathf.Atan2(playerTarget.transform.position.y, playerTarget.transform.position.x) * Mathf.Rad2Deg;
+           if( Physics2D.Raycast(transform.position, Quaternion.AngleAxis(angle, transform.forward) * transform.right, fVisionDistance).collider == null )
+            {
+                playerTarget = null;
+            }
+        }
+
+        //use cone of vision to detect new enemy
         raycasts[(int)RayCastDir.Forward] = Physics2D.Raycast(transform.position, transform.right, fVisionDistance);
         raycasts[(int)RayCastDir.Left20] = Physics2D.Raycast(transform.position, Quaternion.AngleAxis(20, transform.forward) * transform.right, fVisionDistance);
         raycasts[(int)RayCastDir.Left45] = Physics2D.Raycast(transform.position, Quaternion.AngleAxis(45, transform.forward) * transform.right, fVisionDistance);
         raycasts[(int)RayCastDir.Right20] = Physics2D.Raycast(transform.position, Quaternion.AngleAxis(-20, transform.forward) * transform.right, fVisionDistance);
         raycasts[(int)RayCastDir.Right45] = Physics2D.Raycast(transform.position, Quaternion.AngleAxis(-45, transform.forward) * transform.right, fVisionDistance);
 
-        for(int ii = 0; ii<5; ii++)
+
+        foreach (RayCastDir castDir in (RayCastDir[])System.Enum.GetValues(typeof(RayCastDir)))
         {
-            if(raycasts[ii].collider!=null  && raycasts[ii].collider.gameObject.tag == "Player")
+            int ii = (int)castDir;
+            if (raycasts[ii].collider != null && raycasts[ii].collider.gameObject.tag == "Player")
             {
-                playerTarget = raycasts[ii].collider.gameObject;
-                return ii;
+                blockedPaths[ii] = false;
+
+                /*
+                 * IF a player has not been found OR
+                 * the new enemy is closer than the old enemy THEN
+                 * set the target to the enemy detected at index ii
+                 */
+                if(playerTarget == null || 
+                    (Vector2.Distance(transform.position, raycasts[ii].collider.gameObject.transform.position) < 
+                    Vector2.Distance(transform.position, playerTarget.transform.position)))
+                {
+                    playerTarget = raycasts[ii].collider.gameObject;
+                    indexPlayerFoundAt = ii;
+                }
+            }
+            else if (raycasts[ii].collider != null && raycasts[ii].collider.gameObject.tag == "Obstacle")
+            {
+                blockedPaths[ii] = true;
             }
         }
-        
-        playerTarget = null;
-        return -1;
+
+        return playerTarget;
     }
 
     private int SafteyRadius()

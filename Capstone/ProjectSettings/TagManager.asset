@@ -13,6 +13,7 @@ TagManager:
   - Enemy
   - PickUpMessagePanel
   - Weapon
+  - Obstacle
   layers:
   - Default
   - TransparentFX
