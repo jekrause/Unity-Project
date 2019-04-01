@@ -24,7 +24,7 @@ public class InventoryHandler : MonoBehaviour
 
 
     // Inventory HUD messages
-    private string PickUpItemMessage;
+    private string PickUpItemMessage = "-Press (N/A): Pick Up-";
     private string EquippableWepMessage;
     private string SalvageWepMessage;
 
@@ -49,6 +49,7 @@ public class InventoryHandler : MonoBehaviour
         player = GetComponent<Player>();
         playerNumber = player.playerNumber;
         myControllerInput = player.myControllerInput;
+        InitializeInputMessages();
         MainInventory = player.MainInventory;
         WeaponInventory = player.WeaponInventory;
         PlayerOriginalImage = GetComponent<SpriteRenderer>().sprite;
@@ -56,14 +57,6 @@ public class InventoryHandler : MonoBehaviour
         {
             throw new System.MissingFieldException("Inventory Handler: Player should have Inventory as a field");
         }
-        eventAggregator = EventAggregator.GetInstance();
-
-        //Initialize action panel messages
-        DefaultActionMessage = "Item: " + ItemTypeMessage + "\nPress '" + LeftPlatformButton + "' :Use\nPress '" + LeftPlatformButton + "' :Drop";
-        SalvageWeaponMessage = "Item: " + ItemTypeMessage + "\nPress '" + LeftPlatformButton + "' :Salvage For Ammo\nPress '" + RightPlatformButton + "' :Drop";
-        EquipOrSalvageMessage = "Item: " + ItemTypeMessage + "\nPress '" + LeftPlatformButton + "' :Equip"+
-                                "\nHold '" + LeftPlatformButton + "' :Salvage For Ammo" + 
-                                "\nPress '" + RightPlatformButton + "' :Drop";
 
     }
 
@@ -73,9 +66,34 @@ public class InventoryHandler : MonoBehaviour
         ReadControllerInput();
     }
 
+    private void InitializeInputMessages()
+    {
+        if (myControllerInput != null && myControllerInput.inputType != InputType.NONE)
+        {
+            //Initialize action panel messages
+            DefaultActionMessage = "Item: " + ItemTypeMessage + "\nPress '" + LeftPlatformButton + "' :Use\nPress '" + LeftPlatformButton + "' :Drop";
+            SalvageWeaponMessage = "Item: " + ItemTypeMessage + "\nPress '" + LeftPlatformButton + "' :Salvage For Ammo\nPress '" + RightPlatformButton + "' :Drop";
+            EquipOrSalvageMessage = "Item: " + ItemTypeMessage + "\nPress '" + LeftPlatformButton + "' :Equip" +
+                                    "\nHold '" + LeftPlatformButton + "' :Salvage For Ammo" +
+                                    "\nPress '" + RightPlatformButton + "' :Drop";
+
+            myControllerInput = player.myControllerInput;
+
+            Debug.Log("Input connected");
+            InputType input = myControllerInput.inputType;
+            LeftPlatformButton = input == InputType.KEYBOARD ? "E" : input == InputType.PS4_CONTROLLER ? "X" : "A";
+            RightPlatformButton = input == InputType.KEYBOARD ? "Esc" : input == InputType.PS4_CONTROLLER ? "O" : "B";
+            PickUpItemMessage = "-Press '" + LeftPlatformButton + "' : Pick Up-";
+            EquippableWepMessage = "-Press '" + LeftPlatformButton + "' : Pick Up-\n-Hold '" + LeftPlatformButton + "' : Equip- ";
+            SalvageWepMessage = "-Press '" + LeftPlatformButton + "' : Pick Up-\n-Hold '" + LeftPlatformButton + "' : Salvage For Ammo- ";
+            DefaultActionMessage = "Item: " + ItemTypeMessage + "\nPress '" + LeftPlatformButton + "' :Use\nPress '" + LeftPlatformButton + "' :Drop";
+        }
+
+    }
+
     private void ReadControllerInput()
     {
-        if (myControllerInput.inputType != InputType.NONE)
+        if (myControllerInput != null && myControllerInput.inputType != InputType.NONE)
         {
 
             if (Input.GetButtonDown(myControllerInput.UpButton))
@@ -125,7 +143,7 @@ public class InventoryHandler : MonoBehaviour
 
                 if (Input.GetButton(myControllerInput.DownButton))
                 {
-                    if(timerButtonHeldDown > BUTTON_HELD_DOWN_TIME)
+                    if (timerButtonHeldDown > BUTTON_HELD_DOWN_TIME)
                     {
                         if (IteratingMainInv)
                         {
@@ -141,11 +159,11 @@ public class InventoryHandler : MonoBehaviour
                     {
                         timerButtonHeldDown += Time.deltaTime;
                     }
-                    
+
                 }
                 else if (Input.GetButtonUp(myControllerInput.DownButton))
                 {
-                    if(timerButtonHeldDown < BUTTON_HELD_DOWN_TIME)
+                    if (timerButtonHeldDown < BUTTON_HELD_DOWN_TIME)
                     {
                         if (IteratingMainInv)
                         {
@@ -175,7 +193,7 @@ public class InventoryHandler : MonoBehaviour
                 }
                 else if (Input.GetButtonUp(myControllerInput.DownButton))
                 {
-                    if(timerButtonHeldDown < BUTTON_HELD_DOWN_TIME)
+                    if (timerButtonHeldDown < BUTTON_HELD_DOWN_TIME)
                     {
                         buttonHeldDown = false;
                         AddItem();
@@ -197,28 +215,7 @@ public class InventoryHandler : MonoBehaviour
                 actionInProgress = false; // user let go of button, so action is no longer in progress
             }
         }
-        else
-        {
-            //check if user has bind controller
-            if(player.myControllerInput.inputType != InputType.NONE && myControllerInput.inputType == InputType.NONE)
-            {
-                myControllerInput = player.myControllerInput;
 
-                // initialize messages
-                if (myControllerInput.inputType == InputType.NONE) PickUpItemMessage = "-Press (N/A): Pick Up-";
-                else{
-                    InputType input = myControllerInput.inputType;
-                    LeftPlatformButton = input == InputType.KEYBOARD ? "E" : input == InputType.PS4_CONTROLLER ? "X" : "A";
-                    RightPlatformButton = input == InputType.KEYBOARD ? "Esc" : input == InputType.PS4_CONTROLLER ? "O" : "B";
-                    PickUpItemMessage = "-Press '" + LeftPlatformButton + "' : Pick Up-";
-                    EquippableWepMessage = "-Press '" + LeftPlatformButton + "' : Pick Up-\n-Hold '" + LeftPlatformButton + "' : Equip- ";
-                    SalvageWepMessage = "-Press '" + LeftPlatformButton + "' : Pick Up-\n-Hold '" + LeftPlatformButton + "' : Salvage For Ammo- ";
-                    DefaultActionMessage = "Item: " + ItemTypeMessage + "\nPress '" + LeftPlatformButton + "' :Use\nPress '" + LeftPlatformButton + "' :Drop";
-                }
-
-            }
-                
-        }   
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -235,7 +232,7 @@ public class InventoryHandler : MonoBehaviour
                 }
                 else
                 {
-                    if(itemOnGround.GetItemType() == Item.Type.WEAPON)
+                    if (itemOnGround.GetItemType() == Item.Type.WEAPON)
                     {
                         InventoryHUD.ShowPickUpItemMsg(SalvageWepMessage);
                     }
@@ -244,7 +241,7 @@ public class InventoryHandler : MonoBehaviour
                         InventoryHUD.ShowPickUpItemMsg(PickUpItemMessage);
                     }
                 }
-                    
+
             }
         }
 
@@ -283,7 +280,7 @@ public class InventoryHandler : MonoBehaviour
             {
                 if (player.CanEquipWeapon(item))
                 {
-                    EquipOrSalvageMessage = "Item: " + ItemTypeMessage + "\nPress '" + LeftPlatformButton + "' :Equip"+
+                    EquipOrSalvageMessage = "Item: " + ItemTypeMessage + "\nPress '" + LeftPlatformButton + "' :Equip" +
                                 "\nHold '" + LeftPlatformButton + "' :Salvage For Ammo" +
                                 "\nPress '" + RightPlatformButton + "' :Drop ";
                     actionMessageToShow = EquipOrSalvageMessage;
@@ -298,7 +295,7 @@ public class InventoryHandler : MonoBehaviour
             {
                 DefaultActionMessage = "Item: " + ItemTypeMessage + "\nPress '" + LeftPlatformButton + "' :Use\nPress '" + LeftPlatformButton + "' :Drop";
                 actionMessageToShow = DefaultActionMessage;
-            }       
+            }
         }
         else
         {
@@ -338,12 +335,12 @@ public class InventoryHandler : MonoBehaviour
                     }
                     else
                     {
-                        if(itemOnGround is RangedWeapon)
+                        if (itemOnGround is RangedWeapon)
                         {
                             SalvageWeaponForAmmo(itemOnGround);
                         }
-                        
-                    }  
+
+                    }
                 else // it is either a quest item or healing item
                     slot = MainInventory.AddItem(itemOnGround);
 
