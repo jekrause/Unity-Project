@@ -347,7 +347,8 @@ public class PlayerMenuScript : MonoBehaviour
         if (playerReadyScreen.transform.parent.parent.GetComponent<CSSTopMenuScript>().AllPlayersReady())
         {
             AudioManager.Play("StartLevel");
-            SceneManager.LoadScene("SampleScene");
+            //SceneManager.LoadScene("SampleScene");
+            SceneManager.LoadScene("SampleScene2");
         }
         else
         {
@@ -368,7 +369,7 @@ public class PlayerMenuScript : MonoBehaviour
         //currentMenu = newGameOrLoadMenu;
         //currentButton = 0;
     }
-
+    
 
     private void PrintCurrentDebug()
     {
@@ -397,6 +398,8 @@ public class PlayerMenuScript : MonoBehaviour
                 output = "Sniper";
                 break;
         }
+        MenuInputSelector.PlayerClasses[playerNum - 1] = classNum;  //set global PlayerClass variable
+        MenuInputSelector.PlayerNames[playerNum - 1] = playerName;  //also set global PlayerName variable 
         return output;
     }
 
