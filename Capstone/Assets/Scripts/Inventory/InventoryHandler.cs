@@ -135,6 +135,7 @@ public class InventoryHandler : MonoBehaviour
                         {
                             SalvageWeaponForAmmo(WeaponInventory.GetItemInSlot(WeaponSlotIndex));
                         }
+                        ShowInventoryActionPanel();
                     }
                     else
                     {
