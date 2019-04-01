@@ -42,6 +42,17 @@ public class InventoryHUD : MonoBehaviour
         MessagePanel.SetActive(false);
     }
 
+    public void ShowActionPanel(string message)
+    {
+        ActionPanel.transform.GetComponentInChildren<Text>().text = message;
+        ActionPanel.gameObject.SetActive(true);
+    }
+
+    public void RemoveActionPanel()
+    {
+        ActionPanel.gameObject.SetActive(false);
+    }
+
     public void OnItemAdd(Item item, int slot, int Quantity)
     {
         int stackQuantity = Quantity;
@@ -176,7 +187,7 @@ public class InventoryHUD : MonoBehaviour
         return IteratingMainInv;
     }
 
-    public void InventoryToggled(bool InvToggled, InputType input)
+    public void InventoryToggled(bool InvToggled)
     {
         IsInvToggled = InvToggled;
         if (InvToggled)
@@ -189,31 +200,7 @@ public class InventoryHUD : MonoBehaviour
             {
                 WeaponInvSlots[WeaponInvIndex].transform.GetChild(0).GetComponent<Image>().color = Color.yellow;
                 WeaponInvSlots[WeaponInvIndex].transform.GetChild(0).gameObject.SetActive(true);
-            }
-            
-            if(inputType == InputType.NONE) inputType = input;
-            if (ActionMessage == null)
-            {
-                switch (inputType)
-                {
-                    case InputType.PS4_CONTROLLER:
-                        ActionMessage = "'X' - Use Item\n'O' - Drop Item";
-                        break;
-
-                    case InputType.XBOX_CONTROLLER:
-                        ActionMessage = "'A' - Use Item\n'B' - Drop Item";
-                        break;
-
-                    default:
-                        ActionMessage = ActionPanel.transform.GetComponentInChildren<Text>().text;
-                        break;
-                }
-                ActionPanel.transform.GetComponentInChildren<Text>().text = ActionMessage;
-            }
-             
-             ActionPanel.gameObject.SetActive(true);
-            
-            
+            }   
         }
         else
         {
@@ -236,7 +223,6 @@ public class InventoryHUD : MonoBehaviour
                 
             }
             
-            ActionPanel.gameObject.SetActive(false);
         }
             
     }
