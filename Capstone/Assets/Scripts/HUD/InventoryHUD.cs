@@ -80,6 +80,7 @@ public class InventoryHUD : MonoBehaviour
         }
         else
         {
+            if (WeaponEquippedIndex == WeaponInvIndex) WeaponEquippedIndex = -1;
             WeaponInvSlots[WeaponInvIndex].transform.Find("ItemSlot").Find("Item").gameObject.SetActive(false);
             WeaponInvSlots[WeaponInvIndex].transform.Find("ItemSlot").Find("Item").GetComponent<Image>().sprite = null;
         }
