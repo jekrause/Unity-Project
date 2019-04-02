@@ -102,10 +102,12 @@ public class InventoryHandler : MonoBehaviour
                 InventoryHUD.InventoryToggled(InventoryHUDFocused);
                 if (InventoryHUDFocused)
                 {
+                    AudioManager.Play("Open_Inventory");
                     UpdateAndDisplayActionPanel();
                 }
                 else
                 {
+                    AudioManager.Play("Close_Inventory");
                     InventoryHUD.RemoveActionPanel();
                 }
             }

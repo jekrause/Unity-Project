@@ -22503,6 +22503,18 @@ MonoBehaviour:
     pitch: 1
     loop: 0
     source: {fileID: 0}
+  - name: Open_Inventory
+    clip: {fileID: 8300000, guid: bf7f44704182c134286da76385606f90, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: Close_Inventory
+    clip: {fileID: 8300000, guid: 2ed6788998ef98743b97bd41877e17b8, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
 --- !u!4 &1185062560
 Transform:
   m_ObjectHideFlags: 0
@@ -32569,8 +32581,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6282832733320463584, guid: 535be1400dd464ec1b294adef1f6348d,
         type: 3}
+      propertyPath: sounds.Array.size
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 6282832733320463584, guid: 535be1400dd464ec1b294adef1f6348d,
+        type: 3}
       propertyPath: sounds.Array.data[0].volume
       value: 0.65
+      objectReference: {fileID: 0}
+    - target: {fileID: 6282832733320463584, guid: 535be1400dd464ec1b294adef1f6348d,
+        type: 3}
+      propertyPath: sounds.Array.data[7].name
+      value: Open_Inventory
+      objectReference: {fileID: 0}
+    - target: {fileID: 6282832733320463584, guid: 535be1400dd464ec1b294adef1f6348d,
+        type: 3}
+      propertyPath: sounds.Array.data[8].name
+      value: Close_Inventory
       objectReference: {fileID: 0}
     - target: {fileID: 8243977863281870663, guid: 535be1400dd464ec1b294adef1f6348d,
         type: 3}
