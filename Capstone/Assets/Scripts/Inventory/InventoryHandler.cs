@@ -57,7 +57,7 @@ public class InventoryHandler : MonoBehaviour
         {
             throw new System.MissingFieldException("Inventory Handler: Player should have Inventory as a field");
         }
-
+        eventAggregator = EventAggregator.GetInstance();
     }
 
     // Update is called once per frame
