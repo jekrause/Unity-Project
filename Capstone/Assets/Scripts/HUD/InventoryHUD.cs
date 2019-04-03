@@ -11,10 +11,8 @@ public class InventoryHUD : MonoBehaviour
     [SerializeField] public GameObject MessagePanel;
     [SerializeField] public GameObject ActionPanel;
 
-    private InputType inputType = InputType.NONE;
     private EventAggregator eventAggregator = EventAggregator.GetInstance();
     private bool IsInvToggled;
-    private string ActionMessage;
     private bool IteratingMainInv = true;
     private int MainInvIndex = 0;
     private int WeaponInvIndex = 0;

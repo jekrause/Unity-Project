@@ -25,8 +25,6 @@ public class InventoryHandler : MonoBehaviour
 
     // Inventory HUD messages
     private string PickUpItemMessage = "-Press (N/A): Pick Up-";
-    private string EquippableWepMessage;
-    private string SalvageWepMessage;
 
     // Inventory HUD action panel messages
     private string LeftPlatformButton = "N/A";
@@ -39,7 +37,7 @@ public class InventoryHandler : MonoBehaviour
 
     // item pick up timer
     private float timerButtonHeldDown;
-    private const float BUTTON_HELD_DOWN_TIME = 1f;
+    private const float BUTTON_HELD_DOWN_TIME = 0.75f;
     private bool buttonHeldDown = false;
 
     // Use this for initialization
@@ -83,9 +81,6 @@ public class InventoryHandler : MonoBehaviour
             InputType input = myControllerInput.inputType;
             LeftPlatformButton = input == InputType.KEYBOARD ? "E" : input == InputType.PS4_CONTROLLER ? "X" : "A";
             RightPlatformButton = input == InputType.KEYBOARD ? "Esc" : input == InputType.PS4_CONTROLLER ? "O" : "B";
-            PickUpItemMessage = "-Press '" + LeftPlatformButton + "' : Pick Up-";
-            EquippableWepMessage = "-Press '" + LeftPlatformButton + "' : Pick Up-\n-Hold '" + LeftPlatformButton + "' : Equip- ";
-            SalvageWepMessage = "-Press '" + LeftPlatformButton + "' : Pick Up-\n-Hold '" + LeftPlatformButton + "' : Salvage For Ammo- ";
             DefaultActionMessage = "Item: " + ItemTypeMessage;
         }
 
@@ -228,22 +223,24 @@ public class InventoryHandler : MonoBehaviour
             if (itemOnGround != null)
             {
                 ItemFocused = true;
+                ItemTypeMessage = itemOnGround.GetType() + "";
                 if (player.CanEquipWeapon(itemOnGround))
                 {
-                    InventoryHUD.ShowPickUpItemMsg(EquippableWepMessage);
+                    PickUpItemMessage = "Item: " + ItemTypeMessage + "\n-Press '" + LeftPlatformButton + "' : Pick Up-\n-Hold '" + LeftPlatformButton + "' : Equip- ";
                 }
                 else
                 {
                     if (itemOnGround.GetItemType() == Item.Type.WEAPON)
                     {
-                        InventoryHUD.ShowPickUpItemMsg(SalvageWepMessage);
+                        PickUpItemMessage = "Item: " + ItemTypeMessage + "\n-Press '" + LeftPlatformButton + "' : Pick Up-\n-Hold '" + LeftPlatformButton + "' : Salvage For Ammo- ";
                     }
                     else
                     {
-                        InventoryHUD.ShowPickUpItemMsg(PickUpItemMessage);
+                        PickUpItemMessage = "Item: " + ItemTypeMessage + "\n-Press '" + LeftPlatformButton + "' : Pick Up-";
                     }
                 }
 
+                InventoryHUD.ShowPickUpItemMsg(PickUpItemMessage);
             }
         }
 
@@ -299,7 +296,7 @@ public class InventoryHandler : MonoBehaviour
             }
             else
             {
-                DefaultActionMessage = "Item: " + ItemTypeMessage + "\nPress '" + LeftPlatformButton + "' : Use\nPress '" + LeftPlatformButton + "' : Drop";
+                DefaultActionMessage = "Item: " + ItemTypeMessage + "\nPress '" + LeftPlatformButton + "' : Use\nPress '" + RightPlatformButton + "' : Drop";
                 actionMessageToShow = DefaultActionMessage;
             }
         }
