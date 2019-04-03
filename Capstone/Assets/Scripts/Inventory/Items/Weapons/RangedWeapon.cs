@@ -21,7 +21,7 @@ public abstract class RangedWeapon : Weapon
             x.SetDamage(projDamage);
             x.GetComponent<Rigidbody2D>().AddForce(x.transform.right * projSpeed);
             AmmoClip.Decrement();
-            Debug.Log("Current ammo:" + AmmoClip.CurrentAmmo);
+            EventAggregator.GetInstance().Publish<OnWeaponAmmoChangedEvent>(new OnWeaponAmmoChangedEvent(player.playerNumber, AmmoClip.CurrentAmmo));
         }
         else
         {
@@ -58,7 +58,8 @@ public abstract class RangedWeapon : Weapon
             }
 
             AmmoClip.LoadAmmunition(ammunition);
-            Debug.Log(this.name + ": Reload finished.");
+            EventAggregator.GetInstance().Publish(new OnWeaponAmmoChangedEvent(playerNumber, AmmoClip.CurrentAmmo));
+            EventAggregator.GetInstance().Publish(new OnPlayerAmmoChangedEvent(playerNumber, ammunition));
             IsReloading = false;
         }
         

@@ -397,7 +397,6 @@ public class InventoryHandler : MonoBehaviour
                         {
                             UpdatePlayerCurrentWeapon((Weapon)itemToUse);
                         }
-                        eventAggregator.Publish(new OnWeaponEquipEvent(playerNumber, (Weapon)itemToUse));
                         Debug.Log("InventoryHandler: Weapon stowed Successfully");
                     }
                     else
@@ -473,12 +472,11 @@ public class InventoryHandler : MonoBehaviour
             {
                 InventoryHUD.OnItemRemove(1);
             }
-
-            Destroy(itemToSalvage.gameObject);
+            EventAggregator.GetInstance().Publish<OnPlayerAmmoChangedEvent>(new OnPlayerAmmoChangedEvent(player.playerNumber, player.Ammunition));
             ItemFocused = false;
             InventoryHUD.RemovePickUpItemMsg();
-
             Debug.Log("InventoryHandler: " + itemToSalvage.GetType() + " weapon salvaged for ammo.");
+            Destroy(itemToSalvage.gameObject);
         }
         else
         {
@@ -501,7 +499,7 @@ public class InventoryHandler : MonoBehaviour
             player.CurrentWeapon = currentWeapon;
             GetComponent<SpriteRenderer>().sprite = currentWeapon.PlayerImage;
         }
-        
+        eventAggregator.Publish(new OnPlayerWeaponChangedEvent(playerNumber, currentWeapon, player.Ammunition));
     }
 
     /// <summary>
