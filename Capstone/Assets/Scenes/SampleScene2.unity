@@ -434,7 +434,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9860571572730231, guid: 4ce462cdfd245df4d9992a30189a1b63, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 35.4
+      value: 35.399994
       objectReference: {fileID: 0}
     - target: {fileID: 9860571572730231, guid: 4ce462cdfd245df4d9992a30189a1b63, type: 3}
       propertyPath: m_AnchorMin.x
@@ -1757,7 +1757,7 @@ Rigidbody2D:
   m_UseAutoMass: 0
   m_Mass: 1
   m_LinearDrag: 0
-  m_AngularDrag: 5
+  m_AngularDrag: 0
   m_GravityScale: 0
   m_Material: {fileID: 0}
   m_Interpolate: 0
@@ -5259,7 +5259,7 @@ Rigidbody2D:
   m_UseAutoMass: 0
   m_Mass: 1
   m_LinearDrag: 0
-  m_AngularDrag: 5
+  m_AngularDrag: 0
   m_GravityScale: 0
   m_Material: {fileID: 0}
   m_Interpolate: 0
@@ -22648,7 +22648,7 @@ Rigidbody2D:
   m_UseAutoMass: 0
   m_Mass: 1
   m_LinearDrag: 0
-  m_AngularDrag: 5
+  m_AngularDrag: 0
   m_GravityScale: 0
   m_Material: {fileID: 0}
   m_Interpolate: 0
@@ -30928,7 +30928,7 @@ Rigidbody2D:
   m_UseAutoMass: 0
   m_Mass: 1
   m_LinearDrag: 0
-  m_AngularDrag: 5
+  m_AngularDrag: 0
   m_GravityScale: 0
   m_Material: {fileID: 0}
   m_Interpolate: 0
@@ -31268,7 +31268,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9860571572730231, guid: 4ce462cdfd245df4d9992a30189a1b63, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 35.4
+      value: 35.399994
       objectReference: {fileID: 0}
     - target: {fileID: 9860571572730231, guid: 4ce462cdfd245df4d9992a30189a1b63, type: 3}
       propertyPath: m_AnchorMin.x
@@ -32161,7 +32161,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9860571572730231, guid: 4ce462cdfd245df4d9992a30189a1b63, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 35.4
+      value: 35.399994
       objectReference: {fileID: 0}
     - target: {fileID: 9860571572730231, guid: 4ce462cdfd245df4d9992a30189a1b63, type: 3}
       propertyPath: m_AnchorMin.x
@@ -74910,7 +74910,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9860571572730231, guid: 4ce462cdfd245df4d9992a30189a1b63, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 35.4
+      value: 35.399994
       objectReference: {fileID: 0}
     - target: {fileID: 9860571572730231, guid: 4ce462cdfd245df4d9992a30189a1b63, type: 3}
       propertyPath: m_AnchorMin.x

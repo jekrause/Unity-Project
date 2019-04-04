@@ -64,12 +64,12 @@ public class InventoryHUD : MonoBehaviour
 
     }
 
-    public void OnItemRemove(int Quantity)
+    public void OnItemRemove(int CurrentQuantity)
     {
         if (IteratingMainInv)
         {
-            MainInvSlots[MainInvIndex].transform.Find("ItemSlot").Find("Background").Find("Quantity").GetComponent<Text>().text = Quantity + "";
-            if (Quantity <= 0)
+            MainInvSlots[MainInvIndex].transform.Find("ItemSlot").Find("Background").Find("Quantity").GetComponent<Text>().text = CurrentQuantity + "";
+            if (CurrentQuantity <= 0)
             {
                 MainInvSlots[MainInvIndex].transform.Find("ItemSlot").Find("Item").GetComponent<Image>().sprite = null;
                 MainInvSlots[MainInvIndex].transform.Find("ItemSlot").Find("Item").gameObject.SetActive(false);
