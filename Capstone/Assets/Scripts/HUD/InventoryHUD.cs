@@ -8,8 +8,10 @@ public class InventoryHUD : MonoBehaviour
     public List<GameObject> WeaponInvSlots = new List<GameObject>(3);
     [SerializeField] public GameObject MainInventoryPanel;
     [SerializeField] public GameObject WeaponInventoryPanel;
-    [SerializeField] public GameObject MessagePanel;
     [SerializeField] public GameObject ActionPanel;
+    [SerializeField] public Slider HoldButtonDownBar;
+    private Image FillColor;
+    private Color DefaultColor;
 
     private EventAggregator eventAggregator = EventAggregator.GetInstance();
     private bool IsInvToggled;
@@ -27,17 +29,34 @@ public class InventoryHUD : MonoBehaviour
         for (int i = 0; i < WeaponInventoryPanel.transform.childCount; i++)
             WeaponInvSlots[i] = WeaponInventoryPanel.transform.GetChild(i).gameObject;
 
+        HoldButtonDownBar.value = 0;
+        FillColor = HoldButtonDownBar.transform.GetChild(1).GetChild(0).GetComponent<Image>();
+        DefaultColor = FillColor.color;
+
     }
 
-    public void ShowPickUpItemMsg(string message)
+    public void ShowLoadBar(float time)
     {
-        MessagePanel.transform.Find("PickUpItemText").GetComponent<Text>().text = message;
-        MessagePanel.SetActive(true);
+        HoldButtonDownBar.value = time / 0.75f;
+        if(HoldButtonDownBar.value > .20f) HoldButtonDownBar.gameObject.SetActive(true);
+        if (HoldButtonDownBar.value >= 1)
+        {
+            HoldButtonDownBar.value = 0;
+            HoldButtonDownBar.gameObject.SetActive(false);
+        }
     }
 
-    public void RemovePickUpItemMsg()
+    public void RemoveLoadBar()
     {
-        MessagePanel.SetActive(false);
+        HoldButtonDownBar.value = 0;
+        FillColor.color = DefaultColor;
+        HoldButtonDownBar.gameObject.SetActive(false);
+    }
+
+    public void ShowRejectedLoadBar()
+    {
+        HoldButtonDownBar.value = 1;
+        FillColor.color = Color.red;
     }
 
     public void ShowActionPanel(string message)

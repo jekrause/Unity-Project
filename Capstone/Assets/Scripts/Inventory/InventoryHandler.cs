@@ -139,46 +139,51 @@ public class InventoryHandler : MonoBehaviour
                 }
                 else if (Input.GetButton(myControllerInput.DownButton))
                 {
+                    Item itemToSalvage = null;
+                    if (IteratingMainInv)
+                    {
+                        itemToSalvage = MainInventory.GetCurrentItem();
+                    }
+                    else
+                    {
+                        itemToSalvage = WeaponInventory.GetCurrentItem();
+                    }
+
                     if (timerButtonHeldDown > BUTTON_HELD_DOWN_TIME)
                     {
-                        Item itemToSalvage = null;
-                        if (IteratingMainInv)
+                        if(itemToSalvage != null && itemToSalvage is RangedWeapon)
                         {
-                             itemToSalvage = MainInventory.GetCurrentItem();
-                            if(itemToSalvage != null && itemToSalvage is RangedWeapon)
+                            if (IteratingMainInv)
                             {
-                                if (SalvageWeaponForAmmo((RangedWeapon)itemToSalvage) == true)
+                                if(SalvageWeaponForAmmo((RangedWeapon)itemToSalvage) == true)
                                 {
                                     MainInventory.RemoveAllItemInSlot(MainInventory.GetCurrentSlotNum());
                                     UpdateAndDisplayActionPanel();
+                                    timerButtonHeldDown = 0;
                                 }
-                                    
                             }
-                            
-                        }
-                        else
-                        {
-                            itemToSalvage = WeaponInventory.GetCurrentItem();
-                            if (itemToSalvage != null && itemToSalvage is RangedWeapon)
+                            else
                             {
-                                if (SalvageWeaponForAmmo((RangedWeapon)itemToSalvage) == true)
+                                if(SalvageWeaponForAmmo((RangedWeapon)itemToSalvage) == true)
                                 {
                                     WeaponInventory.RemoveAllItemInSlot(WeaponInventory.GetCurrentSlotNum());
                                     UpdateAndDisplayActionPanel();
+                                    timerButtonHeldDown = 0;
                                 }
-                                   
                             }
                         }
-                        timerButtonHeldDown = 0;
                     }
                     else
                     {
                         timerButtonHeldDown += Time.deltaTime;
+                        if (itemToSalvage != null && itemToSalvage.GetItemType() == Item.Type.WEAPON && timerButtonHeldDown < BUTTON_HELD_DOWN_TIME)
+                            InventoryHUD.ShowLoadBar(timerButtonHeldDown);
                     }
 
                 }
                 else if (Input.GetButtonUp(myControllerInput.DownButton))
                 {
+                    InventoryHUD.RemoveLoadBar();
                     if (timerButtonHeldDown < 0.15f)
                     {
                         if (IteratingMainInv)
@@ -205,10 +210,14 @@ public class InventoryHandler : MonoBehaviour
                     else
                     {
                         timerButtonHeldDown += Time.deltaTime;
+                        if (itemOnGround != null && itemOnGround.GetItemType() == Item.Type.WEAPON && timerButtonHeldDown < BUTTON_HELD_DOWN_TIME)
+                            InventoryHUD.ShowLoadBar(timerButtonHeldDown);
+
                     }
                 }
                 else if (Input.GetButtonUp(myControllerInput.DownButton))
                 {
+                    InventoryHUD.RemoveLoadBar();
                     if (timerButtonHeldDown < BUTTON_HELD_DOWN_TIME)
                     {
                         buttonHeldDown = false;
@@ -259,7 +268,7 @@ public class InventoryHandler : MonoBehaviour
                     }
                 }
 
-                InventoryHUD.ShowPickUpItemMsg(PickUpItemMessage);
+                InventoryHUD.ShowActionPanel(PickUpItemMessage);
             }
         }
 
@@ -273,7 +282,7 @@ public class InventoryHandler : MonoBehaviour
         if (itemOnGround != null)
         {
             ItemFocused = false;
-            InventoryHUD.RemovePickUpItemMsg();
+            InventoryHUD.RemoveActionPanel();
         }
     }
 
@@ -282,7 +291,7 @@ public class InventoryHandler : MonoBehaviour
     /// </summary>
     private void UpdateAndDisplayActionPanel()
     {
-        InventoryHUD.RemovePickUpItemMsg();
+        InventoryHUD.RemoveActionPanel();
         Item item = null;
         string actionMessageToShow = "";
         if (IteratingMainInv)
@@ -386,7 +395,7 @@ public class InventoryHandler : MonoBehaviour
                     itemOnGround.gameObject.SetActive(false);
                     ObjectsPickedUp.Add(itemOnGround.gameObject);
                     ItemFocused = false;
-                    InventoryHUD.RemovePickUpItemMsg();
+                    InventoryHUD.RemoveActionPanel();
                 }
             }
 
@@ -494,18 +503,20 @@ public class InventoryHandler : MonoBehaviour
                 
                 EventAggregator.GetInstance().Publish<OnPlayerAmmoChangedEvent>(new OnPlayerAmmoChangedEvent(player.playerNumber, player.Ammunition));
                 ItemFocused = false;
-                InventoryHUD.RemovePickUpItemMsg();
+                InventoryHUD.RemoveActionPanel();
                 Debug.Log("InventoryHandler: " + itemToSalvage.GetType() + " weapon salvaged for ammo.");
                 Destroy(itemToSalvage.gameObject);
 
                 if (InventoryHUDFocused)
                 {
                     InventoryHUD.OnItemRemove(0);
+                    InventoryHUD.RemoveLoadBar();
                 }
             }
             else
             {
                 Debug.Log("InventoryHandler: Cannot salvage weapon, Im already maxed out on ammo");
+                InventoryHUD.ShowRejectedLoadBar();
             }
         }
         return salvagedSuccess;
