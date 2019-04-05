@@ -121,26 +121,40 @@ public class Inventory
         return -1; // inventory is full
     }
 
-    public bool RemoveItem(int index, bool removeFullStack)
+    /// <summary>
+    /// Attempt to remove 1 Item in the inventory slot and returns true if at least 1 item in the slot got removed successfully regardless if
+    /// there exist more items in the slot.
+    /// </summary>
+    /// <returns></returns>
+    public bool RemoveItemInSlot(int index)
     {
         bool ret = false;
         if (Slots[index].HasItem())
         {
-            if (removeFullStack)
-            {
-                ret = true;
-                Slots[index].Clear();
-                DecrementSlotUsed();
-                Debug.Log("Inventory RemoveItem(): Slot no: " + (index+1) + ", Full Stack removed");
-            }
-            else
-            {
-                ret = true;
-                Slots[index].DecrementQuantity();
-                if (!Slots[index].HasItem()) DecrementSlotUsed();
-                Debug.Log("Inventory RemoveItem(): Slot no: " + (index+1) + ", 1 removed from stack");
-            }
-            
+            ret = true;
+            Slots[index].DecrementQuantity();
+            if (!Slots[index].HasItem()) DecrementSlotUsed();
+            Debug.Log("Inventory RemoveItem(): Slot no: " + (index + 1) + ", 1 removed from stack");
+        }
+
+        return ret;
+    }
+
+    /// <summary>
+    /// Attempt to remove the full stack of items in the inventory slot and returns true if all items in the slot got removed successfully.
+    /// </summary>
+    /// <param name="index"></param>
+    /// <returns></returns>
+    public bool RemoveAllItemInSlot(int index)
+    {
+        bool ret = false;
+        if (Slots[index].HasItem())
+        {
+            ret = true;
+            Slots[index].Clear();
+            DecrementSlotUsed();
+            Debug.Log("Inventory RemoveItem(): Slot no: " + (index+1) + ", Full Stack removed");
+                        
         }
         return ret;
     }

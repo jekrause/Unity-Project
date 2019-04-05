@@ -61,9 +61,7 @@ public abstract class Player : MonoBehaviour
     {
         //movement
         GetMovementInput();
-        getRotationPosition();
         rb.MovePosition(rb.position + velocity * Time.deltaTime); // move the player after updating user input
-
         GetAttackInput();
     }
 
@@ -75,6 +73,7 @@ public abstract class Player : MonoBehaviour
         {
             Death();
         }
+        getRotationPosition();
 
     }
 
@@ -107,10 +106,21 @@ public abstract class Player : MonoBehaviour
             {
                 float horizontal = Input.GetAxisRaw(myControllerInput.RightHorizontalAxis);
                 float vertical = Input.GetAxisRaw(myControllerInput.RightVerticalAxis);
-                if (horizontal != 0 || vertical != 0)
+                float deadzone = 0.15f;
+                Vector2 stickInput = new Vector2(horizontal, vertical);
+                if (stickInput.magnitude < deadzone)
                 {
-                    Vector2 lookDirection = new Vector2(horizontal, vertical);
-                    transform.right = lookDirection;
+                    stickInput = Vector2.zero;
+                    rb.freezeRotation = true;
+                }  
+                else
+                {
+                    
+                    rb.freezeRotation = false;
+                    float angle = Mathf.Atan2(vertical, horizontal) * Mathf.Rad2Deg;
+                    Quaternion eulerRot = Quaternion.Euler(0.0f, 0.0f, angle);
+                    transform.localRotation = Quaternion.Slerp(transform.rotation, eulerRot, Time.deltaTime * 120);
+                    
                 }
             }
             catch

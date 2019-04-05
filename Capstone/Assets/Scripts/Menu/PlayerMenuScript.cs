@@ -348,7 +348,8 @@ public class PlayerMenuScript : MonoBehaviour
         {
             AudioManager.Play("StartLevel");
             //SceneManager.LoadScene("SampleScene");
-            SceneManager.LoadScene("SampleScene2");
+            SceneManager.LoadScene("LoadingScreenScene");
+            //SceneManager.LoadScene("SampleScene2");
         }
         else
         {

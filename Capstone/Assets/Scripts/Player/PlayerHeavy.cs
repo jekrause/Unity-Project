@@ -24,7 +24,7 @@ public class PlayerHeavy : Player
 
     protected override void Update()
     {
-
+        base.Update();
     }
 
     public override bool CanEquipWeapon(Item item) { return item is HandGun || item is Dagger || item is RocketLauncher; }

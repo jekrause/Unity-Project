@@ -25,8 +25,6 @@ public class InventoryHandler : MonoBehaviour
 
     // Inventory HUD messages
     private string PickUpItemMessage = "-Press (N/A): Pick Up-";
-    private string EquippableWepMessage;
-    private string SalvageWepMessage;
 
     // Inventory HUD action panel messages
     private string LeftPlatformButton = "N/A";
@@ -39,7 +37,7 @@ public class InventoryHandler : MonoBehaviour
 
     // item pick up timer
     private float timerButtonHeldDown;
-    private const float BUTTON_HELD_DOWN_TIME = 1f;
+    private const float BUTTON_HELD_DOWN_TIME = 0.75f;
     private bool buttonHeldDown = false;
 
     // Use this for initialization
@@ -72,7 +70,7 @@ public class InventoryHandler : MonoBehaviour
         {
             //Initialize action panel messages
             DefaultActionMessage = "Item: " + ItemTypeMessage + "\nPress '" + LeftPlatformButton + "' : Use\nPress '" + LeftPlatformButton + "' : Drop";
-            SalvageWeaponMessage = "Item: " + ItemTypeMessage + "\nPress '" + LeftPlatformButton + "' : Salvage For Ammo\nPress '" + RightPlatformButton + "' : Drop";
+            SalvageWeaponMessage = "Item: " + ItemTypeMessage + "\nHold '" + LeftPlatformButton + "' : Salvage For Ammo\nPress '" + RightPlatformButton + "' : Drop";
             EquipOrSalvageMessage = "Item: " + ItemTypeMessage + "\nPress '" + LeftPlatformButton + "' : Equip" +
                                     "\nHold '" + LeftPlatformButton + "' : Salvage For Ammo" +
                                     "\nPress '" + RightPlatformButton + "' : Drop";
@@ -83,9 +81,6 @@ public class InventoryHandler : MonoBehaviour
             InputType input = myControllerInput.inputType;
             LeftPlatformButton = input == InputType.KEYBOARD ? "E" : input == InputType.PS4_CONTROLLER ? "X" : "A";
             RightPlatformButton = input == InputType.KEYBOARD ? "Esc" : input == InputType.PS4_CONTROLLER ? "O" : "B";
-            PickUpItemMessage = "-Press '" + LeftPlatformButton + "' : Pick Up-";
-            EquippableWepMessage = "-Press '" + LeftPlatformButton + "' : Pick Up-\n-Hold '" + LeftPlatformButton + "' : Equip- ";
-            SalvageWepMessage = "-Press '" + LeftPlatformButton + "' : Pick Up-\n-Hold '" + LeftPlatformButton + "' : Salvage For Ammo- ";
             DefaultActionMessage = "Item: " + ItemTypeMessage;
         }
 
@@ -142,30 +137,54 @@ public class InventoryHandler : MonoBehaviour
                 {
                     RemoveItemFromInv();
                 }
-
-                if (Input.GetButton(myControllerInput.DownButton))
+                else if (Input.GetButton(myControllerInput.DownButton))
                 {
+                    Item itemToSalvage = null;
+                    if (IteratingMainInv)
+                    {
+                        itemToSalvage = MainInventory.GetCurrentItem();
+                    }
+                    else
+                    {
+                        itemToSalvage = WeaponInventory.GetCurrentItem();
+                    }
+
                     if (timerButtonHeldDown > BUTTON_HELD_DOWN_TIME)
                     {
-                        if (IteratingMainInv)
+                        if(itemToSalvage != null && itemToSalvage is RangedWeapon)
                         {
-                            SalvageWeaponForAmmo(MainInventory.GetCurrentItem());
+                            if (IteratingMainInv)
+                            {
+                                if(SalvageWeaponForAmmo((RangedWeapon)itemToSalvage) == true)
+                                {
+                                    MainInventory.RemoveAllItemInSlot(MainInventory.GetCurrentSlotNum());
+                                    UpdateAndDisplayActionPanel();
+                                    timerButtonHeldDown = 0;
+                                }
+                            }
+                            else
+                            {
+                                if(SalvageWeaponForAmmo((RangedWeapon)itemToSalvage) == true)
+                                {
+                                    WeaponInventory.RemoveAllItemInSlot(WeaponInventory.GetCurrentSlotNum());
+                                    UpdateAndDisplayActionPanel();
+                                    timerButtonHeldDown = 0;
+                                }
+                            }
                         }
-                        else
-                        {
-                            SalvageWeaponForAmmo(WeaponInventory.GetItemInSlot(WeaponSlotIndex));
-                        }
-                        UpdateAndDisplayActionPanel();
                     }
                     else
                     {
                         timerButtonHeldDown += Time.deltaTime;
+                        if (itemToSalvage != null && itemToSalvage.GetItemType() == Item.Type.WEAPON && timerButtonHeldDown < BUTTON_HELD_DOWN_TIME)
+                            InventoryHUD.ShowLoadBar(timerButtonHeldDown);
                     }
 
                 }
                 else if (Input.GetButtonUp(myControllerInput.DownButton))
                 {
-                    if (timerButtonHeldDown < BUTTON_HELD_DOWN_TIME)
+                    InventoryHUD.RemoveLoadBar();
+                    if (timerButtonHeldDown < 0.15f)
                     {
                         if (IteratingMainInv)
                         {
@@ -191,10 +210,14 @@ public class InventoryHandler : MonoBehaviour
                     else
                     {
                         timerButtonHeldDown += Time.deltaTime;
+                        if (itemOnGround != null && itemOnGround.GetItemType() == Item.Type.WEAPON && timerButtonHeldDown < BUTTON_HELD_DOWN_TIME)
+                            InventoryHUD.ShowLoadBar(timerButtonHeldDown);
+
                     }
                 }
                 else if (Input.GetButtonUp(myControllerInput.DownButton))
                 {
+                    InventoryHUD.RemoveLoadBar();
                     if (timerButtonHeldDown < BUTTON_HELD_DOWN_TIME)
                     {
                         buttonHeldDown = false;
@@ -228,22 +251,24 @@ public class InventoryHandler : MonoBehaviour
             if (itemOnGround != null)
             {
                 ItemFocused = true;
+                ItemTypeMessage = itemOnGround.GetType() + "";
                 if (player.CanEquipWeapon(itemOnGround))
                 {
-                    InventoryHUD.ShowPickUpItemMsg(EquippableWepMessage);
+                    PickUpItemMessage = "Item: " + ItemTypeMessage + "\n-Press '" + LeftPlatformButton + "' : Pick Up-\n-Hold '" + LeftPlatformButton + "' : Equip- ";
                 }
                 else
                 {
                     if (itemOnGround.GetItemType() == Item.Type.WEAPON)
                     {
-                        InventoryHUD.ShowPickUpItemMsg(SalvageWepMessage);
+                        PickUpItemMessage = "Item: " + ItemTypeMessage + "\n-Press '" + LeftPlatformButton + "' : Pick Up-\n-Hold '" + LeftPlatformButton + "' : Salvage For Ammo- ";
                     }
                     else
                     {
-                        InventoryHUD.ShowPickUpItemMsg(PickUpItemMessage);
+                        PickUpItemMessage = "Item: " + ItemTypeMessage + "\n-Press '" + LeftPlatformButton + "' : Pick Up-";
                     }
                 }
 
+                InventoryHUD.ShowActionPanel(PickUpItemMessage);
             }
         }
 
@@ -257,7 +282,7 @@ public class InventoryHandler : MonoBehaviour
         if (itemOnGround != null)
         {
             ItemFocused = false;
-            InventoryHUD.RemovePickUpItemMsg();
+            InventoryHUD.RemoveActionPanel();
         }
     }
 
@@ -266,7 +291,7 @@ public class InventoryHandler : MonoBehaviour
     /// </summary>
     private void UpdateAndDisplayActionPanel()
     {
-        InventoryHUD.RemovePickUpItemMsg();
+        InventoryHUD.RemoveActionPanel();
         Item item = null;
         string actionMessageToShow = "";
         if (IteratingMainInv)
@@ -281,7 +306,7 @@ public class InventoryHandler : MonoBehaviour
         if (item != null)
         {
             ItemTypeMessage = item.GetType() + "";
-            if (item is Weapon)
+            if (item.GetItemType() == Item.Type.WEAPON)
             {
                 if (player.CanEquipWeapon(item))
                 {
@@ -293,13 +318,13 @@ public class InventoryHandler : MonoBehaviour
                 }
                 else
                 {
-                    SalvageWeaponMessage = "Item: " + ItemTypeMessage + "\nPress '" + LeftPlatformButton + "' : Salvage For Ammo\nPress '" + RightPlatformButton + "' : Drop";
+                    SalvageWeaponMessage = "Item: " + ItemTypeMessage + "\nHold '" + LeftPlatformButton + "' : Salvage For Ammo\nPress '" + RightPlatformButton + "' : Drop";
                     actionMessageToShow = SalvageWeaponMessage;
                 }
             }
             else
             {
-                DefaultActionMessage = "Item: " + ItemTypeMessage + "\nPress '" + LeftPlatformButton + "' : Use\nPress '" + LeftPlatformButton + "' : Drop";
+                DefaultActionMessage = "Item: " + ItemTypeMessage + "\nPress '" + LeftPlatformButton + "' : Use\nPress '" + RightPlatformButton + "' : Drop";
                 actionMessageToShow = DefaultActionMessage;
             }
         }
@@ -335,6 +360,7 @@ public class InventoryHandler : MonoBehaviour
                 int slot = -1;
 
                 if (itemOnGround.GetItemType() == Item.Type.WEAPON && buttonHeldDown) // attempt equip weapon on the spot
+                {
                     if (player.CanEquipWeapon(itemOnGround))
                     {
                         slot = WeaponInventory.AddItem(itemOnGround);
@@ -343,10 +369,10 @@ public class InventoryHandler : MonoBehaviour
                     {
                         if (itemOnGround is RangedWeapon)
                         {
-                            SalvageWeaponForAmmo(itemOnGround);
+                            SalvageWeaponForAmmo((RangedWeapon)itemOnGround);
                         }
-
                     }
+                }
                 else // it is either a quest item or healing item
                     slot = MainInventory.AddItem(itemOnGround);
 
@@ -369,7 +395,7 @@ public class InventoryHandler : MonoBehaviour
                     itemOnGround.gameObject.SetActive(false);
                     ObjectsPickedUp.Add(itemOnGround.gameObject);
                     ItemFocused = false;
-                    InventoryHUD.RemovePickUpItemMsg();
+                    InventoryHUD.RemoveActionPanel();
                 }
             }
 
@@ -394,13 +420,12 @@ public class InventoryHandler : MonoBehaviour
                     int weaponSlot = WeaponInventory.AddItem(itemToUse);
                     if (weaponSlot != -1)
                     {
-                        MainInventory.RemoveItem(mainInvSlot, true);
+                        MainInventory.RemoveAllItemInSlot(mainInvSlot);
                         InventoryHUD.OnWeaponStow(itemToUse, weaponSlot, mainInvSlot);
                         if (player.CurrentWeapon == null)
                         {
                             UpdatePlayerCurrentWeapon((Weapon)itemToUse);
                         }
-                        eventAggregator.Publish(new OnWeaponEquipEvent(playerNumber, (Weapon)itemToUse));
                         Debug.Log("InventoryHandler: Weapon stowed Successfully");
                     }
                     else
@@ -411,7 +436,7 @@ public class InventoryHandler : MonoBehaviour
                 }
                 else
                 {
-                    SalvageWeaponForAmmo(itemToUse);
+                    Debug.Log("Player class: " + player.GetType() + " cannot equip " + itemToUse.GetType() + " weapon type.");
                 }
             }
             else
@@ -462,31 +487,39 @@ public class InventoryHandler : MonoBehaviour
         }
     }
 
-    private void SalvageWeaponForAmmo(Item itemToSalvage)
+    private bool SalvageWeaponForAmmo(RangedWeapon itemToSalvage)
     {
-        bool salvagedSuccess = player.Ammunition.Add(((RangedWeapon)itemToSalvage).AmmoClip.CurrentAmmo);
-        if (salvagedSuccess)
-        {
-            if(itemToSalvage == player.CurrentWeapon)
-            {
-                UpdatePlayerCurrentWeapon(null);
-            }
-           
-            if (InventoryHUDFocused)
-            {
-                InventoryHUD.OnItemRemove(1);
-            }
+        bool salvagedSuccess = false;
 
-            Destroy(itemToSalvage.gameObject);
-            ItemFocused = false;
-            InventoryHUD.RemovePickUpItemMsg();
-
-            Debug.Log("InventoryHandler: " + itemToSalvage.GetType() + " weapon salvaged for ammo.");
-        }
-        else
+        if (itemToSalvage != null)
         {
-            Debug.Log("InventoryHandler: Cannot salvage weapon, Im already maxed out on ammo");
+            salvagedSuccess = player.Ammunition.Add((itemToSalvage).AmmoClip.CurrentAmmo);
+            if (salvagedSuccess)
+            {
+                if (itemToSalvage == player.CurrentWeapon)
+                {
+                    UpdatePlayerCurrentWeapon(null);
+                }
+                
+                EventAggregator.GetInstance().Publish<OnPlayerAmmoChangedEvent>(new OnPlayerAmmoChangedEvent(player.playerNumber, player.Ammunition));
+                ItemFocused = false;
+                InventoryHUD.RemoveActionPanel();
+                Debug.Log("InventoryHandler: " + itemToSalvage.GetType() + " weapon salvaged for ammo.");
+                Destroy(itemToSalvage.gameObject);
+
+                if (InventoryHUDFocused)
+                {
+                    InventoryHUD.OnItemRemove(0);
+                    InventoryHUD.RemoveLoadBar();
+                }
+            }
+            else
+            {
+                Debug.Log("InventoryHandler: Cannot salvage weapon, Im already maxed out on ammo");
+                InventoryHUD.ShowRejectedLoadBar();
+            }
         }
+        return salvagedSuccess;
     }
 
     /// <summary>
@@ -504,7 +537,7 @@ public class InventoryHandler : MonoBehaviour
             player.CurrentWeapon = currentWeapon;
             GetComponent<SpriteRenderer>().sprite = currentWeapon.PlayerImage;
         }
-        
+        eventAggregator.Publish(new OnPlayerWeaponChangedEvent(playerNumber, currentWeapon, player.Ammunition));
     }
 
     /// <summary>
@@ -541,7 +574,7 @@ public class InventoryHandler : MonoBehaviour
                         {
                             ObjectsPickedUp[i].transform.position = transform.position;
                             ObjectsPickedUp[i].SetActive(true);
-                            MainInventory.RemoveItem(slotNum, false);
+                            MainInventory.RemoveItemInSlot(slotNum);
                             itemIndex = i;
                             break;
                         }
@@ -561,7 +594,7 @@ public class InventoryHandler : MonoBehaviour
                         UpdatePlayerCurrentWeapon(null);
                         InventoryHUD.OnWeaponUnEquip();
                     }
-                    WeaponInventory.RemoveItem(WeaponSlotIndex, true);
+                    WeaponInventory.RemoveAllItemInSlot(WeaponSlotIndex);
                     int itemIndex = 0;
                     for (int i = 0; i < ObjectsPickedUp.Count; i++)
                     {
@@ -569,7 +602,7 @@ public class InventoryHandler : MonoBehaviour
                         {
                             ObjectsPickedUp[i].transform.position = transform.position;
                             ObjectsPickedUp[i].SetActive(true);
-                            WeaponInventory.RemoveItem(WeaponSlotIndex, false);
+                            WeaponInventory.RemoveAllItemInSlot(WeaponSlotIndex);
                             itemIndex = i;
                             break;
                         }
