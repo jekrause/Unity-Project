@@ -84,7 +84,7 @@ public class Enemy : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         //death 
         if (fHP <= 0)
@@ -92,6 +92,8 @@ public class Enemy : MonoBehaviour
             Object.Destroy(gameObject);
             Destroy(this);
         }
+
+        EnemyRayCast();
 
         switch (aiMvmt)
         {
@@ -105,8 +107,6 @@ public class Enemy : MonoBehaviour
                 MvmtSafe();
                 break;
         }
-
-        EnemyRayCast();
 
         if (fHP < 10 && SafteyRadius() > -1)
         {
@@ -171,6 +171,7 @@ public class Enemy : MonoBehaviour
 
     protected void MvmtChase()
     {
+
         //handle blocked path
         if (blockedPaths[(int)RayCastDir.Forward] && Vector2.Distance(raycasts[(int)RayCastDir.Forward].transform.position, transform.position) < 5)
         {
@@ -211,6 +212,11 @@ public class Enemy : MonoBehaviour
         }
         else
         {
+            //face player
+            Vector2 dir = playerTarget.transform.position - transform.position;
+            var angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+            transform.rotation = Quaternion.AngleAxis(angle - 5, Vector3.forward);
+
             transform.position = Vector2.MoveTowards(transform.position, playerTarget.transform.position, fMoveSpeed * Time.deltaTime);
         }
     }
@@ -334,14 +340,16 @@ public class Enemy : MonoBehaviour
         //try to cast to an existing enemy
         if (playerTarget != null)
         {
-            var angle = Mathf.Atan2(playerTarget.transform.position.y, playerTarget.transform.position.x) * Mathf.Rad2Deg;
-            if (Physics2D.Raycast(transform.position, Quaternion.AngleAxis(angle, transform.forward) * transform.right, fVisionDistance).collider == null)
+            //var angle = Mathf.Atan2(playerTarget.transform.position.y, playerTarget.transform.position.x) * Mathf.Rad2Deg;
+            //if (Physics2D.Raycast(transform.position, Quaternion.AngleAxis(angle, transform.forward) * transform.right, fVisionDistance).collider == null)
+            if(Vector2.Distance(transform.position, playerTarget.transform.position) > fVisionDistance)
             {
                 playerTarget = null;
+                Debug.Log("Lost sight of player");
             }
             else
             {
-                Debug.Log("Lost Player");
+                Debug.Log("Still chasing Player");
             }
         }
 
