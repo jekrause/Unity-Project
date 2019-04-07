@@ -20,10 +20,12 @@ public class Enemy : MonoBehaviour
 
     // Start is called before the first frame update
     public const int iBaseAttackRate = 1;
+    protected LayerMask layerMask;
     protected float fHP = 100f;
     protected float fDamage = 10f;         //default damage if no weapon is equipped
     protected float fMoveRate = 1f;
     protected float fAttackRadius = 2f;
+    protected bool canShoot = true;
     protected MovementTypeEnum aiMvmt;
 
     protected float fMoveSpeed = 3f;
@@ -69,6 +71,7 @@ public class Enemy : MonoBehaviour
 
     void Start()
     {
+        layerMask = (1 << 4) | (1 << 8) | (1<<9);
         //layersToAvoid.layerMask = 4608;//
         layersToAvoid.layerMask = LayerMask.GetMask("Obstacles", "Player"); // It may be helpful to put Enemies in seperate layer or get rid of Player layer.
         playersToAvoid = LayerMask.GetMask("Player");
@@ -93,6 +96,7 @@ public class Enemy : MonoBehaviour
             Destroy(this);
         }
 
+        canShoot = true;
         EnemyRayCast();
 
         switch (aiMvmt)
@@ -121,19 +125,19 @@ public class Enemy : MonoBehaviour
             aiMvmt = MovementTypeEnum.Patrol;
         }
 
-        if (((aiMvmt == MovementTypeEnum.Chase && playerTarget != null) ||
+        if (canShoot && ((aiMvmt == MovementTypeEnum.Chase && playerTarget != null) ||
            (aiMvmt == MovementTypeEnum.Safe && !withInMinDistance)) && Time.time > fAttackTime)
         {
             //face player
-            Vector2 dir = playerTarget.transform.position - transform.position;
+            Vector2 dir = playerTarget.transform.position - shootPosition.position;
             var angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-            transform.rotation = Quaternion.AngleAxis(angle-5, Vector3.forward);
+            transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
 
             //shoot straight
             var x = Instantiate(bullet, this.shootPosition.position, this.shootPosition.rotation);
             x.SetDamage(30);
             x.SetTarget("Player");
-            x.GetComponent<Rigidbody2D>().AddForce(x.transform.right * 500);
+            x.GetComponent<Rigidbody2D>().AddForce(x.transform.right * 800);
 
             fAttackTime = Time.time + 1 / iBaseAttackRate;
         }
@@ -171,10 +175,10 @@ public class Enemy : MonoBehaviour
 
     protected void MvmtChase()
     {
-
         //handle blocked path
-        if (blockedPaths[(int)RayCastDir.Forward] && Vector2.Distance(raycasts[(int)RayCastDir.Forward].transform.position, transform.position) < 5)
+        if (blockedPaths[(int)RayCastDir.Forward] && raycasts[(int)RayCastDir.Forward].distance < 5)
         {
+            Debug.Log("path blocked");
             //listed in order of move priority
             if (!blockedPaths[(int)RayCastDir.Right20] && !blockedPaths[(int)RayCastDir.Right45])
             {
@@ -209,13 +213,14 @@ public class Enemy : MonoBehaviour
                 transform.rotation = Quaternion.AngleAxis(-90, Vector3.forward);
             }
             transform.position += transform.right * Time.deltaTime * fMoveSpeed;
+            canShoot = false;
         }
         else
         {
             //face player
-            Vector2 dir = playerTarget.transform.position - transform.position;
+            Vector2 dir = playerTarget.transform.position - shootPosition.position;
             var angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-            transform.rotation = Quaternion.AngleAxis(angle - 5, Vector3.forward);
+            transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
 
             transform.position = Vector2.MoveTowards(transform.position, playerTarget.transform.position, fMoveSpeed * Time.deltaTime);
         }
@@ -354,16 +359,17 @@ public class Enemy : MonoBehaviour
         }
 
         //use cone of vision to detect new enemy
-        raycasts[(int)RayCastDir.Forward] = Physics2D.Raycast(transform.position, transform.right, fVisionDistance);
-        raycasts[(int)RayCastDir.Left20] = Physics2D.Raycast(transform.position, Quaternion.AngleAxis(20, transform.forward) * transform.right, fVisionDistance);
-        raycasts[(int)RayCastDir.Left45] = Physics2D.Raycast(transform.position, Quaternion.AngleAxis(45, transform.forward) * transform.right, fVisionDistance);
-        raycasts[(int)RayCastDir.Left90] = Physics2D.Raycast(transform.position, Quaternion.AngleAxis(90, transform.forward) * transform.right, fVisionDistance / 2);
-        raycasts[(int)RayCastDir.Right20] = Physics2D.Raycast(transform.position, Quaternion.AngleAxis(-20, transform.forward) * transform.right, fVisionDistance);
-        raycasts[(int)RayCastDir.Right45] = Physics2D.Raycast(transform.position, Quaternion.AngleAxis(-45, transform.forward) * transform.right, fVisionDistance);
-        raycasts[(int)RayCastDir.Right90] = Physics2D.Raycast(transform.position, Quaternion.AngleAxis(-90, transform.forward) * transform.right, fVisionDistance / 2);
+        raycasts[(int)RayCastDir.Forward] = Physics2D.Raycast(transform.position, transform.right, fVisionDistance, layerMask);
+        raycasts[(int)RayCastDir.Left20] = Physics2D.Raycast(transform.position, Quaternion.AngleAxis(20, transform.forward) * transform.right, fVisionDistance, layerMask);
+        raycasts[(int)RayCastDir.Left45] = Physics2D.Raycast(transform.position, Quaternion.AngleAxis(45, transform.forward) * transform.right, fVisionDistance, layerMask);
+        raycasts[(int)RayCastDir.Left90] = Physics2D.Raycast(transform.position, Quaternion.AngleAxis(90, transform.forward) * transform.right, fVisionDistance / 2, layerMask);
+        raycasts[(int)RayCastDir.Right20] = Physics2D.Raycast(transform.position, Quaternion.AngleAxis(-20, transform.forward) * transform.right, fVisionDistance, layerMask);
+        raycasts[(int)RayCastDir.Right45] = Physics2D.Raycast(transform.position, Quaternion.AngleAxis(-45, transform.forward) * transform.right, fVisionDistance, layerMask);
+        raycasts[(int)RayCastDir.Right90] = Physics2D.Raycast(transform.position, Quaternion.AngleAxis(-90, transform.forward) * transform.right, fVisionDistance / 2, layerMask);
 
         foreach (RayCastDir castDir in (RayCastDir[])System.Enum.GetValues(typeof(RayCastDir)))
         {
+            
             int ii = (int)castDir;
             if (raycasts[ii].collider != null && raycasts[ii].collider.gameObject.tag == "Player")
             {
@@ -382,10 +388,14 @@ public class Enemy : MonoBehaviour
                     indexPlayerFoundAt = ii;
                 }
             }
-            else if (raycasts[ii].collider != null && raycasts[ii].collider.gameObject.tag == "Obstacle")
+            else if (raycasts[ii].collider != null)
             {
-                Debug.Log("Blocked path at " + ii);
+                Debug.Log("Blocked path at " + ii + "  tag = " + raycasts[ii].collider.tag);
                 blockedPaths[ii] = true;
+            }
+            else
+            {
+                blockedPaths[ii] = false;
             }
         }
 
