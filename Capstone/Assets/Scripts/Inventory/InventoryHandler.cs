@@ -279,7 +279,7 @@ public class InventoryHandler : MonoBehaviour
     {
         itemOnGround = collision.collider.GetComponent<Item>();
 
-        if (itemOnGround != null)
+        if (itemOnGround != null && !InventoryHUDFocused)
         {
             ItemFocused = false;
             InventoryHUD.RemoveActionPanel();

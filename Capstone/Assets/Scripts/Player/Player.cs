@@ -62,6 +62,7 @@ public abstract class Player : MonoBehaviour
         //movement
         GetMovementInput();
         rb.MovePosition(rb.position + velocity * Time.deltaTime); // move the player after updating user input
+        getRotationPosition();
         GetAttackInput();
     }
 
@@ -73,7 +74,6 @@ public abstract class Player : MonoBehaviour
         {
             Death();
         }
-        getRotationPosition();
 
     }
 
@@ -98,6 +98,7 @@ public abstract class Player : MonoBehaviour
             Vector3 position = Input.mousePosition;
             position = myCamera.ScreenToWorldPoint(position);
             direction = new Vector2(position.x - transform.position.x, position.y - transform.position.y);
+            Debug.Log("direction: " +direction + "\nx: " + position.x + "\ny: " + position.y );
             transform.right = direction; //transform may vary depending on sprite's image
         }
         else //use controller inputs 
