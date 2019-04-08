@@ -11,6 +11,7 @@ public class LoadingScreenScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        AudioManager.Play("LoadingScreenMusic");
         StartCoroutine(LoadNextSceneAsync());
     }
 

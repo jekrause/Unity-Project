@@ -86,6 +86,16 @@ public class InventoryHandler : MonoBehaviour
 
     }
 
+    public void AssignInventoryHUD(GameObject HUD)
+    {
+        if(HUD.GetComponent<InventoryHUD>() != null)
+        {
+            InventoryHUD = HUD.GetComponent<InventoryHUD>();
+            InventoryHUD.gameObject.SetActive(true);
+        }
+        
+    }
+
     private void ReadControllerInput()
     {
         if (myControllerInput != null && myControllerInput.inputType != InputType.NONE)

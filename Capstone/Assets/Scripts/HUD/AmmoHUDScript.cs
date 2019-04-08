@@ -6,11 +6,10 @@ using UnityEngine.UI;
 public class AmmoHUDScript : MonoBehaviour, ISubscriber<OnWeaponAmmoChangedEvent>, ISubscriber<OnPlayerWeaponChangedEvent>,
                                             ISubscriber<OnPlayerAmmoChangedEvent>
 {
-
-    private string AmmoCountText;
-    private string PlayerAmmoText;
     public int playerNumber;
-    public GameObject WeaponAmmoPanel;
+    public GameObject WeaponCanvas;
+    public GameObject AmmoClip;
+    public GameObject PlayerAmmo;
 
     private void OnEnable()
     {
@@ -28,22 +27,19 @@ public class AmmoHUDScript : MonoBehaviour, ISubscriber<OnWeaponAmmoChangedEvent
 
     private void ShowHUD()
     {
-        WeaponAmmoPanel.transform.GetChild(0).GetComponent<Text>().text = AmmoCountText;
-        WeaponAmmoPanel.transform.GetChild(1).GetComponent<Text>().text = PlayerAmmoText;
-        WeaponAmmoPanel.gameObject.SetActive(true);
+        WeaponCanvas.gameObject.SetActive(true);
     }
 
     private void HideHUD()
     {
-        WeaponAmmoPanel.gameObject.SetActive(false);
+        WeaponCanvas.gameObject.SetActive(false);
     }
 
     public void OnEventHandler(OnWeaponAmmoChangedEvent eventData)
     {
        if(eventData.playerNum == playerNumber)
         {
-            AmmoCountText = eventData.currentAmmoClip + "";
-            WeaponAmmoPanel.transform.GetChild(0).GetComponent<Text>().text = AmmoCountText;
+            AmmoClip.transform.GetComponent<Text>().text = eventData.currentAmmoClip + "";
         }
     }
 
@@ -53,8 +49,8 @@ public class AmmoHUDScript : MonoBehaviour, ISubscriber<OnWeaponAmmoChangedEvent
         {
             if(eventData.Weapon != null && eventData.Weapon is RangedWeapon)
             {
-                PlayerAmmoText = eventData.currentAmmunition.Amount + "";
-                AmmoCountText = ((RangedWeapon)eventData.Weapon).AmmoClip.CurrentAmmo + "";
+                PlayerAmmo.transform.GetComponent<Text>().text = eventData.currentAmmunition.Amount + "";
+                AmmoClip.transform.GetComponent<Text>().text = ((RangedWeapon)eventData.Weapon).AmmoClip.CurrentAmmo + "";
                 ShowHUD();
             }
             else
@@ -68,8 +64,7 @@ public class AmmoHUDScript : MonoBehaviour, ISubscriber<OnWeaponAmmoChangedEvent
     {
         if(eventData.playerNum == playerNumber)
         {
-            PlayerAmmoText = eventData.currentAmmunition.Amount + "";
-            WeaponAmmoPanel.transform.GetChild(1).GetComponent<Text>().text = PlayerAmmoText;
+            PlayerAmmo.transform.GetComponent<Text>().text = eventData.currentAmmunition.Amount + "";
         }
     }
 }
