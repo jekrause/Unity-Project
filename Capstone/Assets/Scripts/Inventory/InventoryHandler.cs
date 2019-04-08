@@ -146,7 +146,7 @@ public class InventoryHandler : MonoBehaviour
                     }
                     else
                     {
-                        itemToSalvage = WeaponInventory.GetCurrentItem();
+                        itemToSalvage = WeaponInventory.GetItemInSlot(WeaponSlotIndex);
                     }
 
                     if (timerButtonHeldDown > BUTTON_HELD_DOWN_TIME)
