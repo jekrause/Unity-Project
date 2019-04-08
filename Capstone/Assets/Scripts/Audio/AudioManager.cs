@@ -56,4 +56,13 @@ public class AudioManager : MonoBehaviour
 
         s.source.Play();
     }
+
+    public static void PlayRandom(string[] names)
+    {
+        int randNum = UnityEngine.Random.Range(0, names.Length);
+
+        Play(names[randNum]);
+
+
+    }
 }
