@@ -183,63 +183,37 @@ public class Enemy : MonoBehaviour
             Vector2 dir = playerTarget.transform.position - shootPosition.position;
             var angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
             //decide to go left or right
-            if(Quaternion.Angle(Quaternion.AngleAxis(20, Vector3.forward), Quaternion.AngleAxis(angle, Vector3.forward)) < Quaternion.Angle(Quaternion.AngleAxis(-20, Vector3.forward), Quaternion.AngleAxis(angle, Vector3.forward)))
+            if(Quaternion.Angle(Quaternion.AngleAxis(transform.eulerAngles.z + 20, Vector3.forward), Quaternion.AngleAxis(angle, Vector3.forward)) > Quaternion.Angle(Quaternion.AngleAxis(transform.eulerAngles.z - 20, Vector3.forward), Quaternion.AngleAxis(angle, Vector3.forward)))
             {
-                Debug.Log("Go Right: Angle between player and enemy is " + Quaternion.Angle(transform.rotation, Quaternion.AngleAxis(angle, Vector3.forward)));
+                Debug.Log("Go Right");
+                //listed in order of move priority
+                if (!blockedPaths[(int)RayCastDir.Right20] || !blockedPaths[(int)RayCastDir.Right45] || !blockedPaths[(int)RayCastDir.Right90])
+                {
+                    Debug.Log("turning right 1");
+                    transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z + 20), fRotationSpeed * Time.deltaTime);
+                }
+                else
+                {
+                    Debug.Log("Right is blocked, going left");
+                    transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z - 20), fRotationSpeed * Time.deltaTime);
+                }
             }
             else
             {
-                Debug.Log("Go Left: Angle between player and enemy is " + Quaternion.Angle(transform.rotation, Quaternion.AngleAxis(angle, Vector3.forward)));
+                if(!blockedPaths[(int)RayCastDir.Left20] || !blockedPaths[(int)RayCastDir.Left45] || !blockedPaths[(int)RayCastDir.Left90])
+                {
+                    
+                    transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z - 20), fRotationSpeed * Time.deltaTime);
+                }
+                else
+                {
+                    Debug.Log("left is blocked, going right");
+                    transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z + 20), fRotationSpeed * Time.deltaTime);
+                }
+
             }
-            Debug.Log("Angle between player and enemy is "+ Quaternion.Angle(transform.rotation, Quaternion.AngleAxis(angle, Vector3.forward)));
             Debug.Log("path blocked");
-            //listed in order of move priority
-            if (!blockedPaths[(int)RayCastDir.Right20] && !blockedPaths[(int)RayCastDir.Right45])
-            {
-                Debug.Log("turning right 1");
-                transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z + 20), fRotationSpeed * Time.deltaTime);
-            }
-            else if (!blockedPaths[(int)RayCastDir.Left20] && !blockedPaths[(int)RayCastDir.Left45])
-            {
-                Debug.Log("turning left 1");
-                transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z -20), fRotationSpeed * Time.deltaTime);
-
-            }
-            else if (!blockedPaths[(int)RayCastDir.Right20])
-            {
-                Debug.Log("turning right 2");
-                transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z + 20), fRotationSpeed * Time.deltaTime);
-
-            }
-            else if (!blockedPaths[(int)RayCastDir.Left20])
-            {
-                Debug.Log("turning left 2");
-                transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z - 20), fRotationSpeed * Time.deltaTime);
-     
-            }
-            else if (!blockedPaths[(int)RayCastDir.Right45])
-            {
-                Debug.Log("turning right 3");
-                transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z + 45), fRotationSpeed * Time.deltaTime);
-            }
-            else if (!blockedPaths[(int)RayCastDir.Left45])
-            {
-                Debug.Log("turning left 3");
-                transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z - 45), fRotationSpeed * Time.deltaTime);
-
-            }
-            else if (!blockedPaths[(int)RayCastDir.Right90])
-            {
-                Debug.Log("turning right 4");
-                transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z + 90), fRotationSpeed * Time.deltaTime);
-            }
-            else if (!blockedPaths[(int)RayCastDir.Left90])
-            {
-                Debug.Log("turning left 4");
-                transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z - 90), fRotationSpeed * Time.deltaTime);
-
-
-            }
+           
             transform.position += transform.right * Time.deltaTime * fMoveSpeed;
             canShoot = false;
         }
