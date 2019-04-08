@@ -5,22 +5,29 @@ using UnityEngine.UI;
 
 public class ReloadHUD : MonoBehaviour, ISubscriber<OnWeaponReloadEvent>, ISubscriber<OnWeaponReloadCancelEvent>
 {
-    private Slider ReloadBar;
+    [SerializeField] private Slider ReloadBar;
     public int playerNum;
     private float maxReloadTime;
     private bool stillReloading;
-    private Image FillColor;
-    private GameObject ReloadCanvas;
+    [SerializeField] private GameObject FillColor;
+    [SerializeField] private GameObject ReloadCanvas;
 
-    // Start is called before the first frame update
-    void Start()
+
+    private void OnEnable()
     {
-        ReloadCanvas = transform.GetChild(0).gameObject;
-        ReloadBar = transform.GetChild(0).GetChild(0).GetComponent<Slider>(); // transform/ReloadPanel/ReloadBar
-        ReloadBar.value = 0;
         EventAggregator.GetInstance().Register<OnWeaponReloadEvent>(this);
         EventAggregator.GetInstance().Register<OnWeaponReloadCancelEvent>(this);
-        FillColor = transform.GetChild(0).GetChild(0).GetChild(1).GetChild(0).GetComponent<Image>();  // transform/ReloadPanel/ReloadBar/FillArea/Fill
+    }
+
+    private void OnDisable()
+    {
+        EventAggregator.GetInstance().Unregister<OnWeaponReloadEvent>(this);
+        EventAggregator.GetInstance().Unregister<OnWeaponReloadCancelEvent>(this);
+    }
+
+    private void Start()
+    {
+        ReloadBar.value = 0;
     }
 
     // Update is called once per frame
@@ -46,11 +53,11 @@ public class ReloadHUD : MonoBehaviour, ISubscriber<OnWeaponReloadEvent>, ISubsc
 
             if (ReloadBar.value >= 0.5f && ReloadBar.value < 0.95f)
             {
-                FillColor.color = Color.yellow;
+                FillColor.gameObject.GetComponent<Image>().color = Color.yellow;
             }
             else if (ReloadBar.value >= 0.95f && ReloadBar.value <= 1f)
             {
-                FillColor.color = Color.green;
+                FillColor.gameObject.GetComponent<Image>().color = Color.green;
             }
 
           yield return new WaitForSeconds(0.25f);
@@ -63,7 +70,7 @@ public class ReloadHUD : MonoBehaviour, ISubscriber<OnWeaponReloadEvent>, ISubsc
     {
         ReloadCanvas.SetActive(false);
         stillReloading = false;
-        FillColor.color = Color.red;
+        FillColor.gameObject.GetComponent<Image>().color = Color.red;
         ReloadBar.value = 0;
     }
 

@@ -16,7 +16,7 @@ public class HealthHUD : MonoBehaviour, ISubscriber<PlayerHealedEvent>, ISubscri
         {
             throw new System.Exception("Health HUD player number is out of bound: " + playerNumHUD + "\nMust be 1 - 4");
         }
-        HealthBar = transform.GetChild(0).GetComponent<Slider>();
+        HealthBar = transform.GetComponent<Slider>();
         // listen for player hp events
         EventAggregator.GetInstance().Register<PlayerHealedEvent>(this);
         EventAggregator.GetInstance().Register<PlayerDamagedEvent>(this);

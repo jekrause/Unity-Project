@@ -86,6 +86,16 @@ public class InventoryHandler : MonoBehaviour
 
     }
 
+    public void AssignInventoryHUD(GameObject HUD)
+    {
+        if(HUD.GetComponent<InventoryHUD>() != null)
+        {
+            InventoryHUD = HUD.GetComponent<InventoryHUD>();
+            InventoryHUD.gameObject.SetActive(true);
+        }
+        
+    }
+
     private void ReadControllerInput()
     {
         if (myControllerInput != null && myControllerInput.inputType != InputType.NONE)
@@ -146,7 +156,7 @@ public class InventoryHandler : MonoBehaviour
                     }
                     else
                     {
-                        itemToSalvage = WeaponInventory.GetCurrentItem();
+                        itemToSalvage = WeaponInventory.GetItemInSlot(WeaponSlotIndex);
                     }
 
                     if (timerButtonHeldDown > BUTTON_HELD_DOWN_TIME)
