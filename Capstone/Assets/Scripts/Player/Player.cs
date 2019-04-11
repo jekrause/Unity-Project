@@ -60,10 +60,18 @@ public abstract class Player : MonoBehaviour
     protected void FixedUpdate()
     {
         //movement
-        GetMovementInput();
-        rb.MovePosition(rb.position + velocity * Time.deltaTime); // move the player after updating user input
-        getRotationPosition();
-        GetAttackInput();
+        try
+        {
+            GetMovementInput();
+            rb.MovePosition(rb.position + velocity * Time.deltaTime); // move the player after updating user input
+            getRotationPosition();
+            GetAttackInput();
+        }
+        catch
+        {
+
+        }
+        
     }
 
     // Update is called once per frame

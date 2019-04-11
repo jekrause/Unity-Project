@@ -33,14 +33,18 @@ public class InputSelection : MonoBehaviour
 
     void Update()
     {
-        if(playerLists[index].myControllerInput.inputType == InputType.NONE)
+        if(playerLists[index].myControllerInput == null)
         {
             // listen for a button press from connected controllers
             BindInputToPlayer();
         }
         else
         {
-            if (index == numOfPlayers - 1) this.enabled = false; // end the script, all players have input
+            if (index == numOfPlayers - 1)
+            {
+                this.enabled = false; // end the script, all players have input
+            }
+
             else index++;
         }
     }
@@ -55,6 +59,7 @@ public class InputSelection : MonoBehaviour
             playerLists[index].myControllerInput = new MyControllerInput(InputType.KEYBOARD, 1);
             Settings.inputAssigned[0] = true;
             transform.GetChild(index).GetComponentInChildren<TextMesh>().text = "P" + (index + 1) + " (Keyboard input)";
+            objList[index].GetComponent<InventoryHandler>().InitializeInputMessages();
         }
         else if (Input.GetButton("J1PS4_DownButton_"+Settings.OS) && !Settings.inputAssigned[1])
         {
@@ -63,7 +68,7 @@ public class InputSelection : MonoBehaviour
             playerLists[index].myControllerInput = new MyControllerInput(InputType.PS4_CONTROLLER, 1);
             Settings.inputAssigned[1] = true;
             transform.GetChild(index).GetComponentInChildren<TextMesh>().text = "P" + (index + 1) + " (PS4 input)";
-
+            objList[index].GetComponent<InventoryHandler>().InitializeInputMessages();
         }
         else if (Input.GetButton("J2PS4_DownButton_" + Settings.OS) && !Settings.inputAssigned[2])
         {
@@ -72,7 +77,7 @@ public class InputSelection : MonoBehaviour
             playerLists[index].myControllerInput = new MyControllerInput(InputType.PS4_CONTROLLER, 2);
             Settings.inputAssigned[2] = true;
             transform.GetChild(index).GetComponentInChildren<TextMesh>().text = "P" + (index + 1) + " (PS4 input)";
-
+            objList[index].GetComponent<InventoryHandler>().InitializeInputMessages();
         }
         else if(Input.GetButton("J3PS4_DownButton_" + Settings.OS) && !Settings.inputAssigned[3])
         {
@@ -80,6 +85,7 @@ public class InputSelection : MonoBehaviour
             playerLists[index].myControllerInput = new MyControllerInput(InputType.PS4_CONTROLLER, 3);
             Settings.inputAssigned[3] = true;
             transform.GetChild(index).GetComponentInChildren<TextMesh>().text = "P" + (index + 1) + " (PS4 input)";
+            objList[index].GetComponent<InventoryHandler>().InitializeInputMessages();
         }
         else if (Input.GetButton("J4PS4_DownButton_" + Settings.OS) && !Settings.inputAssigned[3])
         {
@@ -87,6 +93,7 @@ public class InputSelection : MonoBehaviour
             playerLists[index].myControllerInput = new MyControllerInput(InputType.PS4_CONTROLLER, 4);
             Settings.inputAssigned[4] = true;
             transform.GetChild(index).GetComponentInChildren<TextMesh>().text = "P" + (index + 1) + " (PS4 input)";
+            objList[index].GetComponent<InventoryHandler>().InitializeInputMessages();
         }
         else if (Input.GetButton("J1XBOX_DownButton_" + Settings.OS) && !Settings.inputAssigned[1])
         {
@@ -94,6 +101,7 @@ public class InputSelection : MonoBehaviour
             playerLists[index].myControllerInput = new MyControllerInput(InputType.XBOX_CONTROLLER, 1);
             Settings.inputAssigned[1] = true;
             transform.GetChild(index).GetComponentInChildren<TextMesh>().text = "P" + (index + 1) + " (XBOX input)";
+            objList[index].GetComponent<InventoryHandler>().InitializeInputMessages();
         }
         else if (Input.GetButton("J2XBOX_DownButton_" + Settings.OS) && !Settings.inputAssigned[2])
         {
@@ -101,6 +109,7 @@ public class InputSelection : MonoBehaviour
             playerLists[index].myControllerInput = new MyControllerInput(InputType.XBOX_CONTROLLER, 2);
             Settings.inputAssigned[2] = true;
             transform.GetChild(index).GetComponentInChildren<TextMesh>().text = "P" + (index + 1) + " (XBOX input)";
+            objList[index].GetComponent<InventoryHandler>().InitializeInputMessages();
         }
         else if (Input.GetButton("J3XBOX_DownButton_" + Settings.OS) && !Settings.inputAssigned[3])
         {
@@ -108,6 +117,7 @@ public class InputSelection : MonoBehaviour
             playerLists[index].myControllerInput = new MyControllerInput(InputType.XBOX_CONTROLLER, 3);
             Settings.inputAssigned[3] = true;
             transform.GetChild(index).GetComponentInChildren<TextMesh>().text = "P" + (index + 1) + " (XBOX input)";
+            objList[index].GetComponent<InventoryHandler>().InitializeInputMessages();
         }
         else if (Input.GetButton("J4XBOX_DownButton_" + Settings.OS) && !Settings.inputAssigned[3])
         {
@@ -115,6 +125,7 @@ public class InputSelection : MonoBehaviour
             playerLists[index].myControllerInput = new MyControllerInput(InputType.XBOX_CONTROLLER, 4);
             Settings.inputAssigned[4] = true;
             transform.GetChild(index).GetComponentInChildren<TextMesh>().text = "P" + (index + 1) + " (XBOX input)";
+            objList[index].GetComponent<InventoryHandler>().InitializeInputMessages();
         }
 
     }

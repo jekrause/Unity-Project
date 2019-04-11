@@ -6,7 +6,6 @@ public class InventoryHandler : MonoBehaviour
 {
     private int playerNumber;
     private Player player;
-    private MyControllerInput myControllerInput;
     private bool actionInProgress; // to elminate multiple calls on a long button press
     private bool InventoryHUDFocused;
     private Item itemOnGround;
@@ -47,7 +46,6 @@ public class InventoryHandler : MonoBehaviour
         // get player info
         player = GetComponent<Player>();
         playerNumber = player.playerNumber;
-        myControllerInput = player.myControllerInput;
         InitializeInputMessages();
         MainInventory = player.MainInventory;
         WeaponInventory = player.WeaponInventory;
@@ -65,9 +63,9 @@ public class InventoryHandler : MonoBehaviour
         ReadControllerInput();
     }
 
-    private void InitializeInputMessages()
+    public void InitializeInputMessages()
     {
-        if (myControllerInput != null && myControllerInput.inputType != InputType.NONE)
+        if (player.myControllerInput != null && player.myControllerInput.inputType != InputType.NONE)
         {
             //Initialize action panel messages
             DefaultActionMessage = "Item: " + ItemTypeMessage + "\nPress '" + LeftPlatformButton + "' : Use\nPress '" + LeftPlatformButton + "' : Drop";
@@ -76,10 +74,7 @@ public class InventoryHandler : MonoBehaviour
                                     "\nHold '" + LeftPlatformButton + "' : Salvage For Ammo" +
                                     "\nPress '" + RightPlatformButton + "' : Drop";
 
-            myControllerInput = player.myControllerInput;
-
-            Debug.Log("Input connected");
-            InputType input = myControllerInput.inputType;
+            InputType input = player.myControllerInput.inputType;
             LeftPlatformButton = input == InputType.KEYBOARD ? "E" : input == InputType.PS4_CONTROLLER ? "X" : "A";
             RightPlatformButton = input == InputType.KEYBOARD ? "Esc" : input == InputType.PS4_CONTROLLER ? "O" : "B";
             DefaultActionMessage = "Item: " + ItemTypeMessage;
@@ -99,10 +94,10 @@ public class InventoryHandler : MonoBehaviour
 
     private void ReadControllerInput()
     {
-        if (myControllerInput != null && myControllerInput.inputType != InputType.NONE)
+        if (player.myControllerInput != null && player.myControllerInput.inputType != InputType.NONE)
         {
 
-            if (Input.GetButtonDown(myControllerInput.UpButton))
+            if (Input.GetButtonDown(player.myControllerInput.UpButton))
             {
                 InventoryHUDFocused = !InventoryHUDFocused; // toggle inventory selection
                 InventoryHUD.InventoryToggled(InventoryHUDFocused);
@@ -122,33 +117,33 @@ public class InventoryHandler : MonoBehaviour
             {
                 if (Settings.OS == "Windows")
                 {
-                    if (Input.GetAxis(myControllerInput.DPadX_Windows) > 0) // D-Pad right, iterate throught item inventory
+                    if (Input.GetAxis(player.myControllerInput.DPadX_Windows) > 0) // D-Pad right, iterate throught item inventory
                     {
                         IterateRightList();
                     }
-                    else if (Input.GetAxis(myControllerInput.DPadX_Windows) < 0) // D-Pad left, iterate throught item inventory
+                    else if (Input.GetAxis(player.myControllerInput.DPadX_Windows) < 0) // D-Pad left, iterate throught item inventory
                     {
                         IterateLeftList();
                     }
                 }
                 else
                 {
-                    if (Input.GetButtonDown(myControllerInput.DPadRight_Mac))
+                    if (Input.GetButtonDown(player.myControllerInput.DPadRight_Mac))
                     {
                         IterateRightList();
                     }
-                    else if (Input.GetButtonDown(myControllerInput.DPadLeft_Mac))
+                    else if (Input.GetButtonDown(player.myControllerInput.DPadLeft_Mac))
                     {
                         IterateLeftList();
                     }
 
                 }
 
-                if (Input.GetButtonDown(myControllerInput.RightButton)) // item remove
+                if (Input.GetButtonDown(player.myControllerInput.RightButton)) // item remove
                 {
                     RemoveItemFromInv();
                 }
-                else if (Input.GetButton(myControllerInput.DownButton))
+                else if (Input.GetButton(player.myControllerInput.DownButton))
                 {
                     Item itemToSalvage = null;
                     if (IteratingMainInv)
@@ -192,7 +187,7 @@ public class InventoryHandler : MonoBehaviour
                     }
 
                 }
-                else if (Input.GetButtonUp(myControllerInput.DownButton))
+                else if (Input.GetButtonUp(player.myControllerInput.DownButton))
                 {
                     InventoryHUD.RemoveLoadBar();
                     if (timerButtonHeldDown < 0.15f)
@@ -211,7 +206,7 @@ public class InventoryHandler : MonoBehaviour
             }
             else // Inventory HUD is no longer focused
             {
-                if (Input.GetButton(myControllerInput.DownButton)) // add item
+                if (Input.GetButton(player.myControllerInput.DownButton)) // add item
                 {
                     if (timerButtonHeldDown > BUTTON_HELD_DOWN_TIME)
                     {
@@ -226,7 +221,7 @@ public class InventoryHandler : MonoBehaviour
 
                     }
                 }
-                else if (Input.GetButtonUp(myControllerInput.DownButton))
+                else if (Input.GetButtonUp(player.myControllerInput.DownButton))
                 {
                     InventoryHUD.RemoveLoadBar();
                     if (timerButtonHeldDown < BUTTON_HELD_DOWN_TIME)
@@ -236,17 +231,17 @@ public class InventoryHandler : MonoBehaviour
                     }
                     timerButtonHeldDown = 0;
                 }
-                else if (Input.GetButtonDown(myControllerInput.RBumper)) // equip weapon equipment from the next right slot
+                else if (Input.GetButtonDown(player.myControllerInput.RBumper)) // equip weapon equipment from the next right slot
                 {
                     EquipNextWeapon();
                 }
-                else if (Input.GetButtonDown(myControllerInput.LBumper)) // equip weapon equipment from the next left slot
+                else if (Input.GetButtonDown(player.myControllerInput.LBumper)) // equip weapon equipment from the next left slot
                 {
                     EquipPrevWeapon();
                 }
             }
 
-            if (Input.GetAxis(myControllerInput.DPadX_Windows) == 0 && Input.GetAxis(myControllerInput.DPadY_Windows) == 0)
+            if (Input.GetAxis(player.myControllerInput.DPadX_Windows) == 0 && Input.GetAxis(player.myControllerInput.DPadY_Windows) == 0)
             {
                 actionInProgress = false; // user let go of button, so action is no longer in progress
             }
