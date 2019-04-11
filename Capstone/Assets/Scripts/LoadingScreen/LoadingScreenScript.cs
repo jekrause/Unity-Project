@@ -27,7 +27,8 @@ public class LoadingScreenScript : MonoBehaviour
         }
         if(timer >= 4.5f)
         {
-            AsyncOperation level = SceneManager.LoadSceneAsync(1);
+            //AsyncOperation level = SceneManager.LoadSceneAsync(1);
+            AsyncOperation level = SceneManager.LoadSceneAsync("Level01");
         }
             
     }
