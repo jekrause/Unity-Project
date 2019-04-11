@@ -21,6 +21,7 @@ public class InventoryHandler : MonoBehaviour
     private bool IteratingMainInv = true;
     private int EquippedWeaponSlot; // index of the current weapon equipped
     private int WeaponSlotIndex; // Used for iterating through weapon inventory when inventory is toggled only!
+    private int MainSlotIndex;
 
 
     // Inventory HUD messages
@@ -152,7 +153,7 @@ public class InventoryHandler : MonoBehaviour
                     Item itemToSalvage = null;
                     if (IteratingMainInv)
                     {
-                        itemToSalvage = MainInventory.GetCurrentItem();
+                        itemToSalvage = MainInventory.GetItemInSlot(MainSlotIndex);
                     }
                     else
                     {
@@ -167,7 +168,7 @@ public class InventoryHandler : MonoBehaviour
                             {
                                 if(SalvageWeaponForAmmo((RangedWeapon)itemToSalvage) == true)
                                 {
-                                    MainInventory.RemoveAllItemInSlot(MainInventory.GetCurrentSlotNum());
+                                    MainInventory.RemoveAllItemInSlot(MainSlotIndex);
                                     UpdateAndDisplayActionPanel();
                                     timerButtonHeldDown = 0;
                                 }
@@ -176,7 +177,7 @@ public class InventoryHandler : MonoBehaviour
                             {
                                 if(SalvageWeaponForAmmo((RangedWeapon)itemToSalvage) == true)
                                 {
-                                    WeaponInventory.RemoveAllItemInSlot(WeaponInventory.GetCurrentSlotNum());
+                                    WeaponInventory.RemoveAllItemInSlot(WeaponSlotIndex);
                                     UpdateAndDisplayActionPanel();
                                     timerButtonHeldDown = 0;
                                 }
@@ -306,7 +307,7 @@ public class InventoryHandler : MonoBehaviour
         string actionMessageToShow = "";
         if (IteratingMainInv)
         {
-            item = MainInventory.GetCurrentItem();
+            item = MainInventory.GetItemInSlot(MainSlotIndex);
         }
         else
         {
@@ -418,8 +419,7 @@ public class InventoryHandler : MonoBehaviour
     /// </summary>
     private void UseItemFromMainInv()
     {
-        Item itemToUse = MainInventory.GetCurrentItem();
-        int mainInvSlot = MainInventory.GetCurrentSlotNum();
+        Item itemToUse = MainInventory.GetItemInSlot(MainSlotIndex);
         if (itemToUse != null)
         {
             if (itemToUse.GetItemType() == Item.Type.WEAPON)
@@ -430,13 +430,12 @@ public class InventoryHandler : MonoBehaviour
                     int weaponSlot = WeaponInventory.AddItem(itemToUse);
                     if (weaponSlot != -1)
                     {
-                        MainInventory.RemoveAllItemInSlot(mainInvSlot);
-                        InventoryHUD.OnWeaponStow(itemToUse, weaponSlot, mainInvSlot);
+                        MainInventory.RemoveAllItemInSlot(MainSlotIndex);
+                        InventoryHUD.OnWeaponStow(itemToUse, weaponSlot, MainSlotIndex);
                         if (player.CurrentWeapon == null)
                         {
                             UpdatePlayerCurrentWeapon((Weapon)itemToUse);
                         }
-                        Debug.Log("InventoryHandler: Weapon stowed Successfully");
                     }
                     else
                     {
@@ -451,11 +450,11 @@ public class InventoryHandler : MonoBehaviour
             }
             else
             {
-                if (MainInventory.UseItem(GetComponent<Player>(), mainInvSlot))
+                if (MainInventory.UseItem(GetComponent<Player>(), MainSlotIndex))
                 {
-                    InventoryHUD.OnItemRemove(MainInventory.GetQuantityInSlot(mainInvSlot));
+                    InventoryHUD.OnItemRemove(MainInventory.GetQuantityInSlot(MainSlotIndex));
                     ObjectsPickedUp.Remove(itemToUse.gameObject);
-                    if (MainInventory.GetItemInSlot(mainInvSlot) == null)
+                    if (MainInventory.GetItemInSlot(MainSlotIndex) == null)
                         Destroy(itemToUse.gameObject);
                 }
 
@@ -573,8 +572,7 @@ public class InventoryHandler : MonoBehaviour
             actionInProgress = true;
             if (IteratingMainInv)
             {
-                int slotNum = MainInventory.GetCurrentSlotNum();
-                Item itemToRemove = MainInventory.GetCurrentItem();
+                Item itemToRemove = MainInventory.GetItemInSlot(MainSlotIndex);
                 if (itemToRemove != null)
                 {
                     int itemIndex = 0;
@@ -584,12 +582,12 @@ public class InventoryHandler : MonoBehaviour
                         {
                             ObjectsPickedUp[i].transform.position = transform.position;
                             ObjectsPickedUp[i].SetActive(true);
-                            MainInventory.RemoveItemInSlot(slotNum);
+                            MainInventory.RemoveItemInSlot(MainSlotIndex);
                             itemIndex = i;
                             break;
                         }
                     }
-                    InventoryHUD.OnItemRemove(MainInventory.GetQuantityInSlot(slotNum));
+                    InventoryHUD.OnItemRemove(MainInventory.GetQuantityInSlot(MainSlotIndex));
                     ObjectsPickedUp.RemoveAt(itemIndex);
                 }
             }
@@ -608,7 +606,7 @@ public class InventoryHandler : MonoBehaviour
                     int itemIndex = 0;
                     for (int i = 0; i < ObjectsPickedUp.Count; i++)
                     {
-                        if (ObjectsPickedUp[i].GetComponent<Item>().name.Equals(weaponToRemove.name))
+                        if (ObjectsPickedUp[i].GetComponent<Weapon>() == weaponToRemove)
                         {
                             ObjectsPickedUp[i].transform.position = transform.position;
                             ObjectsPickedUp[i].SetActive(true);
@@ -641,7 +639,7 @@ public class InventoryHandler : MonoBehaviour
             {
                 if (IteratingMainInv)
                 {
-                    MainInventory.GetNextItem();
+                    MainSlotIndex = ++MainSlotIndex >= MainInventory.MAX_SLOT_SIZE ? 0 : MainSlotIndex;
                 }
                 else
                 {
@@ -652,7 +650,7 @@ public class InventoryHandler : MonoBehaviour
             {
                 if (IteratingMainInv)
                 {
-                    MainInventory.GetFirstItem();
+                    MainSlotIndex = 0;
                 }
                 else
                 {
@@ -681,7 +679,7 @@ public class InventoryHandler : MonoBehaviour
             {
                 if (IteratingMainInv)
                 {
-                    MainInventory.GetPrevItem();
+                    MainSlotIndex = --MainSlotIndex < 0 ? MainInventory.MAX_SLOT_SIZE - 1 : MainSlotIndex;
                 }
                 else
                 {
@@ -692,7 +690,7 @@ public class InventoryHandler : MonoBehaviour
             {
                 if (IteratingMainInv)
                 {
-                    MainInventory.GetLastItem();
+                    MainSlotIndex = MainInventory.MAX_SLOT_SIZE - 1;
                 }
                 else
                 {
