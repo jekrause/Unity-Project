@@ -27,6 +27,7 @@ public class Enemy : MonoBehaviour
     protected float fAttackRadius = 2f;
     protected bool canShoot = true;
     protected MovementTypeEnum aiMvmt;
+    protected Animator feetAnimation;
 
     protected float fMoveSpeed = 3f;
     protected float fRotationSpeed = 20f;
@@ -84,6 +85,7 @@ public class Enemy : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         HealthBarHandler = GetComponent<HealthBarHandler>();
         HealthBarHandler.SetMaxHP(fHP);
+        feetAnimation = transform.GetChild(2).GetComponent<Animator>();
 
     }
 
@@ -162,16 +164,17 @@ public class Enemy : MonoBehaviour
             }
             else
             {
+                feetAnimation.SetBool("Moving", false);
                 fWaitTime -= Time.deltaTime;
             }
         }
         else
         {
             transform.position = Vector2.MoveTowards(transform.position, moveSpots[iRandomSpot], fMoveSpeed * Time.deltaTime);
-
             Vector2 dir = moveSpots[iRandomSpot] - (Vector2)transform.position;
             var angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
             transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+            feetAnimation.SetBool("Moving", true);
         }
     }
 
@@ -180,6 +183,7 @@ public class Enemy : MonoBehaviour
         //handle blocked path
         if (blockedPaths[(int)RayCastDir.Forward] && raycasts[(int)RayCastDir.Forward].distance < 5)
         {
+            feetAnimation.SetBool("Moving", false);
             Vector2 dir = playerTarget.transform.position - shootPosition.position;
             var angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
             //decide to go left or right
@@ -215,6 +219,7 @@ public class Enemy : MonoBehaviour
             Debug.Log("path blocked");
            
             transform.position += transform.right * Time.deltaTime * fMoveSpeed;
+            feetAnimation.SetBool("Moving", true);
             canShoot = false;
         }
         else
@@ -228,7 +233,7 @@ public class Enemy : MonoBehaviour
 
 
             transform.position = Vector2.MoveTowards(transform.position, playerTarget.transform.position, fMoveSpeed * Time.deltaTime);
-
+            feetAnimation.SetBool("Moving", true);
         }
         
     }

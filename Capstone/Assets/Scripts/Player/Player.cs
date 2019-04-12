@@ -21,11 +21,11 @@ public abstract class Player : MonoBehaviour
     protected float fAttackRadius = 2f;
     protected float fProjSpeed = 20f;
     [SerializeField] public int playerNumber;
-    private Animator anim;
 
     // player's movement
     private Rigidbody2D rb;
     protected Vector2 velocity;
+    private Animator feetAnimation;
 
     //attacking
     public Item basicWeapon;
@@ -53,7 +53,7 @@ public abstract class Player : MonoBehaviour
     }
     protected void Start()
     {
-        anim = GetComponent<Animator>();
+        feetAnimation = transform.GetChild(3).GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
     }
 
@@ -91,7 +91,15 @@ public abstract class Player : MonoBehaviour
         {
             float moveHorizontal = Input.GetAxis(myControllerInput.LeftHorizontalAxis);
             float moveVertical = Input.GetAxis(myControllerInput.LeftVerticalAxis);
-            velocity = new Vector2(moveHorizontal, moveVertical)* fMoveRate; 
+            velocity = new Vector2(moveHorizontal, moveVertical)* fMoveRate;
+            if (moveHorizontal == 0 && moveVertical == 0)
+            {
+                feetAnimation.SetBool("Moving", false);
+            }
+            else
+            {
+                feetAnimation.SetBool("Moving", true);
+            }
         }
         catch
         {
