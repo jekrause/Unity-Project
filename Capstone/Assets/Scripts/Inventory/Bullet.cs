@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
+    private const string TAG_OBSTACLE = "Obstacle";
     protected float damage = 10;
     protected float distance = 100;
     protected string targetTag = "Enemy";
@@ -35,6 +36,10 @@ public class Bullet : MonoBehaviour
             col.gameObject.SendMessage("Damaged", damage);
             Destroy(gameObject);
             AudioManager.Play("BulletHit");
+        }
+        else if(col.gameObject.tag == TAG_OBSTACLE)
+        {
+            Destroy(gameObject);
         }
     }
 
