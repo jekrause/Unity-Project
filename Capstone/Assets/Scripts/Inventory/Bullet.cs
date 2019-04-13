@@ -5,6 +5,7 @@ using UnityEngine;
 public class Bullet : MonoBehaviour
 {
     protected float damage = 10;
+    protected float distance = 100;
     protected string targetTag = "Enemy";
     protected Vector2 spawnPosition;
 
@@ -18,7 +19,7 @@ public class Bullet : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Vector2.Distance(spawnPosition, transform.position) > 100)
+        if(Vector2.Distance(spawnPosition, transform.position) > distance)
         {
             Destroy(gameObject);
         }
@@ -37,9 +38,14 @@ public class Bullet : MonoBehaviour
         }
     }
 
-    public void SetDamage(float dmg)
+    public void SetDamage(float pDmg)
     {
-        damage = dmg;
+        damage = pDmg;
+    }
+
+    public void SetDistance(float pDist)
+    {
+        distance = pDist;
     }
 
     public void SetTarget(string tag)

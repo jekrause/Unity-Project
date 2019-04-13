@@ -4,17 +4,17 @@ public class Shotgun : RangedWeapon
 {
     private readonly Vector3[] projAngles = new Vector3[]
     {
-        new Vector3(0,-5,0),
-        new Vector3(0,-2.5f,0),
+        new Vector3(0,0,-5),
+        new Vector3(0,0,-2.5f),
         new Vector3(0,0,0),
-        new Vector3(0,2.5f,0),
-        new Vector3(0,5,0),
+        new Vector3(0,0,2.5f),
+        new Vector3(0,0,5),
     };
     
     public Shotgun() {
         weight = 3;
         projDamage = 10f;
-        projSpeed = 10;
+        projSpeed = 350;
         AmmoClip = new AmmoClip(25, 5);
         ReloadTime = 4;
     }
@@ -25,8 +25,6 @@ public class Shotgun : RangedWeapon
         {
             Bullet[] bulletArr = new Bullet[5];
 
-     
-
             for (int i = 0; i < bulletArr.Length; i++)
             {
                 bulletArr[i] = Instantiate(bullet, player.shootPosition.position, player.shootPosition.rotation * Quaternion.Euler(projAngles[i]));
@@ -34,6 +32,7 @@ public class Shotgun : RangedWeapon
             foreach (Bullet b in bulletArr)
             {
                 b.SetDamage(projDamage);
+                b.SetDistance(20f);
                 b.GetComponent<Rigidbody2D>().AddForce(b.transform.right * projSpeed);
             }
             AmmoClip.Decrement();
