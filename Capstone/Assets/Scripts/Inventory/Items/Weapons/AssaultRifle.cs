@@ -9,6 +9,7 @@ public class AssaultRifle : RangedWeapon
         weight = 2;
         projDamage = 10f;
         projSpeed = 650f;
+        attackRate = 0.5f;
     }
 
     

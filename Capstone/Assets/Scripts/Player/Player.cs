@@ -10,9 +10,6 @@ using System.Collections.Generic;
 // https://unity3d.com/learn/tutorials/projects/2d-roguelike-tutorial/writing-player-script
 public abstract class Player : MonoBehaviour
 {
-    // Player stats
-    protected const int iBaseAttackRate = 1;
-
     protected float fAttackTime = 3;  //The higher this number, the more frequent you can shoot
     protected float fHP = 100f;
 
@@ -28,8 +25,8 @@ public abstract class Player : MonoBehaviour
     private Animator feetAnimation;
 
     //attacking
-    public Item basicWeapon;
-    public Item CurrentWeapon;
+    public Weapon basicWeapon;
+    public Weapon CurrentWeapon;
     public Transform shootPosition;
     public Ammunition Ammunition = new Ammunition(500);
 
@@ -195,13 +192,14 @@ public abstract class Player : MonoBehaviour
     {
         try
         {
-            if (Input.GetAxis(myControllerInput.RTrigger) == 1 && Time.time > fAttackTime)
+            if (CurrentWeapon!= null &&
+                Input.GetAxis(myControllerInput.RTrigger) == 1 && Time.time > fAttackTime)
             {
                 if (CurrentWeapon != null)
                 {
                     print("weapon inventory size = " + WeaponInventory.GetNumOfSlotUsed());
                     print("Trying to fire " + CurrentWeapon.name);
-                    fAttackTime = Time.time + 1 / iBaseAttackRate;
+                    fAttackTime = Time.time + CurrentWeapon.GetAttackRate();
                     CurrentWeapon.UseItem(this);
                 }
 

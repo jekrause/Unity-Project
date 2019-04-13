@@ -205,7 +205,7 @@ MonoBehaviour:
   - {x: 0, y: 0}
   - {x: 0, y: 0}
   shootPosition: {fileID: 2086454351693460974}
-  bullet: {fileID: 2338026660133703715, guid: 92cfefeb70e1bc940babcdb62c9c91b6, type: 3}
+  bullet: {fileID: 4644192146566282934, guid: 30761f5d69e28eb46b5491574b1bcf13, type: 3}
 --- !u!114 &2310485460840450568
 MonoBehaviour:
   m_ObjectHideFlags: 0

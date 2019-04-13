@@ -33,7 +33,7 @@ public class Enemy : MonoBehaviour
     protected float fRotationSpeed = 20f;
     protected float fWaitTime;
     protected float fStartWaitTime = 3f;
-    protected float fVisionDistance = 150f;
+    protected float fVisionDistance = 50f;
     protected Vector3 lastPosition = new Vector3(0,0,0); //used to see if we are blocked and the front raycast can't detect it.
 
 
