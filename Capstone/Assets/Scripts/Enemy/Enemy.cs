@@ -6,12 +6,13 @@ using UnityEngine;
 public class Enemy : MonoBehaviour
 {
 
+    private const float LOW_HP_THRESHOLD = 20f;
+
     /*
      * Patrol - move inbetween a few set spots
      * Chase  - follow the palyer as aggressively as possible without worrying about taking damage
      * Safe   - Attack, but try to keep your distance.
      */
-
 
     public enum MovementTypeEnum { Patrol, Chase, Safe };
     public enum RayCastDir { Left90 = 0, Left45 = 1, Left20 = 2, Forward = 3, Right20 = 4, Right45 = 5, Right90 = 6 } //raycast angles from player's transform position
@@ -30,7 +31,7 @@ public class Enemy : MonoBehaviour
     protected Animator feetAnimation;
 
     protected float fMoveSpeed = 3f;
-    protected float fRotationSpeed = 20f;
+    protected float fRotationSpeed = 150f;
     protected float fWaitTime;
     protected float fStartWaitTime = 3f;
     protected float fVisionDistance = 50f;
@@ -73,7 +74,7 @@ public class Enemy : MonoBehaviour
 
     void Start()
     {
-        layerMask = (1 << 4) | (1 << 8) | (1<<9);
+        layerMask = (1 << 4) | (1 << 8) | (1<<9) | (1<<12);
         //layersToAvoid.layerMask = 4608;//
         layersToAvoid.layerMask = LayerMask.GetMask("Obstacles", "Player"); // It may be helpful to put Enemies in seperate layer or get rid of Player layer.
         playersToAvoid = LayerMask.GetMask("Player");
@@ -115,7 +116,7 @@ public class Enemy : MonoBehaviour
                 break;
         }
 
-        if (fHP < 10 && SafteyRadius() > -1)
+        if (fHP < LOW_HP_THRESHOLD && SafteyRadius() > -1)
         {
             aiMvmt = MovementTypeEnum.Safe;
         }
@@ -135,7 +136,7 @@ public class Enemy : MonoBehaviour
             //face player
             Vector2 dir = playerTarget.transform.position - shootPosition.position;
             var angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-            transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.AngleAxis(angle, Vector3.forward), fRotationSpeed * Time.deltaTime);
 
             //shoot straight
             var x = Instantiate(bullet, this.shootPosition.position, this.shootPosition.rotation);
@@ -187,32 +188,33 @@ public class Enemy : MonoBehaviour
             Vector2 dir = playerTarget.transform.position - shootPosition.position;
             var angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
             //decide to go left or right
-            if(Quaternion.Angle(Quaternion.AngleAxis(transform.eulerAngles.z + 20, Vector3.forward), Quaternion.AngleAxis(angle, Vector3.forward)) > Quaternion.Angle(Quaternion.AngleAxis(transform.eulerAngles.z - 20, Vector3.forward), Quaternion.AngleAxis(angle, Vector3.forward)))
+            if(Quaternion.Angle(Quaternion.AngleAxis(transform.eulerAngles.z + 1, Vector3.forward), Quaternion.AngleAxis(angle, Vector3.forward)) > Quaternion.Angle(Quaternion.AngleAxis(transform.eulerAngles.z - 1, Vector3.forward), Quaternion.AngleAxis(angle, Vector3.forward)))
             {
                 Debug.Log("Go Right");
                 //listed in order of move priority
                 if (!blockedPaths[(int)RayCastDir.Right20] || !blockedPaths[(int)RayCastDir.Right45] || !blockedPaths[(int)RayCastDir.Right90])
                 {
-                    Debug.Log("turning right 1");
-                    transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z + 20), fRotationSpeed * Time.deltaTime);
+                    Debug.Log("turning right");
+                    transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z - 20), fRotationSpeed * Time.deltaTime);
                 }
                 else
                 {
                     Debug.Log("Right is blocked, going left");
-                    transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z - 20), fRotationSpeed * Time.deltaTime);
+                    transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z + 20), fRotationSpeed * Time.deltaTime);
                 }
             }
             else
             {
+                Debug.Log("Go Left");
                 if(!blockedPaths[(int)RayCastDir.Left20] || !blockedPaths[(int)RayCastDir.Left45] || !blockedPaths[(int)RayCastDir.Left90])
                 {
-                    
-                    transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z - 20), fRotationSpeed * Time.deltaTime);
+                    Debug.Log("turning left");
+                    transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z + 20), fRotationSpeed * Time.deltaTime);
                 }
                 else
                 {
                     Debug.Log("left is blocked, going right");
-                    transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z + 20), fRotationSpeed * Time.deltaTime);
+                    transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z - 20), fRotationSpeed * Time.deltaTime);
                 }
 
             }
@@ -228,9 +230,8 @@ public class Enemy : MonoBehaviour
             //face player
             Vector2 dir = playerTarget.transform.position - shootPosition.position;
             var angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-            transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
-
-
+            //transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.AngleAxis(angle, Vector3.forward), fRotationSpeed * Time.deltaTime);
 
             transform.position = Vector2.MoveTowards(transform.position, playerTarget.transform.position, fMoveSpeed * Time.deltaTime);
             feetAnimation.SetBool("Moving", true);
