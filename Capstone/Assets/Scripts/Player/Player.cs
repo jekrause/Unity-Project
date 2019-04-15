@@ -86,8 +86,8 @@ public abstract class Player : MonoBehaviour
     {
         try
         {
-            float moveHorizontal = Input.GetAxis(myControllerInput.LeftHorizontalAxis);
-            float moveVertical = Input.GetAxis(myControllerInput.LeftVerticalAxis);
+            float moveHorizontal = Input.GetAxisRaw(myControllerInput.LeftHorizontalAxis);
+            float moveVertical = Input.GetAxisRaw(myControllerInput.LeftVerticalAxis);
             velocity = new Vector2(moveHorizontal, moveVertical)* fMoveRate;
             if (moveHorizontal == 0 && moveVertical == 0)
             {
