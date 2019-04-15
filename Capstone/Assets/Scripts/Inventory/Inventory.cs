@@ -86,6 +86,14 @@ public class Inventory
                 {
                     Slots[i].IncrementQuantity();
                     Settings.PrintDebugMsg("Inventory AddItem(): Slot no: " + (i+1) + ", Item stack Incremented");
+                    if (item is RangedWeapon)
+                    {
+                        AudioManager.Play(((RangedWeapon)item).ReloadFinishSound);
+                    }
+                    else
+                    {
+                        AudioManager.Play("PickUpItem");
+                    }
                     return i;
                 }
                 
@@ -98,6 +106,15 @@ public class Inventory
             Slots[freeSlotIndex] = new Slot(item, 1);
             IncrementSlotUsed();
             ret = freeSlotIndex;
+            if(item is RangedWeapon)
+            {
+                AudioManager.Play(((RangedWeapon)item).ReloadFinishSound);
+            }
+            else
+            {
+                AudioManager.Play("PickUpItem");
+            }
+
         }
        
         return ret;

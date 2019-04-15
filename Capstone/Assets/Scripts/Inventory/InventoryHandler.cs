@@ -478,6 +478,8 @@ public class InventoryHandler : MonoBehaviour
             {
                 InventoryHUD.OnWeaponEquip(weaponSlot);
                 UpdatePlayerCurrentWeapon(weaponToUse);
+                if(weaponToUse is RangedWeapon)
+                    AudioManager.Play(((RangedWeapon)weaponToUse).ReloadFinishSound);
             }
 
             if(InventoryHUDFocused)
@@ -506,6 +508,7 @@ public class InventoryHandler : MonoBehaviour
                 }
                 
                 EventAggregator.GetInstance().Publish<OnPlayerAmmoChangedEvent>(new OnPlayerAmmoChangedEvent(player.playerNumber, player.Ammunition));
+                AudioManager.Play("SalvagedWeapon");
                 ItemFocused = false;
                 InventoryHUD.RemoveActionPanel();
                 Debug.Log("InventoryHandler: " + itemToSalvage.GetType() + " weapon salvaged for ammo.");
@@ -577,6 +580,7 @@ public class InventoryHandler : MonoBehaviour
                         {
                             ObjectsPickedUp[i].transform.position = transform.position;
                             ObjectsPickedUp[i].SetActive(true);
+                            AudioManager.Play("ItemDropped");
                             MainInventory.RemoveItemInSlot(MainSlotIndex);
                             itemIndex = i;
                             break;
@@ -605,6 +609,7 @@ public class InventoryHandler : MonoBehaviour
                         {
                             ObjectsPickedUp[i].transform.position = transform.position;
                             ObjectsPickedUp[i].SetActive(true);
+                            AudioManager.Play("ItemDropped");
                             WeaponInventory.RemoveAllItemInSlot(WeaponSlotIndex);
                             itemIndex = i;
                             break;

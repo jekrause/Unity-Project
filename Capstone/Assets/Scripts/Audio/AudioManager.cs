@@ -57,6 +57,27 @@ public class AudioManager : MonoBehaviour
         s.source.Play();
     }
 
+    public static void Stop(string name)
+    {
+        Sound s = Array.Find(soundsGlob, sound => sound.name == name);
+
+        if (s == null)
+        {
+            Debug.LogWarning("Sound: " + name + " not found!");
+            return;
+        }
+
+        try
+        {
+            s.source.Stop();
+        }
+        catch
+        {
+            Debug.Log("Error on stopping sound clip");
+        }
+        
+    }
+
     public static void PlayRandom(string[] names)
     {
         int randNum = UnityEngine.Random.Range(0, names.Length);

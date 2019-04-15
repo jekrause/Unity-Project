@@ -17,19 +17,22 @@ public class LoadingScreenScript : MonoBehaviour
 
     IEnumerator LoadNextSceneAsync()
     {
-       // simply using this since it loads the next scene too quick
-        while(timer < 4.5f)
+        yield return null;
+
+        AsyncOperation level = SceneManager.LoadSceneAsync("Level01");
+        level.allowSceneActivation = false;
+        while (!level.isDone)
         {
-            timer += 0.25f;
-            LoadingBar.fillAmount = (timer / 4.5f);
-            PercentageText.text = ((int)((timer / 4.5) * 100)) + "%";
-            yield return new WaitForSeconds(0.25f);
+            LoadingBar.fillAmount = (level.progress / 1);
+            PercentageText.text = (level.progress * 100) + "%";
+
+            if (level.progress >= 0.9f)
+                level.allowSceneActivation = true;
+
+            yield return null;
+
         }
-        if(timer >= 4.5f)
-        {
-            //AsyncOperation level = SceneManager.LoadSceneAsync(1);
-            AsyncOperation level = SceneManager.LoadSceneAsync("Level01");
-        }
-            
+        
+        
     }
 }

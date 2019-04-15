@@ -3,12 +3,15 @@ using System.Collections;
 
 public abstract class RangedWeapon : Weapon
 {
+    public readonly string NO_AMMO_SOUND = "No_Ammo_Sound";
     protected float projDamage;
     protected float projSpeed;
     public float ReloadTime { get; protected set; }
     public bool IsReloading { get; protected set; }
     protected bool ReloadCancel;
     public AmmoClip AmmoClip { get; protected set; }
+    public string ReloadSound { get; protected set; }
+    public string ReloadFinishSound { get; protected set; }
 
 
     public virtual void Fire(Player player)
@@ -32,6 +35,7 @@ public abstract class RangedWeapon : Weapon
             }
             else
             {
+                AudioManager.Play(NO_AMMO_SOUND);
                 Debug.Log("Not enough ammo in clip to fire, need to reload " + this.name + "\nAmmoUsePerBullet: " + AmmoClip.AMMO_USE_PER_BULLET + ", but in clip: " + AmmoClip.CurrentAmmo );
             }
             
@@ -46,6 +50,7 @@ public abstract class RangedWeapon : Weapon
         {
             IsReloading = true;
             Debug.Log(this.name + ": Reloading...");
+            AudioManager.Play(ReloadSound);
             EventAggregator.GetInstance().Publish<OnWeaponReloadEvent>(new OnWeaponReloadEvent(playerNumber, this));
             for (float timer = ReloadTime; timer > 0; timer -= 0.25f)
             {
@@ -56,10 +61,11 @@ public abstract class RangedWeapon : Weapon
                 }
                 yield return new WaitForSeconds(0.25f);
             }
-
+            AudioManager.Stop(ReloadSound);
             AmmoClip.LoadAmmunition(ammunition);
             EventAggregator.GetInstance().Publish(new OnWeaponAmmoChangedEvent(playerNumber, AmmoClip.CurrentAmmo));
             EventAggregator.GetInstance().Publish(new OnPlayerAmmoChangedEvent(playerNumber, ammunition));
+            AudioManager.Play(ReloadFinishSound);
             IsReloading = false;
         }
         
@@ -70,6 +76,7 @@ public abstract class RangedWeapon : Weapon
     {
         if (IsReloading && ReloadCancel == false)
         {
+            AudioManager.Stop(ReloadSound);
             EventAggregator.GetInstance().Publish<OnWeaponReloadCancelEvent>(new OnWeaponReloadCancelEvent(playerNumber, true));
             ReloadCancel = true;
             Debug.Log(this.name + ": Reload interrupted.");

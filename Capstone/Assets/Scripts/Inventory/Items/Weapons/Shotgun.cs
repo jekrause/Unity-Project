@@ -17,6 +17,8 @@ public class Shotgun : RangedWeapon
         projSpeed = 350;
         AmmoClip = new AmmoClip(25, 5);
         ReloadTime = 4;
+        ReloadSound = "Shotgun_Reload";
+        ReloadFinishSound = "Shotgun_Reload_Finished";
     }
 
     public override void Fire(Player player)
@@ -36,6 +38,7 @@ public class Shotgun : RangedWeapon
                 b.GetComponent<Rigidbody2D>().AddForce(b.transform.right * projSpeed);
             }
             AmmoClip.Decrement();
+            EventAggregator.GetInstance().Publish<OnWeaponAmmoChangedEvent>(new OnWeaponAmmoChangedEvent(player.playerNumber, AmmoClip.CurrentAmmo));
         }
         else
         {
@@ -46,6 +49,7 @@ public class Shotgun : RangedWeapon
             }
             else
             {
+                AudioManager.Play("No_Ammo_Sound");
                 Debug.Log("Not enough ammo in clip to fire, need to reload " + this.name + "\nAmmoUsePerBullet: " + AmmoClip.AMMO_USE_PER_BULLET + ", but in clip: " + AmmoClip.CurrentAmmo);
             }
         }

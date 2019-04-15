@@ -8,6 +8,8 @@ public class HandGun : RangedWeapon
         weight = 0;
         ReloadTime = 2;
         AmmoClip = new AmmoClip(12, 1);
+        ReloadSound = "Universal_Reload";
+        ReloadFinishSound = "Universal_Reload_Finished";
     }
 
 }

@@ -10,6 +10,8 @@ public class AssaultRifle : RangedWeapon
         projDamage = 10f;
         projSpeed = 650f;
         attackRate = 0.5f;
+        ReloadSound = "Universal_Reload";
+        ReloadFinishSound = "Universal_Reload_Finished";
     }
 
     

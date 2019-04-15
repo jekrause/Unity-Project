@@ -10,5 +10,7 @@ public class Sniper : RangedWeapon
         AmmoClip = new AmmoClip(200, 25);
         ReloadTime = 4;
         attackRate = 5;
+        ReloadSound = "Sniper_Reload";
+        ReloadFinishSound = "Sniper_Reload_Finished";
     }
 }

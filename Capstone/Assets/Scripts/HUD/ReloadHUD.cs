@@ -12,7 +12,6 @@ public class ReloadHUD : MonoBehaviour, ISubscriber<OnWeaponReloadEvent>, ISubsc
     [SerializeField] private GameObject FillColor;
     [SerializeField] private GameObject ReloadCanvas;
 
-
     private void OnEnable()
     {
         EventAggregator.GetInstance().Register<OnWeaponReloadEvent>(this);
