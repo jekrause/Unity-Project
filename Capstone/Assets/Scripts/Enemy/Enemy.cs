@@ -96,6 +96,7 @@ public class Enemy : MonoBehaviour
         //death 
         if (fHP <= 0)
         {
+            EventAggregator.GetInstance().Publish<OnEnemyKilledEvent>(new OnEnemyKilledEvent());
             Object.Destroy(gameObject);
             Destroy(this);
         }

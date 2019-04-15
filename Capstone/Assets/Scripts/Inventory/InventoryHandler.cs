@@ -84,12 +84,12 @@ public class InventoryHandler : MonoBehaviour
 
     public void AssignInventoryHUD(GameObject HUD)
     {
-        if(HUD.GetComponent<InventoryHUD>() != null)
+        if (HUD.GetComponent<InventoryHUD>() != null)
         {
             InventoryHUD = HUD.GetComponent<InventoryHUD>();
             InventoryHUD.gameObject.SetActive(true);
         }
-        
+
     }
 
     private void ReadControllerInput()
@@ -128,15 +128,29 @@ public class InventoryHandler : MonoBehaviour
                 }
                 else
                 {
-                    if (Input.GetButtonDown(player.myControllerInput.DPadRight_Mac))
+                    if (player.myControllerInput.inputType == InputType.KEYBOARD)
                     {
-                        IterateRightList();
+                        if (Input.GetKeyDown(KeyCode.RightArrow)) // D-Pad right, iterate throught item inventory
+                        {
+                            IterateRightList();
+                        }
+                        else if (Input.GetKeyDown(KeyCode.LeftArrow)) // D-Pad left, iterate throught item inventory
+                        {
+                            IterateLeftList();
+                        }
                     }
-                    else if (Input.GetButtonDown(player.myControllerInput.DPadLeft_Mac))
+                    else
                     {
-                        IterateLeftList();
+                        if (Input.GetButtonDown(player.myControllerInput.DPadRight_Mac))
+                        {
+                            IterateRightList();
+                        }
+                        else if (Input.GetButtonDown(player.myControllerInput.DPadLeft_Mac))
+                        {
+                            IterateLeftList();
+                        }
                     }
-
+                    
                 }
 
                 if (Input.GetButtonDown(player.myControllerInput.RightButton)) // item remove
@@ -157,11 +171,11 @@ public class InventoryHandler : MonoBehaviour
 
                     if (timerButtonHeldDown > BUTTON_HELD_DOWN_TIME)
                     {
-                        if(itemToSalvage != null && itemToSalvage is RangedWeapon)
+                        if (itemToSalvage != null && itemToSalvage is RangedWeapon)
                         {
                             if (IteratingMainInv)
                             {
-                                if(SalvageWeaponForAmmo((RangedWeapon)itemToSalvage) == true)
+                                if (SalvageWeaponForAmmo((RangedWeapon)itemToSalvage) == true)
                                 {
                                     MainInventory.RemoveAllItemInSlot(MainSlotIndex);
                                     UpdateAndDisplayActionPanel();
@@ -170,7 +184,7 @@ public class InventoryHandler : MonoBehaviour
                             }
                             else
                             {
-                                if(SalvageWeaponForAmmo((RangedWeapon)itemToSalvage) == true)
+                                if (SalvageWeaponForAmmo((RangedWeapon)itemToSalvage) == true)
                                 {
                                     WeaponInventory.RemoveAllItemInSlot(WeaponSlotIndex);
                                     UpdateAndDisplayActionPanel();
@@ -478,11 +492,11 @@ public class InventoryHandler : MonoBehaviour
             {
                 InventoryHUD.OnWeaponEquip(weaponSlot);
                 UpdatePlayerCurrentWeapon(weaponToUse);
-                if(weaponToUse is RangedWeapon)
+                if (weaponToUse is RangedWeapon)
                     AudioManager.Play(((RangedWeapon)weaponToUse).ReloadFinishSound);
             }
 
-            if(InventoryHUDFocused)
+            if (InventoryHUDFocused)
                 UpdateAndDisplayActionPanel();
         }
         else // no weapon in slot, so use player orginal image
@@ -506,7 +520,7 @@ public class InventoryHandler : MonoBehaviour
                 {
                     UpdatePlayerCurrentWeapon(null);
                 }
-                
+
                 EventAggregator.GetInstance().Publish<OnPlayerAmmoChangedEvent>(new OnPlayerAmmoChangedEvent(player.playerNumber, player.Ammunition));
                 AudioManager.Play("SalvagedWeapon");
                 ItemFocused = false;
@@ -534,7 +548,7 @@ public class InventoryHandler : MonoBehaviour
     /// </summary>
     private void UpdatePlayerCurrentWeapon(Weapon currentWeapon)
     {
-        if(currentWeapon == null)
+        if (currentWeapon == null)
         {
             player.CurrentWeapon = null;
             GetComponent<SpriteRenderer>().sprite = PlayerOriginalImage;
@@ -698,7 +712,7 @@ public class InventoryHandler : MonoBehaviour
                 }
             }
 
-            if(InventoryHUDFocused)
+            if (InventoryHUDFocused)
                 UpdateAndDisplayActionPanel();
         }
     }

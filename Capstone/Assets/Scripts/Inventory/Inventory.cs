@@ -13,11 +13,11 @@ public class Inventory
         {
             CurrentItem = item ?? throw new System.ArgumentNullException("Attempting to add null item");
 
-            if(quantity > CurrentItem.GetMaxStackSize())
+            if (quantity > CurrentItem.GetMaxStackSize())
                 throw new System.ArgumentException("Quantity given is bigger than item's max stack size");
-          
+
             CurrentQuantity = quantity;
-            
+
         }
 
         public Slot() { Clear(); }
@@ -31,9 +31,10 @@ public class Inventory
             CurrentQuantity = ++CurrentQuantity > CurrentItem.GetMaxStackSize() ? CurrentItem.GetMaxStackSize() : CurrentQuantity;
         }
 
-        public void DecrementQuantity() {
+        public void DecrementQuantity()
+        {
             --CurrentQuantity;
-            if(CurrentQuantity <= 0)
+            if (CurrentQuantity <= 0)
             {
                 Clear();
             }
@@ -52,7 +53,8 @@ public class Inventory
     [SerializeField] private int slotUsed = 0;
     [SerializeField] private readonly Slot[] Slots;
 
-    public Inventory(int maxSlotSize) {
+    public Inventory(int maxSlotSize)
+    {
         if (maxSlotSize <= 0) throw new System.ArgumentException("Inventory Constuctor(): Can't have max size be lower than 1");
         MAX_SLOT_SIZE = maxSlotSize;
         Slots = new Slot[MAX_SLOT_SIZE];
@@ -64,7 +66,8 @@ public class Inventory
         Slots[0] = new Slot(item, 1);
     }
 
-    public void ClearInventory() {
+    public void ClearInventory()
+    {
         for (int i = 0; i < MAX_SLOT_SIZE; i++) Slots[i] = new Slot();
     }
 
@@ -85,7 +88,7 @@ public class Inventory
                 if (!Slots[i].IsFull() && Slots[i].GetItem().GetType() == item.GetType())
                 {
                     Slots[i].IncrementQuantity();
-                    Settings.PrintDebugMsg("Inventory AddItem(): Slot no: " + (i+1) + ", Item stack Incremented");
+                    Settings.PrintDebugMsg("Inventory AddItem(): Slot no: " + (i + 1) + ", Item stack Incremented");
                     if (item is RangedWeapon)
                     {
                         AudioManager.Play(((RangedWeapon)item).ReloadFinishSound);
@@ -96,7 +99,7 @@ public class Inventory
                     }
                     return i;
                 }
-                
+
             }
         }
 
@@ -106,17 +109,21 @@ public class Inventory
             Slots[freeSlotIndex] = new Slot(item, 1);
             IncrementSlotUsed();
             ret = freeSlotIndex;
-            if(item is RangedWeapon)
+            if (item is RangedWeapon)
             {
                 AudioManager.Play(((RangedWeapon)item).ReloadFinishSound);
             }
             else
             {
+                if (item is QuestItem)
+                {
+                    EventAggregator.GetInstance().Publish<OnQuestItemPickUpEvent>(new OnQuestItemPickUpEvent((QuestItem)item));
+                }
                 AudioManager.Play("PickUpItem");
             }
 
         }
-       
+
         return ret;
     }
 
@@ -124,7 +131,7 @@ public class Inventory
     {
         if (slotUsed == 0) return 0;
 
-        for(int i = 0; i < MAX_SLOT_SIZE; i++)
+        for (int i = 0; i < MAX_SLOT_SIZE; i++)
         {
             if (!Slots[i].HasItem()) return i;
         }
@@ -138,12 +145,16 @@ public class Inventory
     /// <returns></returns>
     public bool RemoveItemInSlot(int index)
     {
-        if (index <= -1 || index >= MAX_SLOT_SIZE) throw new System.ArgumentOutOfRangeException("Index out of bound, must be from 0-" + (MAX_SLOT_SIZE - 1) );
+        if (index <= -1 || index >= MAX_SLOT_SIZE) throw new System.ArgumentOutOfRangeException("Index out of bound, must be from 0-" + (MAX_SLOT_SIZE - 1));
 
         bool ret = false;
         if (Slots[index].HasItem())
         {
             ret = true;
+            if (Slots[index].GetItem() is QuestItem)
+            {
+                EventAggregator.GetInstance().Publish<OnQuestItemDroppedEvent>(new OnQuestItemDroppedEvent((QuestItem)Slots[index].GetItem()));
+            }
             Slots[index].DecrementQuantity();
             if (!Slots[index].HasItem()) DecrementSlotUsed();
             Settings.PrintDebugMsg("Inventory RemoveItem(): Slot no: " + (index + 1) + ", 1 removed from stack");
@@ -163,16 +174,21 @@ public class Inventory
 
         bool ret = false;
         if (Slots[index].HasItem())
-        { 
+        {
             ret = true;
+            if (Slots[index].GetItem() is QuestItem)
+            {
+                EventAggregator.GetInstance().Publish<OnQuestItemDroppedEvent>(new OnQuestItemDroppedEvent((QuestItem)Slots[index].GetItem()));
+            }
             Slots[index].Clear();
             DecrementSlotUsed();
-            Settings.PrintDebugMsg("Inventory RemoveItem(): Slot no: " + (index+1) + ", Full Stack removed");               
+            Settings.PrintDebugMsg("Inventory RemoveItem(): Slot no: " + (index + 1) + ", Full Stack removed");
         }
         return ret;
     }
 
-    public Item GetItemInSlot(int slot) {
+    public Item GetItemInSlot(int slot)
+    {
 
         if (slot <= -1 || slot >= MAX_SLOT_SIZE) throw new System.ArgumentOutOfRangeException("Inventory GetItemInSlot(): Index out of bound, must be from 0-" + (MAX_SLOT_SIZE - 1));
 
@@ -181,7 +197,8 @@ public class Inventory
 
     public int GetNumOfSlotUsed() { return slotUsed; }
 
-    public bool UseItem(Player player, int slot) {
+    public bool UseItem(Player player, int slot)
+    {
 
         if (player == null) throw new System.ArgumentNullException("Inventory UseItem(): Player is null");
         if (slot <= -1 || slot >= MAX_SLOT_SIZE) throw new System.ArgumentOutOfRangeException("Inventory UseItem(): Index out of bound, must be from 0-" + (MAX_SLOT_SIZE - 1));
@@ -199,12 +216,13 @@ public class Inventory
         }
         else
         {
-            Settings.PrintDebugMsg("Inventory UseItem(): Use item " + s.GetItem().name +  " unsuccessful");
+            Settings.PrintDebugMsg("Inventory UseItem(): Use item " + s.GetItem().name + " unsuccessful");
         }
         return ret;
     }
 
-    public int GetQuantityInSlot(int slot) {
+    public int GetQuantityInSlot(int slot)
+    {
 
         if (slot <= -1 || slot >= MAX_SLOT_SIZE) throw new System.ArgumentOutOfRangeException("Index out of bound, must be from 0-" + (MAX_SLOT_SIZE - 1));
 

@@ -14,10 +14,9 @@ public class PlayerHealedEvent
     public PlayerHealedEvent(float amount, int playerNum) { this.Health = amount; this.playerNum = playerNum; }
 }
 
-public class OnEnemeyNearDeathEvent
+public class OnEnemyKilledEvent
 {
-    // on this event called, we can have other nearby enemies come and aid the 
-    // enemey that is near death
+    public OnEnemyKilledEvent() { }
 }
 
 public class OnPlayerWeaponChangedEvent
@@ -75,6 +74,18 @@ public class OnPlayerAmmoChangedEvent
         this.playerNum = playerNum;
         this.currentAmmunition = currentAmmunition;
     }
+}
+
+public class OnQuestItemPickUpEvent
+{
+    public QuestItem QuestItem { get; private set; }
+    public OnQuestItemPickUpEvent(QuestItem item) { QuestItem = item; }
+}
+
+public class OnQuestItemDroppedEvent
+{
+    public QuestItem QuestItem { get; private set; }
+    public OnQuestItemDroppedEvent(QuestItem item) { QuestItem = item; }
 }
 
 // other events to add...
