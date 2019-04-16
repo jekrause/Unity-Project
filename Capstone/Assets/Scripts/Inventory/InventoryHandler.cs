@@ -403,6 +403,8 @@ public class InventoryHandler : MonoBehaviour
                         InventoryHUD.OnWeaponStow(itemOnGround, slot, -1);
                         if (player.CurrentWeapon == null)
                         {
+                            InventoryHUD.OnWeaponEquip(slot);
+                            EquippedWeaponSlot = slot;
                             UpdatePlayerCurrentWeapon((Weapon)itemOnGround);
                         }
                     }
@@ -443,6 +445,8 @@ public class InventoryHandler : MonoBehaviour
                         InventoryHUD.OnWeaponStow(itemToUse, weaponSlot, MainSlotIndex);
                         if (player.CurrentWeapon == null)
                         {
+                            InventoryHUD.OnWeaponEquip(weaponSlot);
+                            EquippedWeaponSlot = weaponSlot;
                             UpdatePlayerCurrentWeapon((Weapon)itemToUse);
                         }
                     }
@@ -503,7 +507,7 @@ public class InventoryHandler : MonoBehaviour
         {
             InterruptWeaponReload();
             UpdatePlayerCurrentWeapon(null);
-            InventoryHUD.OnWeaponUnEquip();
+            InventoryHUD.OnWeaponEquip(weaponSlot);
         }
     }
 

@@ -18,7 +18,7 @@ public class InventoryHUD : MonoBehaviour
     private bool IteratingMainInv = true;
     private int MainInvIndex = 0;
     private int WeaponInvIndex = 0;
-    private int WeaponEquippedIndex = -1; // keep track what weapon slot color is green (equipped)
+    private int WeaponEquippedIndex = 0; // keep track what weapon slot color is green (equipped)
 
     private void Start()
     {
@@ -33,6 +33,8 @@ public class InventoryHUD : MonoBehaviour
         FillColor = HoldButtonDownBar.transform.GetChild(1).GetChild(0).GetComponent<Image>();
         DefaultColor = FillColor.color;
 
+        WeaponInvSlots[WeaponEquippedIndex].transform.GetChild(0).GetComponent<Image>().color = Color.green;
+        WeaponInvSlots[WeaponEquippedIndex].transform.GetChild(0).gameObject.SetActive(true);
     }
 
     public void ShowLoadBar(float time)
@@ -97,7 +99,6 @@ public class InventoryHUD : MonoBehaviour
         }
         else
         {
-            if (WeaponEquippedIndex == WeaponInvIndex) WeaponEquippedIndex = -1;
             WeaponInvSlots[WeaponInvIndex].transform.Find("ItemSlot").Find("Item").gameObject.SetActive(false);
             WeaponInvSlots[WeaponInvIndex].transform.Find("ItemSlot").Find("Item").GetComponent<Image>().sprite = null;
         }
@@ -126,7 +127,7 @@ public class InventoryHUD : MonoBehaviour
         }
         else
         {
-            if (WeaponEquippedIndex != -1 && WeaponEquippedIndex == WeaponInvIndex)
+            if (WeaponEquippedIndex == WeaponInvIndex)
             {
                 WeaponInvSlots[WeaponInvIndex].transform.GetChild(0).GetComponent<Image>().color = Color.green;
                 WeaponInvSlots[WeaponInvIndex].transform.GetChild(0).gameObject.SetActive(true);
@@ -177,7 +178,7 @@ public class InventoryHUD : MonoBehaviour
         }
         else
         {
-            if (WeaponEquippedIndex != -1 && WeaponEquippedIndex == WeaponInvIndex) 
+            if (WeaponEquippedIndex == WeaponInvIndex) 
             {
                 WeaponInvSlots[WeaponInvIndex].transform.GetChild(0).GetComponent<Image>().color = Color.green;
                 WeaponInvSlots[WeaponInvIndex].transform.GetChild(0).gameObject.SetActive(true);
@@ -228,19 +229,12 @@ public class InventoryHUD : MonoBehaviour
             }
             else
             {
-                if(WeaponEquippedIndex != -1 && WeaponEquippedIndex == WeaponInvIndex)
-                {
-                    WeaponInvSlots[WeaponEquippedIndex].transform.GetChild(0).GetComponent<Image>().color = Color.green;
-                    WeaponInvSlots[WeaponEquippedIndex].transform.GetChild(0).gameObject.SetActive(true);
-                }
-                else
-                {
-                    WeaponInvSlots[WeaponInvIndex].transform.GetChild(0).gameObject.SetActive(false);
-                    WeaponInvSlots[WeaponInvIndex].transform.GetChild(0).GetComponent<Image>().color = Color.green;
-                }
-                
+                WeaponInvSlots[WeaponInvIndex].transform.GetChild(0).gameObject.SetActive(false);
             }
-            
+
+            WeaponInvSlots[WeaponEquippedIndex].transform.GetChild(0).GetComponent<Image>().color = Color.green;
+            WeaponInvSlots[WeaponEquippedIndex].transform.GetChild(0).gameObject.SetActive(true);
+
         }
             
     }
@@ -250,14 +244,12 @@ public class InventoryHUD : MonoBehaviour
         if(mainInvSlot != -1)
         {
             // remove from main inventory hud
-            mainInvSlot--;
             MainInvSlots[MainInvIndex].transform.Find("ItemSlot").Find("Item").GetComponent<Image>().sprite = null;
             MainInvSlots[MainInvIndex].transform.Find("ItemSlot").Find("Item").gameObject.SetActive(false);
             MainInvSlots[MainInvIndex].transform.Find("ItemSlot").Find("Background").gameObject.SetActive(false);
         }
         
         // add it to weapon hud
-        if (WeaponEquippedIndex == -1) OnWeaponEquip(weaponSlot);
         WeaponInvSlots[weaponSlot].transform.Find("ItemSlot").Find("Item").GetComponent<Image>().sprite = item.Image;
         WeaponInvSlots[weaponSlot].transform.Find("ItemSlot").Find("Item").gameObject.SetActive(true);
         
@@ -265,32 +257,29 @@ public class InventoryHUD : MonoBehaviour
 
     public void OnWeaponEquip(int weaponSlot)
     {
-        OnWeaponUnEquip(); // remove any slot that was equipped
-        if(IsInvToggled && weaponSlot == WeaponEquippedIndex)
+
+        WeaponInvSlots[WeaponEquippedIndex].transform.GetChild(0).gameObject.SetActive(false); // turn off previous equipped slot
+
+        if (IsInvToggled && !IteratingMainInv)
             WeaponInvSlots[weaponSlot].transform.GetChild(0).GetComponent<Image>().color = Color.yellow;
         else
             WeaponInvSlots[weaponSlot].transform.GetChild(0).GetComponent<Image>().color = Color.green;
 
         WeaponInvSlots[weaponSlot].transform.GetChild(0).gameObject.SetActive(true);
         WeaponEquippedIndex = weaponSlot;
-
     }
 
     public void OnWeaponUnEquip()
     {
-        if(WeaponEquippedIndex != -1)
-        {
-            if(WeaponEquippedIndex == WeaponInvIndex && IsInvToggled)
-            {
-                WeaponInvSlots[WeaponEquippedIndex].transform.GetChild(0).GetComponent<Image>().color = Color.yellow;
-            }
-            else
-            {
-                WeaponInvSlots[WeaponEquippedIndex].transform.GetChild(0).gameObject.SetActive(false);
-            }
-            WeaponEquippedIndex = -1;
-        }
         
+        if( IsInvToggled && WeaponEquippedIndex == WeaponInvIndex)
+        {
+            WeaponInvSlots[WeaponEquippedIndex].transform.GetChild(0).GetComponent<Image>().color = Color.yellow;
+        }
+        else if(WeaponEquippedIndex == WeaponInvIndex)
+        {
+            WeaponInvSlots[WeaponEquippedIndex].transform.GetChild(0).GetComponent<Image>().color = Color.green;
+        }
         
     }
 
