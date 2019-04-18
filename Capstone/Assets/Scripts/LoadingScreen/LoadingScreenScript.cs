@@ -21,18 +21,24 @@ public class LoadingScreenScript : MonoBehaviour
 
         AsyncOperation level = SceneManager.LoadSceneAsync("Level01");
         level.allowSceneActivation = false;
+        while (timer < 2.5f)
+        {
+            timer += 0.25f;
+            LoadingBar.fillAmount = timer / 3.0f;
+            PercentageText.text = ((int)((timer/3.0f) * 100)) + "%";
+            
+            yield return new WaitForSeconds(0.25f);
+        }
+
         while (!level.isDone)
         {
-            LoadingBar.fillAmount = (level.progress / 1);
-            PercentageText.text = (level.progress * 100) + "%";
-
-            if (level.progress >= 0.9f)
+            if(level.progress >= 0.9f)
+            {
+                LoadingBar.fillAmount = 1;
+                PercentageText.text = 100 + "%";
                 level.allowSceneActivation = true;
-
+            }
             yield return null;
-
         }
-        
-        
     }
 }
