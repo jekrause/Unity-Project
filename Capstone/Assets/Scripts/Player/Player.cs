@@ -146,12 +146,6 @@ public abstract class Player : MonoBehaviour
 
     }
 
-    //Used to manage collisions with impermeable objects.
-    protected void AttemptMove(int xDir, int yDir)
-    {
-        //TODO
-    }
-
     //Called when player is healed
     public bool Healed(float f)
     {
@@ -170,16 +164,23 @@ public abstract class Player : MonoBehaviour
         return gotHealed;
     }
 
-    public bool Damaged(float f)
+    public bool Damaged(object[] storage)
     {
-        Debug.Log("Received " + f + " damage");
-        if (fHP > 0)
+        try
         {
-            fHP -= f;
-            EventAggregator.GetInstance().Publish(new PlayerDamagedEvent(fHP, playerNumber)); // fire event
-            return true;
+            Debug.Log("Received " + storage[0] + " damage");
+            if (fHP > 0)
+            {
+                fHP -= (int)storage[0];
+                EventAggregator.GetInstance().Publish(new PlayerDamagedEvent(fHP, playerNumber)); // fire event
+                return true;
+            }
+            return false;
         }
-        return false;
+        catch(InvalidCastException e)
+        {
+            return false;
+        }
     }
 
     protected void Death()

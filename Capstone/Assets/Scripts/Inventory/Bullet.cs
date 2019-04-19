@@ -5,8 +5,9 @@ using UnityEngine;
 public class Bullet : MonoBehaviour
 {
     private const string TAG_OBSTACLE = "Obstacle";
-    protected float damage = 10;
+    protected float damage = 10f;
     protected float distance = 100;
+    protected GameObject shooter = null;
     protected string targetTag = "Enemy";
     protected Vector2 spawnPosition;
 
@@ -33,7 +34,10 @@ public class Bullet : MonoBehaviour
         if (col.gameObject.tag == targetTag)
         {
             Debug.Log("sending Damage message to " + col.tag);
-            col.gameObject.SendMessage("Damaged", damage);
+            object[] tempStorage = new object[2];
+            tempStorage[0] = (int)damage;
+            tempStorage[1] = shooter;
+            col.gameObject.SendMessage("Damaged", tempStorage);
             Destroy(gameObject);
             AudioManager.Play("BulletHit");
         }
@@ -56,5 +60,10 @@ public class Bullet : MonoBehaviour
     public void SetTarget(string tag)
     {
         targetTag = tag;
+    }
+
+    public void setShooter(GameObject pShooter)
+    {
+        shooter = pShooter;
     }
 }

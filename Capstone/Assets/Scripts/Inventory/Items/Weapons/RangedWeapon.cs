@@ -21,7 +21,9 @@ public abstract class RangedWeapon : Weapon
             if (IsReloading) ReloadingInterrupted(player.playerNumber);
             
             var x = Instantiate(bullet, player.shootPosition.position, player.shootPosition.rotation);
+
             x.SetDamage(projDamage);
+            x.setShooter(player.gameObject);
             x.GetComponent<Rigidbody2D>().AddForce(x.transform.right * projSpeed);
             AmmoClip.Decrement();
             EventAggregator.GetInstance().Publish<OnWeaponAmmoChangedEvent>(new OnWeaponAmmoChangedEvent(player.playerNumber, AmmoClip.CurrentAmmo));

@@ -34,7 +34,7 @@ public class Enemy : MonoBehaviour
     protected float fRotationSpeed = 150f;
     protected float fWaitTime;
     protected float fStartWaitTime = 3f;
-    protected float fVisionDistance = 50f;
+    protected float fVisionDistance = 100f;
     protected Vector3 lastPosition = new Vector3(0,0,0); //used to see if we are blocked and the front raycast can't detect it.
 
 
@@ -162,7 +162,6 @@ public class Enemy : MonoBehaviour
                 //iRandomSpot = Random.Range(0, moveSpots.Length); // this will not work unless different FillMoveSpots is implemented
                 iRandomSpot = (++iRandomSpot) % moveSpots.Length;
                 fWaitTime = fStartWaitTime;
-                Debug.Log("Patrol new spot is " + iRandomSpot);
             }
             else
             {
@@ -191,35 +190,35 @@ public class Enemy : MonoBehaviour
             //decide to go left or right
             if(Quaternion.Angle(Quaternion.AngleAxis(transform.eulerAngles.z + 1, Vector3.forward), Quaternion.AngleAxis(angle, Vector3.forward)) > Quaternion.Angle(Quaternion.AngleAxis(transform.eulerAngles.z - 1, Vector3.forward), Quaternion.AngleAxis(angle, Vector3.forward)))
             {
-                Debug.Log("Go Right");
+                //Debug.Log("Go Right");
                 //listed in order of move priority
                 if (!blockedPaths[(int)RayCastDir.Right20] || !blockedPaths[(int)RayCastDir.Right45] || !blockedPaths[(int)RayCastDir.Right90])
                 {
-                    Debug.Log("turning right");
+                    //Debug.Log("turning right");
                     transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z - 20), fRotationSpeed * Time.deltaTime);
                 }
                 else
                 {
-                    Debug.Log("Right is blocked, going left");
+                    //Debug.Log("Right is blocked, going left");
                     transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z + 20), fRotationSpeed * Time.deltaTime);
                 }
             }
             else
             {
-                Debug.Log("Go Left");
+                //Debug.Log("Go Left");
                 if(!blockedPaths[(int)RayCastDir.Left20] || !blockedPaths[(int)RayCastDir.Left45] || !blockedPaths[(int)RayCastDir.Left90])
                 {
-                    Debug.Log("turning left");
+                    //Debug.Log("turning left");
                     transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z + 20), fRotationSpeed * Time.deltaTime);
                 }
                 else
                 {
-                    Debug.Log("left is blocked, going right");
+                    //Debug.Log("left is blocked, going right");
                     transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z - 20), fRotationSpeed * Time.deltaTime);
                 }
 
             }
-            Debug.Log("path blocked");
+            //Debug.Log("path blocked");
            
             transform.position += transform.right * Time.deltaTime * fMoveSpeed;
             feetAnimation.SetBool("Moving", true);
@@ -307,7 +306,7 @@ public class Enemy : MonoBehaviour
             do
             {
                 //Debug.Log("Iterations: " + ++j);
-                moveSpots[i] = new Vector2(Random.Range(-10, 10) + moveSpots[i - 1].x, Random.Range(-10, 10) + moveSpots[i - 1].y);
+                moveSpots[i] = new Vector2(UnityEngine.Random.Range(-10, 10) + moveSpots[i - 1].x, UnityEngine.Random.Range(-10, 10) + moveSpots[i - 1].y);
 
                 p = Physics2D.CircleCast(moveSpots[i - 1], radius, moveSpots[i] - moveSpots[i - 1], layersToAvoid, raycasts, Vector2.Distance(moveSpots[i], moveSpots[i - 1]));
                 q = Physics2D.CircleCast(moveSpots[i], radius, moveSpots[0] - moveSpots[i], layersToAvoid, raycasts, Vector2.Distance(moveSpots[0], moveSpots[i]));
@@ -330,10 +329,35 @@ public class Enemy : MonoBehaviour
 
     }
 
-    protected void Damaged(float f)
+    protected void Damaged(object[] storage)
     {
-        fHP -= f;
-        HealthBarHandler.OnDamaged(fHP);
+        try
+        {
+            
+            Debug.Log("Rececived " + (int)storage[0] + " damage");
+            fHP -= (int)storage[0];
+            HealthBarHandler.OnDamaged(fHP);
+            
+            if (storage[1] != null)
+            {
+                GameObject temp = (GameObject)storage[1];
+                if(playerTarget == null && Vector3.Distance(temp.transform.position, gameObject.transform.position) < fVisionDistance)
+                {
+                    Debug.Log("Detected that " + temp.name + " shot at enemy");
+                    playerTarget = temp;
+                    aiMvmt = MovementTypeEnum.Chase;
+                }
+                else
+                {
+                    Debug.Log("Was shot at but distance [" + Vector3.Distance(temp.transform.position, gameObject.transform.position) + "] was too far");
+                }
+            }
+        }
+        catch (System.InvalidCastException e)
+        {
+            Debug.Log("Cast exception in enemy's damaged function");
+        }
+        
     }
 
     /*
@@ -348,7 +372,7 @@ public class Enemy : MonoBehaviour
         Player player = collision.collider.GetComponent<Player>();
         if (player != null)
         {
-            player.Damaged(10); // simple test
+            //player.Damaged(); // simple test
         }
     }
 

@@ -80,10 +80,11 @@ public class EnemyHouseSpawner : MonoBehaviour
     }
 
 
-
-    protected void Damaged(float f)
+    //message[0] = damage
+    //message[1] = player who shot at it (might be null)
+    protected void Damaged(object[] message)
     {
-        fHP -= f;
+        fHP -= (int)message[0];
         HealthBarHandler.OnDamaged(fHP);
     }
 
