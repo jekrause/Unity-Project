@@ -12,9 +12,10 @@ public class Enemy : MonoBehaviour
      * Patrol - move inbetween a few set spots
      * Chase  - follow the palyer as aggressively as possible without worrying about taking damage
      * Safe   - Attack, but try to keep your distance.
+     * Manual - Set by enemy spawning houses. This forces the enemy to walk to a given spot before entering the patrol state.
      */
 
-    public enum MovementTypeEnum { Patrol, Chase, Safe };
+    public enum MovementTypeEnum { Patrol, Chase, Safe, Manual, None};
     public enum RayCastDir { Left90 = 0, Left45 = 1, Left20 = 2, Forward = 3, Right20 = 4, Right45 = 5, Right90 = 6 } //raycast angles from player's transform position
 
     public enum LookDir { Towards, Away };
@@ -26,7 +27,7 @@ public class Enemy : MonoBehaviour
     public float fDamage = 10f;         //default damage if no weapon is equipped
     protected float fAttackRadius = 2f;
     protected bool canShoot = true;
-    protected MovementTypeEnum aiMvmt;
+    protected MovementTypeEnum aiMvmt = MovementTypeEnum.None;
     protected Animator feetAnimation;
 
     public float fMoveSpeed = 3f;
@@ -35,6 +36,7 @@ public class Enemy : MonoBehaviour
     protected float fStartWaitTime = 3f;
     protected float fVisionDistance = 100f;
     protected Vector3 lastPosition = new Vector3(0,0,0); //used to see if we are blocked and the front raycast can't detect it.
+    protected Vector3 goalLocation; //used by house enemy spawner
 
 
     /*
@@ -80,8 +82,11 @@ public class Enemy : MonoBehaviour
         fWaitTime = fStartWaitTime;
         //iRandomSpot = Random.Range(0, moveSpots.Length);
         iRandomSpot = 0;
-        FillMoveSpots();
-        aiMvmt = MovementTypeEnum.Patrol;
+        if(aiMvmt == MovementTypeEnum.None)
+        {
+            FillMoveSpots();
+            aiMvmt = MovementTypeEnum.Patrol;
+        }
         rb = GetComponent<Rigidbody2D>();
         HealthBarHandler = GetComponent<HealthBarHandler>();
         HealthBarHandler.SetMaxHP(fHP);
@@ -101,7 +106,10 @@ public class Enemy : MonoBehaviour
         }
 
         canShoot = true;
-        EnemyRayCast();
+        if(aiMvmt != MovementTypeEnum.Manual)
+        {
+            EnemyRayCast();
+        }
 
         switch (aiMvmt)
         {
@@ -114,6 +122,9 @@ public class Enemy : MonoBehaviour
             case MovementTypeEnum.Safe:
                 MvmtSafe();
                 break;
+            case MovementTypeEnum.Manual:
+                MvmtManual();
+                break;
         }
 
         if (fHP < LOW_HP_THRESHOLD && SafteyRadius() > -1)
@@ -124,13 +135,14 @@ public class Enemy : MonoBehaviour
         {
             aiMvmt = MovementTypeEnum.Chase;
         }
-        else
+        else if (aiMvmt != MovementTypeEnum.Manual)
         {
             aiMvmt = MovementTypeEnum.Patrol;
         }
 
-        if (canShoot && ((aiMvmt == MovementTypeEnum.Chase && playerTarget != null) ||
-           (aiMvmt == MovementTypeEnum.Safe && !withInMinDistance)) && Time.time > fAttackTime)
+        if ((canShoot && ((aiMvmt == MovementTypeEnum.Chase && playerTarget != null) ||
+           (aiMvmt == MovementTypeEnum.Safe && !withInMinDistance)) && Time.time > fAttackTime) &&
+           raycasts[(int) RayCastDir.Forward].collider != null && raycasts[(int)RayCastDir.Forward].collider.gameObject == playerTarget)
         {
             Debug.Log("Shooting");
             //face player
@@ -140,7 +152,7 @@ public class Enemy : MonoBehaviour
 
             //shoot straight
             var x = Instantiate(bullet, this.shootPosition.position, this.shootPosition.rotation);
-            x.SetDamage(0);
+            x.SetDamage(fDamage);
             x.SetTarget("Player");
             x.GetComponent<Rigidbody2D>().AddForce(x.transform.right * 800);
 
@@ -183,45 +195,7 @@ public class Enemy : MonoBehaviour
         //handle blocked path
         if (blockedPaths[(int)RayCastDir.Forward] && raycasts[(int)RayCastDir.Forward].distance < 5)
         {
-            feetAnimation.SetBool("Moving", false);
-            Vector2 dir = playerTarget.transform.position - shootPosition.position;
-            var angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-            //decide to go left or right
-            if(Quaternion.Angle(Quaternion.AngleAxis(transform.eulerAngles.z + 1, Vector3.forward), Quaternion.AngleAxis(angle, Vector3.forward)) > Quaternion.Angle(Quaternion.AngleAxis(transform.eulerAngles.z - 1, Vector3.forward), Quaternion.AngleAxis(angle, Vector3.forward)))
-            {
-                //Debug.Log("Go Right");
-                //listed in order of move priority
-                if (!blockedPaths[(int)RayCastDir.Right20] || !blockedPaths[(int)RayCastDir.Right45] || !blockedPaths[(int)RayCastDir.Right90])
-                {
-                    //Debug.Log("turning right");
-                    transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z - 20), fRotationSpeed * Time.deltaTime);
-                }
-                else
-                {
-                    //Debug.Log("Right is blocked, going left");
-                    transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z + 20), fRotationSpeed * Time.deltaTime);
-                }
-            }
-            else
-            {
-                //Debug.Log("Go Left");
-                if(!blockedPaths[(int)RayCastDir.Left20] || !blockedPaths[(int)RayCastDir.Left45] || !blockedPaths[(int)RayCastDir.Left90])
-                {
-                    //Debug.Log("turning left");
-                    transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z + 20), fRotationSpeed * Time.deltaTime);
-                }
-                else
-                {
-                    //Debug.Log("left is blocked, going right");
-                    transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z - 20), fRotationSpeed * Time.deltaTime);
-                }
-
-            }
-            //Debug.Log("path blocked");
-           
-            transform.position += transform.right * Time.deltaTime * fMoveSpeed;
-            feetAnimation.SetBool("Moving", true);
-            canShoot = false;
+            AvoidObstalces();
         }
         else
         {
@@ -240,7 +214,6 @@ public class Enemy : MonoBehaviour
 
     protected void MvmtSafe()// Should be used when enemy has low health AND enemies are nearby
     {
-
         if (Vector2.Distance(transform.position, playerTarget.transform.position) < minDistance)
         {
             withInMinDistance = true;
@@ -260,6 +233,31 @@ public class Enemy : MonoBehaviour
         }
 
         Debug.Log(playerTarget.transform.position);
+    }
+
+    protected void MvmtManual()
+    {
+        if (Vector2.Distance(transform.position, goalLocation) < 0.2f)
+        {
+            FillMoveSpots();
+            aiMvmt = MovementTypeEnum.Patrol;
+            Debug.Log("Reached manually set location");
+        }
+        else
+        {
+            transform.position = Vector2.MoveTowards(transform.position, goalLocation, fMoveSpeed * Time.deltaTime);
+            Vector2 dir = goalLocation - transform.position;
+            var angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+            transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+            feetAnimation.SetBool("Moving", true);
+        }
+    }
+
+    public void SetManualDestination(Vector3 pDestination)
+    {
+        Debug.Log("Manual destination set");
+        goalLocation = pDestination;
+        aiMvmt = MovementTypeEnum.Manual;
     }
 
     private void LookAt(LookDir lookDir)
@@ -436,6 +434,49 @@ public class Enemy : MonoBehaviour
         }
 
         return playerTarget;
+    }
+
+    protected void AvoidObstalces()
+    {
+        feetAnimation.SetBool("Moving", false);
+        Vector2 dir = playerTarget.transform.position - shootPosition.position;
+        var angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+        //decide to go left or right
+        if (Quaternion.Angle(Quaternion.AngleAxis(transform.eulerAngles.z + 1, Vector3.forward), Quaternion.AngleAxis(angle, Vector3.forward)) > Quaternion.Angle(Quaternion.AngleAxis(transform.eulerAngles.z - 1, Vector3.forward), Quaternion.AngleAxis(angle, Vector3.forward)))
+        {
+            //Debug.Log("Go Right");
+            //listed in order of move priority
+            if (!blockedPaths[(int)RayCastDir.Right20] || !blockedPaths[(int)RayCastDir.Right45] || !blockedPaths[(int)RayCastDir.Right90])
+            {
+                //Debug.Log("turning right");
+                transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z - 20), fRotationSpeed * Time.deltaTime);
+            }
+            else
+            {
+                //Debug.Log("Right is blocked, going left");
+                transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z + 20), fRotationSpeed * Time.deltaTime);
+            }
+        }
+        else
+        {
+            //Debug.Log("Go Left");
+            if (!blockedPaths[(int)RayCastDir.Left20] || !blockedPaths[(int)RayCastDir.Left45] || !blockedPaths[(int)RayCastDir.Left90])
+            {
+                //Debug.Log("turning left");
+                transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z + 20), fRotationSpeed * Time.deltaTime);
+            }
+            else
+            {
+                //Debug.Log("left is blocked, going right");
+                transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z - 20), fRotationSpeed * Time.deltaTime);
+            }
+
+        }
+        //Debug.Log("path blocked");
+
+        transform.position += transform.right * Time.deltaTime * fMoveSpeed;
+        feetAnimation.SetBool("Moving", true);
+        canShoot = false;
     }
 
     private int SafteyRadius()

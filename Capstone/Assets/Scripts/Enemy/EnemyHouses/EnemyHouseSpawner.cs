@@ -12,6 +12,7 @@ public class EnemyHouseSpawner : MonoBehaviour
     public GameObject enemy;
     public GameObject destroyedHouse;
     public Transform spawnPosition;
+    public Transform goalPosition;
 
     //Health bar
     protected HealthBarHandler HealthBarHandler;
@@ -59,6 +60,8 @@ public class EnemyHouseSpawner : MonoBehaviour
 
             //Debug.Log("transformz = "+transform.rotation.z);
             //Debug.Log("transformz+90 = " + transform.rotation.z + -90);
+
+            newEnemy.SendMessage("SetManualDestination", goalPosition.transform.position);
         }
 
     }
