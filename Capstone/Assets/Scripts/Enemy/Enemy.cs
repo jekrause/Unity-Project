@@ -20,17 +20,16 @@ public class Enemy : MonoBehaviour
     public enum LookDir { Towards, Away };
 
     // Start is called before the first frame update
-    public const int iBaseAttackRate = 1;
+    public int iBaseAttackRate = 1;
     protected LayerMask layerMask;
     protected float fHP = 100f;
-    protected float fDamage = 10f;         //default damage if no weapon is equipped
-    protected float fMoveRate = 1f;
+    public float fDamage = 10f;         //default damage if no weapon is equipped
     protected float fAttackRadius = 2f;
     protected bool canShoot = true;
     protected MovementTypeEnum aiMvmt;
     protected Animator feetAnimation;
 
-    protected float fMoveSpeed = 3f;
+    public float fMoveSpeed = 3f;
     protected float fRotationSpeed = 150f;
     protected float fWaitTime;
     protected float fStartWaitTime = 3f;
@@ -145,7 +144,7 @@ public class Enemy : MonoBehaviour
             x.SetTarget("Player");
             x.GetComponent<Rigidbody2D>().AddForce(x.transform.right * 800);
 
-            fAttackTime = Time.time + 1 / iBaseAttackRate;
+            fAttackTime = Time.time + iBaseAttackRate;
         }
     }
 
