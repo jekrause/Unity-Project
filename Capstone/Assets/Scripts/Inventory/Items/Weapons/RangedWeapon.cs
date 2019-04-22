@@ -110,7 +110,7 @@ public class AmmoClip
     public readonly int MAX_CLIP_SIZE;
     public readonly int AMMO_USE_PER_BULLET;
     public int CurrentAmmoRaw { get; private set; }
-    private int CurrentAmmo
+    private int CurrentAmmo;
 
     public AmmoClip(int maxClipSize, int ammoPerBullet)
     {

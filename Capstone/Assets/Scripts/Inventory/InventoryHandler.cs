@@ -517,7 +517,7 @@ public class InventoryHandler : MonoBehaviour
 
         if (itemToSalvage != null)
         {
-            salvagedSuccess = player.Ammunition.Add((itemToSalvage).AmmoClip.CurrentAmmo);
+            salvagedSuccess = player.Ammunition.Add((itemToSalvage).AmmoClip.GetCurrentAmmo());
             if (salvagedSuccess)
             {
                 if (itemToSalvage == player.CurrentWeapon)
