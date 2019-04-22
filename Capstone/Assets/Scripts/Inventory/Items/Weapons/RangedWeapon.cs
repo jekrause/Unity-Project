@@ -20,14 +20,11 @@ public abstract class RangedWeapon : Weapon
         {
             if (IsReloading) ReloadingInterrupted(player.playerNumber);
             
-            PlayFireAnimation(player);
             var x = Instantiate(bullet, player.shootPosition.position, player.shootPosition.rotation);
-
             x.SetDamage(projDamage);
-            x.setShooter(player.gameObject);
             x.GetComponent<Rigidbody2D>().AddForce(x.transform.right * projSpeed);
             AmmoClip.Decrement();
-            EventAggregator.GetInstance().Publish<OnWeaponAmmoChangedEvent>(new OnWeaponAmmoChangedEvent(player.playerNumber, AmmoClip.CurrentAmmo));
+            EventAggregator.GetInstance().Publish<OnWeaponAmmoChangedEvent>(new OnWeaponAmmoChangedEvent(player.playerNumber, AmmoClip.GetCurrentAmmo()));
         }
         else
         {
@@ -39,7 +36,7 @@ public abstract class RangedWeapon : Weapon
             else
             {
                 AudioManager.Play(NO_AMMO_SOUND);
-                Debug.Log("Not enough ammo in clip to fire, need to reload " + this.name + "\nAmmoUsePerBullet: " + AmmoClip.AMMO_USE_PER_BULLET + ", but in clip: " + AmmoClip.CurrentAmmo );
+                Debug.Log("Not enough ammo in clip to fire, need to reload " + this.name + "\nAmmoUsePerBullet: " + AmmoClip.AMMO_USE_PER_BULLET + ", but in clip: " + AmmoClip.GetCurrentAmmo() );
             }
             
         }
@@ -66,7 +63,7 @@ public abstract class RangedWeapon : Weapon
             }
             AudioManager.Stop(ReloadSound);
             AmmoClip.LoadAmmunition(ammunition);
-            EventAggregator.GetInstance().Publish(new OnWeaponAmmoChangedEvent(playerNumber, AmmoClip.CurrentAmmo));
+            EventAggregator.GetInstance().Publish(new OnWeaponAmmoChangedEvent(playerNumber, AmmoClip.GetCurrentAmmo()));
             EventAggregator.GetInstance().Publish(new OnPlayerAmmoChangedEvent(playerNumber, ammunition));
             AudioManager.Play(ReloadFinishSound);
             IsReloading = false;
@@ -85,31 +82,14 @@ public abstract class RangedWeapon : Weapon
             Debug.Log(this.name + ": Reload interrupted.");
         }
     }
-    
-    public void PlayFireAnimation(Player player)
-    {
-        player.GetComponent<SpriteRenderer>().sprite = this.PlayerFireImage;   //change to firing sprite
-
-
-        float fireRate = 0f;
-        if (this.attackRate > 0.6f)
-        {
-            fireRate = 0.6f;      //0.6f will be max fire delay
-        }
-        else
-        {
-            fireRate = this.attackRate;
-        }
-
-        player.WaitForFireSprite(this.PlayerImage, fireRate / 2);    //change back to regular sprite
-    }
 }
 
 public class AmmoClip
 {
     public readonly int MAX_CLIP_SIZE;
     public readonly int AMMO_USE_PER_BULLET;
-    public int CurrentAmmo { get; private set; }
+    public int CurrentAmmoRaw { get; private set; }
+    private int CurrentAmmo; 
 
     public AmmoClip(int maxClipSize, int ammoPerBullet)
     {
@@ -117,7 +97,7 @@ public class AmmoClip
         {
             MAX_CLIP_SIZE = maxClipSize;
             AMMO_USE_PER_BULLET = ammoPerBullet;
-            CurrentAmmo = MAX_CLIP_SIZE;
+            CurrentAmmoRaw = MAX_CLIP_SIZE;
         }
         else
         {
@@ -127,15 +107,15 @@ public class AmmoClip
 
     public void LoadAmmunition(Ammunition ammunition)
     {
-        if(CurrentAmmo + ammunition.Amount > MAX_CLIP_SIZE)
+        if(CurrentAmmoRaw + ammunition.Amount > MAX_CLIP_SIZE)
         {
-            int amountLeft = (CurrentAmmo + ammunition.Amount) - MAX_CLIP_SIZE;
-            CurrentAmmo = MAX_CLIP_SIZE;
+            int amountLeft = (CurrentAmmoRaw + ammunition.Amount) - MAX_CLIP_SIZE;
+            CurrentAmmoRaw = MAX_CLIP_SIZE;
             ammunition.Amount = amountLeft;
         }
         else
         {
-            CurrentAmmo += ammunition.Amount;
+            CurrentAmmoRaw += ammunition.Amount;
             ammunition.Amount = 0;
         }
         Debug.Log("Ammunition left on player: " + ammunition.Amount);
@@ -143,12 +123,17 @@ public class AmmoClip
 
     public void Decrement()
     {
-        CurrentAmmo = CurrentAmmo - AMMO_USE_PER_BULLET < 0 ? 0 : CurrentAmmo - AMMO_USE_PER_BULLET;
+        CurrentAmmoRaw = CurrentAmmoRaw - AMMO_USE_PER_BULLET < 0 ? 0 : CurrentAmmoRaw - AMMO_USE_PER_BULLET;
     }
 
-    public bool IsEmpty() { return this.CurrentAmmo <= 0; }
+    public bool IsEmpty() { return this.CurrentAmmoRaw <= 0; }
 
-    public bool IsFull() { return this.CurrentAmmo == MAX_CLIP_SIZE; }
+    public bool IsFull() { return this.CurrentAmmoRaw == MAX_CLIP_SIZE; }
 
-    public bool EnoughAmmoToFire() { return this.CurrentAmmo >= AMMO_USE_PER_BULLET; }
+    public bool EnoughAmmoToFire() { return this.CurrentAmmoRaw >= AMMO_USE_PER_BULLET; }
+
+    public int GetCurrentAmmo()
+    {
+        return CurrentAmmo = CurrentAmmoRaw / AMMO_USE_PER_BULLET;
+    }
 }
