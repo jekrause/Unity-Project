@@ -99,7 +99,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -449872189
-  m_SortingLayer: 2
+  m_SortingLayer: 3
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 28298f0a3a1b14e97a42fb65b1d7138e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -126,6 +126,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Image: {fileID: 21300000, guid: 28298f0a3a1b14e97a42fb65b1d7138e, type: 3}
   PlayerImage: {fileID: 21300000, guid: 62a38039d15934621acbe39f391cb549, type: 3}
+  PlayerFireImage: {fileID: 21300000, guid: 37084634a49a14fea81514558907d7f9, type: 3}
   bullet: {fileID: 2338026660133703715, guid: 92cfefeb70e1bc940babcdb62c9c91b6, type: 3}
 --- !u!61 &3433539802935323454
 BoxCollider2D:

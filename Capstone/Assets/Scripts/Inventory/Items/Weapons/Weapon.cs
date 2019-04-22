@@ -8,7 +8,9 @@ public abstract class Weapon : Item
     protected float attackRate = 3f;
 
     public Sprite PlayerImage;
+    public Sprite PlayerFireImage;
     public Bullet bullet;
+    //public GameObject bulletPuff;
     
 
     public override Type GetItemType() { return Type.WEAPON; }

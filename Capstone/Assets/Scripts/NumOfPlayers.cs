@@ -6,6 +6,7 @@ public class NumOfPlayers : MonoBehaviour
 {
 
     public int HowManyPlayers = Settings.NumOfPlayers;
+    public int playerclass = 0;
 
 
 
@@ -18,6 +19,8 @@ public class NumOfPlayers : MonoBehaviour
         }
         Settings.NumOfPlayers = HowManyPlayers;
 
+
+        MenuInputSelector.PlayerClasses[0] = playerclass;
         BindPlayer1ToKeyboard();
     }
 
@@ -38,4 +41,5 @@ public class NumOfPlayers : MonoBehaviour
         //transform.GetChild(index).GetComponentInChildren<TextMesh>().text = "P" + (index + 1) + " (Keyboard input)";
         //}
     }
+
 }
