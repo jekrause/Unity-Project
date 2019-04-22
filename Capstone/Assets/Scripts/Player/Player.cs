@@ -82,6 +82,16 @@ public abstract class Player : MonoBehaviour
 
     }
 
+    public void WaitForFireSprite(Sprite originalSprite, float delaySeconds)
+    {
+        StartCoroutine(FireSpriteDelay(originalSprite,delaySeconds));
+    }
+    public IEnumerator FireSpriteDelay(Sprite originalSprite, float delaySeconds)
+    {
+        yield return new WaitForSecondsRealtime(delaySeconds);
+        GetComponent<SpriteRenderer>().sprite = originalSprite; //change sprite back to regular image
+    }
+
     protected void GetMovementInput()
     {
         try
