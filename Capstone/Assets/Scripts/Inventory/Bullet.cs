@@ -1,32 +1,20 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
     private const string TAG_OBSTACLE = "Obstacle";
-    protected float damage = 10;
+    protected float damage = 10f;
     protected float distance = 100;
+    protected GameObject shooter = null;
     protected string targetTag = "Enemy";
     protected Vector2 spawnPosition;
-    public GameObject bulletPuff;
-    public string spawnSound;
-    
 
     // Start is called before the first frame update
     void Start()
     {
-        //AudioManager.Play("AssaultFire");
-        /*if (gameObject.name.Equals("rocket"))
-        {
-            AudioManager.Play("RocketFire");
-        }
-        else
-        {
-            AudioManager.Play("AssaultFire");
-
-        }*/
-        AudioManager.Play(spawnSound);
+        AudioManager.Play("AssaultFire");
         spawnPosition = transform.position;
     }
 
@@ -46,16 +34,15 @@ public class Bullet : MonoBehaviour
         if (col.gameObject.tag == targetTag)
         {
             Debug.Log("sending Damage message to " + col.tag);
-            col.gameObject.SendMessage("Damaged", damage);
-            Instantiate(bulletPuff, gameObject.transform.position, gameObject.transform.rotation);
+            object[] tempStorage = new object[2];
+            tempStorage[0] = (int)damage;
+            tempStorage[1] = shooter;
+            col.gameObject.SendMessage("Damaged", tempStorage);
             Destroy(gameObject);
             AudioManager.Play("BulletHit");
         }
         else if(col.gameObject.tag == TAG_OBSTACLE)
         {
-            AudioManager.Play("BulletHit");
-            //AudioManager.Play("BulletHitWall");
-            Instantiate(bulletPuff, gameObject.transform.position, gameObject.transform.rotation);
             Destroy(gameObject);
         }
     }
@@ -73,5 +60,10 @@ public class Bullet : MonoBehaviour
     public void SetTarget(string tag)
     {
         targetTag = tag;
+    }
+
+    public void setShooter(GameObject pShooter)
+    {
+        shooter = pShooter;
     }
 }
