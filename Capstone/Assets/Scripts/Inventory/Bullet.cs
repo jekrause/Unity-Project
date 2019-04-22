@@ -10,11 +10,13 @@ public class Bullet : MonoBehaviour
     protected GameObject shooter = null;
     protected string targetTag = "Enemy";
     protected Vector2 spawnPosition;
+    public GameObject bulletPuff;
+    public string spawnSound;
 
     // Start is called before the first frame update
     void Start()
     {
-        AudioManager.Play("AssaultFire");
+        AudioManager.Play(spawnSound);
         spawnPosition = transform.position;
     }
 
@@ -38,11 +40,14 @@ public class Bullet : MonoBehaviour
             tempStorage[0] = (int)damage;
             tempStorage[1] = shooter;
             col.gameObject.SendMessage("Damaged", tempStorage);
+            Instantiate(bulletPuff, gameObject.transform.position, gameObject.transform.rotation);
             Destroy(gameObject);
             AudioManager.Play("BulletHit");
         }
         else if(col.gameObject.tag == TAG_OBSTACLE)
         {
+            AudioManager.Play("BulletHit");
+            Instantiate(bulletPuff, gameObject.transform.position, gameObject.transform.rotation);
             Destroy(gameObject);
         }
     }
