@@ -8,10 +8,7 @@ public class InventoryHUD : MonoBehaviour
     public List<GameObject> WeaponInvSlots = new List<GameObject>(3);
     [SerializeField] public GameObject MainInventoryPanel;
     [SerializeField] public GameObject WeaponInventoryPanel;
-    [SerializeField] public GameObject ActionPanel;
-    [SerializeField] public Slider HoldButtonDownBar;
-    private Image FillColor;
-    private Color DefaultColor;
+    
 
     private EventAggregator eventAggregator = EventAggregator.GetInstance();
     private bool IsInvToggled;
@@ -29,48 +26,14 @@ public class InventoryHUD : MonoBehaviour
         for (int i = 0; i < WeaponInventoryPanel.transform.childCount; i++)
             WeaponInvSlots[i] = WeaponInventoryPanel.transform.GetChild(i).gameObject;
 
-        HoldButtonDownBar.value = 0;
-        FillColor = HoldButtonDownBar.transform.GetChild(1).GetChild(0).GetComponent<Image>();
-        DefaultColor = FillColor.color;
+        
 
         WeaponInvSlots[WeaponEquippedIndex].transform.GetChild(0).GetComponent<Image>().color = Color.green;
         WeaponInvSlots[WeaponEquippedIndex].transform.GetChild(0).gameObject.SetActive(true);
     }
 
-    public void ShowLoadBar(float time)
-    {
-        HoldButtonDownBar.value = time / 0.75f;
-        if(HoldButtonDownBar.value > .20f) HoldButtonDownBar.gameObject.SetActive(true);
-        if (HoldButtonDownBar.value >= 1)
-        {
-            HoldButtonDownBar.value = 0;
-            HoldButtonDownBar.gameObject.SetActive(false);
-        }
-    }
+    
 
-    public void RemoveLoadBar()
-    {
-        HoldButtonDownBar.value = 0;
-        FillColor.color = DefaultColor;
-        HoldButtonDownBar.gameObject.SetActive(false);
-    }
-
-    public void ShowRejectedLoadBar()
-    {
-        HoldButtonDownBar.value = 1;
-        FillColor.color = Color.red;
-    }
-
-    public void ShowActionPanel(string message)
-    {
-        ActionPanel.transform.GetComponentInChildren<Text>().text = message;
-        ActionPanel.gameObject.SetActive(true);
-    }
-
-    public void RemoveActionPanel()
-    {
-        ActionPanel.gameObject.SetActive(false);
-    }
 
     public void OnItemAdd(Item item, int slot, int Quantity)
     {

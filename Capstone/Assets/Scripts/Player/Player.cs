@@ -11,7 +11,7 @@ using System.Collections.Generic;
 public abstract class Player : MonoBehaviour
 {
     protected float fAttackTime = 3;  //The higher this number, the more frequent you can shoot
-    protected float fHP = 100f;
+    [SerializeField] protected float fHP = 100f; // serialize field for testing purposes
 
     protected float fDamage = 10f;         //default damage if no weapon is equipped
     protected float fMoveRate = 1f;
@@ -25,10 +25,11 @@ public abstract class Player : MonoBehaviour
     private Animator feetAnimation;
 
     //attacking
+    private Sprite PlayerOriginalImage;
     public Weapon basicWeapon;
     public Weapon CurrentWeapon;
     public Transform shootPosition;
-    public Ammunition Ammunition = new Ammunition(500);
+    public readonly Ammunition Ammunition = new Ammunition(500);
 
     // mouse
     private Vector2 direction;
@@ -38,9 +39,32 @@ public abstract class Player : MonoBehaviour
 
     // reference to the controller that is attached to the player
     public MyControllerInput myControllerInput = new MyControllerInput();
+    public string DownPlatformButton { get; private set; } = "N/A";
+    public string RightPlatformButton { get; private set; } = "N/A";
+
+    //player Interaction state
+    public InteractionState InteractionState = InteractionState.OPEN_STATE;
+    public InteractionHandler InteractionPanel { get; private set; }
 
     public readonly Inventory MainInventory = new Inventory(6);
     public readonly Inventory WeaponInventory = new Inventory(3);
+	private InventoryHandler InventoryHandler;
+    private LootBagHandler LootBagHandler;
+
+    // Revive functionality
+    private ReviveBarHandler reviveBarHandler;
+    public PlayerState PlayerState { get; protected set; } = PlayerState.ALIVE;
+    public const float MAX_DOWN_TIME = 25f;
+    public const float MAX_REVIVE_TIME = 7f;
+    private float ReviveTimer = 0; // counts up to TIME_TO_REVIVE
+    private float DownStateTimer = MAX_DOWN_TIME; // counts down to 0
+    private bool IsBeingRevived = false; // when true, pause the DownStateTimer to allow reviving
+    private Player downPlayer;
+
+    // Used to keep track what was our last Raycast since they don't have RaycastExit like colliderExit
+    private Collider2D MostRecentCollider;
+
+    public GameObject MyHUD;
 
     // Start is called before the first frame update
 
@@ -50,8 +74,32 @@ public abstract class Player : MonoBehaviour
     }
     protected void Start()
     {
-        feetAnimation = transform.GetChild(3).GetComponent<Animator>();
+        feetAnimation = transform.Find("Feet").GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
+        InventoryHandler = GetComponent<InventoryHandler>();
+        reviveBarHandler = transform.Find("PlayerDownCanvas").GetComponent<ReviveBarHandler>();
+        PlayerOriginalImage = GetComponent<SpriteRenderer>().sprite;
+        InteractionPanel = MyHUD.transform.Find("InteractionPanel").GetComponent<InteractionHandler>();
+        LootBagHandler = GetComponent<LootBagHandler>();
+
+        switch (myControllerInput.inputType)
+        {
+
+            case InputType.KEYBOARD:
+                DownPlatformButton = "E";
+                RightPlatformButton = "Esc";
+                break;
+
+            case InputType.PS4_CONTROLLER:
+                DownPlatformButton = "X";
+                RightPlatformButton = "O";
+                break;
+
+            case InputType.XBOX_CONTROLLER:
+                DownPlatformButton = "A";
+                RightPlatformButton = "B";
+                break;
+        }
     }
 
     protected void FixedUpdate()
@@ -60,13 +108,24 @@ public abstract class Player : MonoBehaviour
         try
         {
             GetMovementInput();
-            rb.MovePosition(rb.position + velocity * Time.deltaTime); // move the player after updating user input
             getRotationPosition();
-            GetAttackInput();
-        }
-        catch
-        {
+            rb.MovePosition(rb.position + velocity * Time.deltaTime); // move the player after updating user input
 
+            if (PlayerState == PlayerState.DOWN)
+            {
+                fMoveRate = 1f; // crawl speed
+            }
+            else if(PlayerState == PlayerState.ALIVE)
+            {
+                if(InteractionState == InteractionState.OPEN_STATE)
+                    GetAttackInput();
+            }
+            
+            
+        }
+        catch (Exception e)
+        {
+            Debug.Log(e);
         }
         
     }
@@ -74,10 +133,29 @@ public abstract class Player : MonoBehaviour
     // Update is called once per frame
     protected virtual void Update()
     {
-        //check for less than 1 so we can simply subtract enemy damage rather than checking for 0.
-        if (fHP < 1f)
+        if (PlayerState == PlayerState.ALIVE)
         {
-            Death();
+            if(fHP <= 0)
+            {
+                PlayerState = PlayerState.DOWN;
+                reviveBarHandler.OnReviveHandler(MAX_DOWN_TIME, 0); //start the timer
+            }
+            else
+            {
+                if(InteractionState != InteractionState.INVENTORY_STATE)
+                    CastRayCast();
+            }
+        }
+        else if(PlayerState == PlayerState.DOWN)
+        {
+            if (!IsBeingRevived)
+            {
+                DownStateTimer -= Time.deltaTime;
+                reviveBarHandler.OnReviveHandler(DownStateTimer, 0);
+            }
+            if (DownStateTimer <= 0)
+                Death();
+            
         }
 
     }
@@ -185,6 +263,15 @@ public abstract class Player : MonoBehaviour
                 EventAggregator.GetInstance().Publish(new PlayerDamagedEvent(fHP, playerNumber)); // fire event
                 return true;
             }
+            else
+        	{
+	            if(PlayerState == PlayerState.ALIVE)
+	            {
+	                PlayerState = PlayerState.DOWN;
+	            }
+   
+        	}
+            
             return false;
         }
         catch(InvalidCastException e)
@@ -195,7 +282,24 @@ public abstract class Player : MonoBehaviour
 
     protected void Death()
     {
+        PlayerState = PlayerState.KILLED;
         EventAggregator.GetInstance().Publish(new OnPlayerDeathEvent(playerNumber));
+        GameObject bagObj = Resources.Load("Prefabs/Bag") as GameObject;
+        Inventory ptr = bagObj.GetComponent<LootBag>().Inventory;
+
+        for (int i = 0; i < MainInventory.MAX_SLOT_SIZE; i++)
+        {
+            if (MainInventory.GetItemInSlot(i) != null)
+                ptr.AddItem(MainInventory.GetItemInSlot(i));
+        }
+
+        for (int i = 0; i < WeaponInventory.MAX_SLOT_SIZE; i++)
+        {
+            if (WeaponInventory.GetItemInSlot(i) != null)
+                ptr.AddItem(WeaponInventory.GetItemInSlot(i));
+        }
+
+        Instantiate(bagObj, transform.position, transform.rotation); // drop the player loot bag
         gameObject.SetActive(false);
     }
 
@@ -203,8 +307,7 @@ public abstract class Player : MonoBehaviour
     {
         try
         {
-            if (CurrentWeapon!= null &&
-                Input.GetAxis(myControllerInput.RTrigger) == 1 && Time.time > fAttackTime)
+            if (Input.GetAxis(myControllerInput.RTrigger) == 1 && Time.time > fAttackTime)
             {
                 if (CurrentWeapon != null)
                 {
@@ -247,8 +350,91 @@ public abstract class Player : MonoBehaviour
 
     public abstract bool CanEquipWeapon(Item item);
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void CastRayCast()
     {
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, transform.right, 2f);
+        if(hit.collider != null)
+        {
+            switch (hit.collider.tag)
+            {
+                case ("Player"):
+                    //Attempt to revive down player
+                        downPlayer = hit.collider.GetComponent<Player>();
+                    if (downPlayer.PlayerState == PlayerState.DOWN) // only one player can revive another one at a time
+                    {
+                        MostRecentCollider = hit.collider;
+                        InteractionState = InteractionState.REVIVING_STATE;
+                        if (ReviveTimer == 0)
+                        {
+                            downPlayer.OnReviveStart(myControllerInput.inputType);
+                        }
+                           
+                        RevivePlayer(downPlayer);
+                    }
+                        
+                    break;
+
+                case ("Item"):
+                    MostRecentCollider = hit.collider;
+                    InventoryHandler.OnRayCastItemEnter(hit.collider);
+                    break;
+
+                case ("Weapon"):
+                    MostRecentCollider = hit.collider;
+                    InventoryHandler.OnRayCastItemEnter(hit.collider);
+                    break;
+
+                case ("Helicopter"):
+                    break;
+
+                case ("LootBag"):
+                    MostRecentCollider = hit.collider;
+                    LootBagHandler.OnRayCastLootBagEnter(hit.collider);
+                    break;
+            }
+            
+        }
+        else
+        {
+            if(MostRecentCollider != null)
+            {
+                switch (MostRecentCollider.tag)
+                {
+                    case ("Player"):
+                        if (ReviveTimer < MAX_REVIVE_TIME && downPlayer != null)
+                        {
+                            ReviveTimer = 0; // reset as player went away from down player
+                            downPlayer.OnReviveCancel();
+                            downPlayer = null;
+                            InteractionState = InteractionState.OPEN_STATE;
+                        }
+                        break;
+
+                    case ("Item"):
+                        Debug.Log("RaycastExit Item");
+                        InventoryHandler.OnRayCastItemExit();
+                        break;
+
+                    case ("Weapon"):
+                        Debug.Log("RaycastExit Weapon");
+                        InventoryHandler.OnRayCastItemExit();
+                        break;
+
+                    case ("Helicopter"):
+                        Debug.Log("RaycastExit Helicopter");
+                        break;
+
+                    case ("LootBag"):
+                        Debug.Log("RaycastExit Bag");
+                        LootBagHandler.OnRayCastLootBagExit();
+                        break;
+                }
+            }
+
+            MostRecentCollider = null; // reset
+            
+           
+        }
 
     }
 
@@ -281,4 +467,84 @@ public abstract class Player : MonoBehaviour
         newLocation.y = yPos;
         rb.transform.position = newLocation;
     }
+
+
+    private void RevivePlayer(Player player)
+    {
+        if (Input.GetButton(myControllerInput.LeftButton))
+        {
+            if (ReviveTimer < MAX_REVIVE_TIME)
+            {
+                InteractionState = InteractionState.REVIVING_STATE;
+                ReviveTimer += Time.deltaTime;
+                player.reviveBarHandler.OnReviveHandler(player.DownStateTimer, ReviveTimer);
+                Debug.Log(player.name + " is being revived\nTimer_To_Revive: " + ReviveTimer + "\nDown_Timer: " + player.DownStateTimer);
+                player.IsBeingRevived = true;
+
+            }
+            else
+            {
+                InteractionState = InteractionState.OPEN_STATE;
+                Debug.Log(this.name + " revived player successfully");
+                player.OnReviveCompleted();
+                ReviveTimer = 0;
+            }
+        }
+
+        if (Input.GetButtonUp(myControllerInput.LeftButton))
+        {
+            if (ReviveTimer < MAX_REVIVE_TIME)
+            {
+                Debug.Log("You didn't finish reviving and let go");
+                InteractionState = InteractionState.OPEN_STATE;
+                ReviveTimer = 0; // reset as player let go of the button
+                player.OnReviveCancel();
+            }
+        }
+
+    }
+
+    /// <summary>
+    /// Change the player's sprite and current weapon to the Weapon passed in. If the weapon is null, the original player image is used instead.
+    /// </summary>
+    public void UpdatePlayerCurrentWeapon(Weapon currentWeapon)
+    {
+        if (currentWeapon == null)
+        {
+            CurrentWeapon = null;
+            GetComponent<SpriteRenderer>().sprite = PlayerOriginalImage;
+        }
+        else
+        {
+            CurrentWeapon = currentWeapon;
+            GetComponent<SpriteRenderer>().sprite = currentWeapon.PlayerImage;
+        }
+        EventAggregator.GetInstance().Publish(new OnPlayerWeaponChangedEvent(playerNumber, currentWeapon, Ammunition));
+    }
+
+    public virtual void OnReviveCompleted() 
+    {
+        fHP = 50f;
+        PlayerState = PlayerState.ALIVE;
+        reviveBarHandler.OnReviveFinishHandler();
+        DownStateTimer = MAX_DOWN_TIME; // reset down timer
+        EventAggregator.GetInstance().Publish(new PlayerHealedEvent(fHP, playerNumber));
+        IsBeingRevived = false;
+    }
+
+    public void OnReviveStart(InputType inputType) // input type to show the controller type that is healing this player
+    {
+        reviveBarHandler.SetPlatformButtonImage(inputType);
+    }
+
+    public void OnReviveCancel()
+    {
+        IsBeingRevived = false;
+        reviveBarHandler.OnReviveCancelHandler();
+    }
+
 }
+
+public enum PlayerState { ALIVE, DOWN, KILLED } 
+
+public enum InteractionState { OPEN_STATE, INVENTORY_STATE, LOOTING_STATE, REVIVING_STATE}  // Player action state, determines what actions the player can do

@@ -22,5 +22,11 @@ public class PlayerSniper : Player
         base.Update();
     }
 
+    public override void OnReviveCompleted()
+    {
+        fMoveRate = 7f;
+        base.OnReviveCompleted();
+    }
+
     public override bool CanEquipWeapon(Item item) { return item is HandGun || item is Dagger || item is Sniper; }
 }

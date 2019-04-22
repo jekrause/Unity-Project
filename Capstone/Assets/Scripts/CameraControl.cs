@@ -41,7 +41,9 @@ public class CameraControl : MonoBehaviour {
                 if (player.name == "Player1")
                 {
                     thisCam.rect = new Rect(0, 0, 1, 1);
+                    player.GetComponent<Player>().MyHUD = HUD.transform.Find(HUD_SINGLEPLAYER_MODE).gameObject;
                     player.GetComponent<InventoryHandler>().AssignInventoryHUD(HUD.transform.Find(HUD_SINGLEPLAYER_MODE).gameObject);
+                    player.GetComponent<LootBagHandler>().InitializeLootBagHandler(HUD.transform.Find(HUD_SINGLEPLAYER_MODE).gameObject);
                     GameObject.FindWithTag("Camera2").SetActive(false);
                     GameObject.FindWithTag("Camera3").SetActive(false);
                     GameObject.FindWithTag("Camera4").SetActive(false);
@@ -51,14 +53,19 @@ public class CameraControl : MonoBehaviour {
                 if (player.name == "Player1")
                 {
                     thisCam.rect = new Rect(0, 0.5f, 1, 0.5f);
+                    thisCam.rect = new Rect(0, 0, 1, 1);
+                    player.GetComponent<Player>().MyHUD = HUD.transform.Find(HUD_2PLAYERS_MODE).Find(P1_HUD).gameObject;
                     player.GetComponent<InventoryHandler>().AssignInventoryHUD(HUD.transform.Find(HUD_2PLAYERS_MODE).Find(P1_HUD).gameObject);
+                    player.GetComponent<LootBagHandler>().InitializeLootBagHandler(HUD.transform.Find(HUD_2PLAYERS_MODE).Find(P1_HUD).gameObject);
                     GameObject.FindWithTag("Camera3").SetActive(false);
                     GameObject.FindWithTag("Camera4").SetActive(false);
                 }
                 else if (player.name == "Player2")
                 {
                     thisCam.rect = new Rect(0, 0, 1, 0.5f);
+                    player.GetComponent<Player>().MyHUD = HUD.transform.Find(HUD_2PLAYERS_MODE).Find(P2_HUD).gameObject;
                     player.GetComponent<InventoryHandler>().AssignInventoryHUD(HUD.transform.Find(HUD_2PLAYERS_MODE).Find(P2_HUD).gameObject);
+                    player.GetComponent<LootBagHandler>().InitializeLootBagHandler(HUD.transform.Find(HUD_2PLAYERS_MODE).Find(P2_HUD).gameObject);
                 }
                 break;
             case 3:

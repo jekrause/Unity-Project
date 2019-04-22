@@ -22,6 +22,12 @@ public class PlayerHeavy : Player
 
     }
 
+    public override void OnReviveCompleted()
+    {
+        fMoveRate = 5f;
+        base.OnReviveCompleted();
+    }
+
     protected override void Update()
     {
         base.Update();

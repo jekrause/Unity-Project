@@ -29,5 +29,11 @@ public class PlayerFast : Player
         base.Update();
     }
 
+    public override void OnReviveCompleted()
+    {
+        fMoveRate = 10f;
+        base.OnReviveCompleted();
+    }
+
     public override bool CanEquipWeapon(Item item) { return item is HandGun || item is Dagger || item is AssaultRifle; }
 }

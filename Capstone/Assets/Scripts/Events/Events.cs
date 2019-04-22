@@ -88,5 +88,13 @@ public class OnQuestItemDroppedEvent
     public OnQuestItemDroppedEvent(QuestItem item) { QuestItem = item; }
 }
 
+public class OnLootBagChangedEvent
+{
+    public LootBag LootBag { get; private set; }
+    public OnLootBagChangedEvent(LootBag lootBag)
+    {
+        LootBag = lootBag;
+    }
+}
 // other events to add...
 
