@@ -20,6 +20,7 @@ public abstract class RangedWeapon : Weapon
         {
             if (IsReloading) ReloadingInterrupted(player.playerNumber);
             
+            PlayFireAnimation(player);
             var x = Instantiate(bullet, player.shootPosition.position, player.shootPosition.rotation);
 
             x.SetDamage(projDamage);
@@ -83,6 +84,24 @@ public abstract class RangedWeapon : Weapon
             ReloadCancel = true;
             Debug.Log(this.name + ": Reload interrupted.");
         }
+    }
+    
+    public void PlayFireAnimation(Player player)
+    {
+        player.GetComponent<SpriteRenderer>().sprite = this.PlayerFireImage;   //change to firing sprite
+
+
+        float fireRate = 0f;
+        if (this.attackRate > 0.6f)
+        {
+            fireRate = 0.6f;      //0.6f will be max fire delay
+        }
+        else
+        {
+            fireRate = this.attackRate;
+        }
+
+        player.WaitForFireSprite(this.PlayerImage, fireRate / 2);    //change back to regular sprite
     }
 }
 
