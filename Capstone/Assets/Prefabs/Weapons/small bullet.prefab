@@ -69,7 +69,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1574983757
-  m_SortingLayer: 3
+  m_SortingLayer: 4
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 591a06eec8ba77746b2d6ff3abb62ecb, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -131,3 +131,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 32df5bb7e1c387b40846a07fbca6fb93, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  bulletPuff: {fileID: 886530705132006855, guid: ef535cf8babb7458ca7eabbcb0453b39,
+    type: 3}
+  spawnSound: AssaultFire

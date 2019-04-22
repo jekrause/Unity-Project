@@ -17,6 +17,7 @@ public class Shotgun : RangedWeapon
         projSpeed = 350;
         AmmoClip = new AmmoClip(25, 5);
         ReloadTime = 4;
+        attackRate = 2;
         ReloadSound = "Shotgun_Reload";
         ReloadFinishSound = "Shotgun_Reload_Finished";
     }
@@ -26,6 +27,9 @@ public class Shotgun : RangedWeapon
         if (AmmoClip.EnoughAmmoToFire())
         {
             Bullet[] bulletArr = new Bullet[5];
+
+            //currentPlayer = player;
+            PlayFireAnimation(player);
 
             for (int i = 0; i < bulletArr.Length; i++)
             {

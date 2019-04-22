@@ -126,6 +126,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Image: {fileID: 21300000, guid: f67ee539a3f707947ab406d410ca856e, type: 3}
   PlayerImage: {fileID: 21300000, guid: 2b2254bc1e9894bdc8323eddf0f19cfd, type: 3}
+  PlayerFireImage: {fileID: 21300000, guid: 23538a0c3f7714172b4faa24e5345856, type: 3}
   bullet: {fileID: 5871093558369168446, guid: 5fb01a62127840e42892e0c93f84ca22, type: 3}
 --- !u!61 &6061381929267859570
 BoxCollider2D:
