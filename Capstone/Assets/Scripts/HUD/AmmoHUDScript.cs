@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -7,6 +7,7 @@ public class AmmoHUDScript : MonoBehaviour, ISubscriber<OnWeaponAmmoChangedEvent
                                             ISubscriber<OnPlayerAmmoChangedEvent>
 {
     public int playerNumber;
+    private RangedWeapon CurrentWeapon;
     public GameObject WeaponCanvas;
     public GameObject AmmoClip;
     public GameObject PlayerAmmo;
@@ -39,7 +40,7 @@ public class AmmoHUDScript : MonoBehaviour, ISubscriber<OnWeaponAmmoChangedEvent
     {
        if(eventData.playerNum == playerNumber)
         {
-            AmmoClip.transform.GetComponent<Text>().text = eventData.currentAmmoClip + "";
+            AmmoClip.transform.GetComponent<Text>().text = CurrentWeapon.AmmoClip.GetCurrentAmmo() + "";
         }
     }
 
@@ -49,8 +50,9 @@ public class AmmoHUDScript : MonoBehaviour, ISubscriber<OnWeaponAmmoChangedEvent
         {
             if(eventData.Weapon != null && eventData.Weapon is RangedWeapon)
             {
-                PlayerAmmo.transform.GetComponent<Text>().text = eventData.currentAmmunition.Amount + "";
-                AmmoClip.transform.GetComponent<Text>().text = ((RangedWeapon)eventData.Weapon).AmmoClip.CurrentAmmo + "";
+                CurrentWeapon = ((RangedWeapon)eventData.Weapon);
+                PlayerAmmo.transform.GetComponent<Text>().text = (eventData.currentAmmunition.Amount / CurrentWeapon.AmmoClip.AMMO_USE_PER_BULLET) + "";
+                AmmoClip.transform.GetComponent<Text>().text = CurrentWeapon.AmmoClip.GetCurrentAmmo() + "";
                 ShowHUD();
             }
             else
@@ -64,7 +66,7 @@ public class AmmoHUDScript : MonoBehaviour, ISubscriber<OnWeaponAmmoChangedEvent
     {
         if(eventData.playerNum == playerNumber)
         {
-            PlayerAmmo.transform.GetComponent<Text>().text = eventData.currentAmmunition.Amount + "";
+            PlayerAmmo.transform.GetComponent<Text>().text = (eventData.currentAmmunition.Amount / CurrentWeapon.AmmoClip.AMMO_USE_PER_BULLET) + "";
         }
     }
 }
