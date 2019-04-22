@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public abstract class RangedWeapon : Weapon
@@ -13,21 +13,17 @@ public abstract class RangedWeapon : Weapon
     public string ReloadSound { get; protected set; }
     public string ReloadFinishSound { get; protected set; }
 
-    private Player currentPlayer;
-    private float timePassed = 0;
 
     public virtual void Fire(Player player)
     {
         if (AmmoClip.EnoughAmmoToFire())
         {
             if (IsReloading) ReloadingInterrupted(player.playerNumber);
-
-            currentPlayer = player;
-            PlayFireAnimation(currentPlayer);
-
-
+            
             var x = Instantiate(bullet, player.shootPosition.position, player.shootPosition.rotation);
+
             x.SetDamage(projDamage);
+            x.setShooter(player.gameObject);
             x.GetComponent<Rigidbody2D>().AddForce(x.transform.right * projSpeed);
             AmmoClip.Decrement();
             EventAggregator.GetInstance().Publish<OnWeaponAmmoChangedEvent>(new OnWeaponAmmoChangedEvent(player.playerNumber, AmmoClip.CurrentAmmo));
@@ -54,12 +50,6 @@ public abstract class RangedWeapon : Weapon
         if (AmmoClip.IsFull() || IsReloading) yield break; // if already reloading, then return
         else
         {
-
-            //if (currentPlayer != null) 
-            //{
-            //    currentPlayer.GetComponent<SpriteRenderer>().sprite = this.PlayerImage; //change sprite back to regular image
-            //}
-
             IsReloading = true;
             Debug.Log(this.name + ": Reloading...");
             AudioManager.Play(ReloadSound);
@@ -93,30 +83,6 @@ public abstract class RangedWeapon : Weapon
             ReloadCancel = true;
             Debug.Log(this.name + ": Reload interrupted.");
         }
-    }
-
-
-    public void PlayFireAnimation(Player player)
-    {
-        player.GetComponent<SpriteRenderer>().sprite = this.PlayerFireImage;   //change to firing sprite
-
-        //for(int i = 0; i < this.PlayerFireImage.Length; i += 1)
-        //{
-        //    player.WaitForFireSprite(this.PlayerFireImage[i], this.attackRate / 2);    //change back to regular sprite
-        //}
-        //player.GetComponent<SpriteRenderer>().sprite = this.PlayerImage;   //change back to regular sprite
-
-        float fireRate = 0f;
-        if (this.attackRate > 0.6f)
-        {
-            fireRate = 0.6f;      //0.6f will be max fire delay
-        }
-        else
-        {
-            fireRate = this.attackRate;
-        }
-
-        player.WaitForFireSprite(this.PlayerImage, fireRate / 2);    //change back to regular sprite
     }
 }
 
