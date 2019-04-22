@@ -21,7 +21,9 @@ public class ExplosionDamage : MonoBehaviour
         if (col.gameObject.tag == targetTag)
         {
             Debug.Log("sending ExplosiveDamage message to " + col.tag);
-            col.gameObject.SendMessage("Damaged", damage);
+            object[] tempStorage = new object[2];
+            tempStorage[0] = (int)damage;
+            col.gameObject.SendMessage("Damaged", tempStorage);
            // AudioManager.Play("BulletHit");
         }
         else if (col.gameObject.tag == TAG_OBSTACLE)

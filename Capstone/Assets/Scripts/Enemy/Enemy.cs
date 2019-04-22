@@ -111,6 +111,19 @@ public class Enemy : MonoBehaviour
             EnemyRayCast();
         }
 
+        if (fHP < LOW_HP_THRESHOLD && SafteyRadius() > -1)
+        {
+            aiMvmt = MovementTypeEnum.Safe;
+        }
+        else if (playerTarget != null)
+        {
+            aiMvmt = MovementTypeEnum.Chase;
+        }
+        else if (aiMvmt != MovementTypeEnum.Manual)
+        {
+            aiMvmt = MovementTypeEnum.Patrol;
+        }
+
         switch (aiMvmt)
         {
             case MovementTypeEnum.Patrol:
@@ -125,19 +138,6 @@ public class Enemy : MonoBehaviour
             case MovementTypeEnum.Manual:
                 MvmtManual();
                 break;
-        }
-
-        if (fHP < LOW_HP_THRESHOLD && SafteyRadius() > -1)
-        {
-            aiMvmt = MovementTypeEnum.Safe;
-        }
-        else if (playerTarget != null)
-        {
-            aiMvmt = MovementTypeEnum.Chase;
-        }
-        else if (aiMvmt != MovementTypeEnum.Manual)
-        {
-            aiMvmt = MovementTypeEnum.Patrol;
         }
 
         if ((canShoot && ((aiMvmt == MovementTypeEnum.Chase && playerTarget != null) ||
