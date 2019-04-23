@@ -133,11 +133,17 @@ public class Inventory
     {
         if(item == null)
         {
+            if(Slots[slotNum].HasItem())
+                slotUsed--;
+
             Slots[slotNum] = new Slot();
-            slotUsed--;
+            
         }
         else
         {
+            if (!Slots[slotNum].HasItem())
+                slotUsed++;
+
             Slots[slotNum] = new Slot(item, quantity);
         }
     }

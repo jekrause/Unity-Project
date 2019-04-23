@@ -2,14 +2,14 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
 
-public class InventoryHandler : MonoBehaviour
+public class InventoryHandler : MonoBehaviour, ISubscriber<OnMainInvChangedEvent>, ISubscriber<OnWeaponInvChangedEvent>
 {
     private int playerNumber;
     private Player player;
     private bool actionInProgress; // to elminate multiple calls on a long button press
     private bool InventoryHUDFocused;
     private Item itemOnGround;
-    private List<GameObject> ObjectsPickedUp = new List<GameObject>();
+    public static List<GameObject> ObjectsPickedUp = new List<GameObject>();
     private bool ItemFocused;
     private EventAggregator eventAggregator;
 
@@ -53,6 +53,44 @@ public class InventoryHandler : MonoBehaviour
             throw new System.MissingFieldException("Inventory Handler: Player should have Inventory as a field");
         }
         eventAggregator = EventAggregator.GetInstance();
+    }
+
+    private void OnEnable()
+    {
+        EventAggregator.GetInstance().Register<OnMainInvChangedEvent>(this);
+        EventAggregator.GetInstance().Register<OnWeaponInvChangedEvent>(this);
+    }
+
+    private void OnDisable()
+    {
+        EventAggregator.GetInstance().Unregister<OnMainInvChangedEvent>(this);
+        EventAggregator.GetInstance().Unregister<OnWeaponInvChangedEvent>(this);
+    }
+
+    public void OnEventHandler(OnMainInvChangedEvent eventData)
+    {
+        if(eventData.playerNumber == player.playerNumber)
+        {
+            InventoryHUD.OnItemAdd(eventData.item, eventData.slotNum, eventData.Quantity);
+        }
+    }
+
+    public void OnEventHandler(OnWeaponInvChangedEvent eventData)
+    {
+        if (eventData.playerNumber == player.playerNumber)
+        {
+            if (eventData.Equipped == true)
+            {
+                InventoryHUD.OnWeaponEquip(eventData.slotNum);
+                EquippedWeaponSlot = eventData.slotNum;
+            }
+            InventoryHUD.OnWeaponStow(eventData.item, eventData.slotNum, -1);
+        }
+    }
+
+    public void ClearInventoryHUD()
+    {
+        InventoryHUD.Clear();
     }
 
     // Update is called once per frame
@@ -429,6 +467,18 @@ public class InventoryHandler : MonoBehaviour
                     else
                     {
                         InventoryHUD.OnItemAdd(itemOnGround, slot, MainInventory.GetQuantityInSlot(slot));
+                        if (itemOnGround is RangedWeapon)
+                        {
+                            AudioManager.Play(((RangedWeapon)itemOnGround).ReloadFinishSound);
+                        }
+                        else
+                        {
+                            if (itemOnGround is QuestItem)
+                            {
+                                EventAggregator.GetInstance().Publish<OnQuestItemPickUpEvent>(new OnQuestItemPickUpEvent((QuestItem)itemOnGround));
+                            }
+                            AudioManager.Play("PickUpItem");
+                        }
                     }
 
                     // disable game object
@@ -727,4 +777,6 @@ public class InventoryHandler : MonoBehaviour
                 UpdateAndDisplayInteractionPanel();
         }
     }
+
+    
 }

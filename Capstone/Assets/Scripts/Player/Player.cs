@@ -284,7 +284,9 @@ public abstract class Player : MonoBehaviour
     {
         PlayerState = PlayerState.KILLED;
         EventAggregator.GetInstance().Publish(new OnPlayerDeathEvent(playerNumber));
-        GameObject bagObj = Resources.Load("Prefabs/Bag") as GameObject;
+        GameObject prefab = Resources.Load("Prefabs/Bag") as GameObject;
+        GameObject bagObj = Instantiate(prefab, transform.position, transform.rotation); // create the player loot bag
+
         Inventory ptr = bagObj.GetComponent<LootBag>().Inventory;
 
         for (int i = 0; i < MainInventory.MAX_SLOT_SIZE; i++)
@@ -298,8 +300,9 @@ public abstract class Player : MonoBehaviour
             if (WeaponInventory.GetItemInSlot(i) != null)
                 ptr.AddItem(WeaponInventory.GetItemInSlot(i));
         }
-
-        Instantiate(bagObj, transform.position, transform.rotation); // drop the player loot bag
+        GetComponent<InventoryHandler>().ClearInventoryHUD();
+        MyHUD.gameObject.SetActive(false);
+        bagObj.gameObject.SetActive(true);
         gameObject.SetActive(false);
     }
 
@@ -518,6 +521,10 @@ public abstract class Player : MonoBehaviour
         {
             CurrentWeapon = currentWeapon;
             GetComponent<SpriteRenderer>().sprite = currentWeapon.PlayerImage;
+            if(CurrentWeapon is RangedWeapon)
+            {
+                AudioManager.Play(((RangedWeapon)CurrentWeapon).ReloadFinishSound);
+            }
         }
         EventAggregator.GetInstance().Publish(new OnPlayerWeaponChangedEvent(playerNumber, currentWeapon, Ammunition));
     }

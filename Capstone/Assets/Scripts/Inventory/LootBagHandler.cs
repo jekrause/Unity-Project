@@ -32,7 +32,7 @@ public class LootBagHandler : MonoBehaviour, ISubscriber<OnLootBagChangedEvent>
     private int MyInvSlotIndex = 0;   // [0 - 9] where index 6,7,8 are weapon inventory
 
     //keep track what section we are iterating in for player's inventory
-    private bool IteratingMainInv; // True - Main Inventory, False - Weapon Inventory
+    private bool IteratingMainInv = true; // True - Main Inventory, False - Weapon Inventory
 
     // Const to reduce misspelling
     public const string ITEM_SELECTED = "ItemSelected";
@@ -181,7 +181,7 @@ public class LootBagHandler : MonoBehaviour, ISubscriber<OnLootBagChangedEvent>
             player.InteractionState = InteractionState.LOOTING_STATE;
             IteratingMyInv = false;
             UpdateLootBagHUD();
-            UpdateMyInvBagHUD();
+            OpenMyInvBagHUD();
             LootBagHUD.SetActive(true);
             MyInvBagHUD.SetActive(true);
             LootBagSlots[0].transform.Find(ITEM_SELECTED).gameObject.SetActive(true);
@@ -191,86 +191,87 @@ public class LootBagHandler : MonoBehaviour, ISubscriber<OnLootBagChangedEvent>
 
     private void UpdateLootBagHUD()
     {
-        if (CurrentLootBag == null || CurrentLootBag.Inventory.GetNumOfSlotUsed() == 0) return;
+        if (CurrentLootBag == null) return;
 
-        Item item;
-        for (int i = 0; i < SlotSize; i++)
+        if(CurrentLootBag.Inventory.GetNumOfSlotUsed() == 0)
         {
-            item = CurrentLootBag.Inventory.GetItemInSlot(i);
-            if(item != null)
-            {
-                LootBagSlots[i].transform.Find(ITEM_SLOT).Find(ITEM).GetComponent<Image>().sprite = item.Image;
-                if (!(item is Weapon || item is QuestItem))
-                {
-                    LootBagSlots[i].transform.Find(ITEM_SLOT).Find(BACKGROUND).Find(QUANTITY).GetComponent<Text>().text = CurrentLootBag.Inventory.GetQuantityInSlot(i) + "";
-                }
-                LootBagSlots[i].transform.Find(ITEM_SLOT).Find(ITEM).gameObject.SetActive(true);
-            }
-            else
-            {
+            for (int i = 0; i < SlotSize; i++)
                 LootBagSlots[i].transform.Find(ITEM_SLOT).Find(ITEM).gameObject.SetActive(false);
+        }
+        else
+        {
+            Item item;
+            for (int i = 0; i < SlotSize; i++)
+            {
+                item = CurrentLootBag.Inventory.GetItemInSlot(i);
+                if (item != null)
+                {
+                    LootBagSlots[i].transform.Find(ITEM_SLOT).Find(ITEM).GetComponent<Image>().sprite = item.Image;
+                    if (!(item is Weapon || item is QuestItem))
+                    {
+                        LootBagSlots[i].transform.Find(ITEM_SLOT).Find(BACKGROUND).Find(QUANTITY).GetComponent<Text>().text = CurrentLootBag.Inventory.GetQuantityInSlot(i) + "";
+                    }
+                    LootBagSlots[i].transform.Find(ITEM_SLOT).Find(ITEM).gameObject.SetActive(true);
+                }
+                else
+                {
+                    LootBagSlots[i].transform.Find(ITEM_SLOT).Find(ITEM).gameObject.SetActive(false);
+                }
             }
         }
+
+        
         
     }
 
-    private void UpdateMyInvBagHUD()
+    private void OpenMyInvBagHUD()
     {
         if (player.MainInventory.GetNumOfSlotUsed() == 0 && player.WeaponInventory.GetNumOfSlotUsed() == 0) return;
-
+        
         Item item;
-        int i = 0;
+        int index = 0;
         int size = 9;
-        for (; i < 6; i++)
+        for (; index < 6; index++)
         {
-            item = player.MainInventory.GetItemInSlot(i);
-            if(item != null)
+            item = player.MainInventory.GetItemInSlot(index);
+            if (item != null)
             {
-                MyInvSlots[i].transform.Find(ITEM_SLOT).Find(ITEM).GetComponent<Image>().sprite = item.Image;
+                MyInvSlots[index].transform.Find(ITEM_SLOT).Find(ITEM).GetComponent<Image>().sprite = item.Image;
                 if (item is FirstAid)
                 {
-                    MyInvSlots[i].transform.Find(ITEM_SLOT).Find(BACKGROUND).Find(QUANTITY).GetComponent<Text>().text = player.MainInventory.GetQuantityInSlot(i) + "";
-                    MyInvSlots[i].transform.Find(ITEM_SLOT).Find(BACKGROUND).gameObject.SetActive(true);
+                    MyInvSlots[index].transform.Find(ITEM_SLOT).Find(BACKGROUND).Find(QUANTITY).GetComponent<Text>().text = player.MainInventory.GetQuantityInSlot(index) + "";
+                    MyInvSlots[index].transform.Find(ITEM_SLOT).Find(BACKGROUND).gameObject.SetActive(true);
                 }
                 else
                 {
-                    MyInvSlots[i].transform.Find(ITEM_SLOT).Find(BACKGROUND).gameObject.SetActive(false);
+                    MyInvSlots[index].transform.Find(ITEM_SLOT).Find(BACKGROUND).gameObject.SetActive(false);
                 }
-                MyInvSlots[i].transform.Find(ITEM_SLOT).Find(ITEM).gameObject.SetActive(true);
+                MyInvSlots[index].transform.Find(ITEM_SLOT).Find(ITEM).gameObject.SetActive(true);
             }
             else
             {
-                MyInvSlots[i].transform.Find(ITEM_SLOT).Find(ITEM).gameObject.SetActive(false);
+                MyInvSlots[index].transform.Find(ITEM_SLOT).Find(BACKGROUND).gameObject.SetActive(false);
+                MyInvSlots[index].transform.Find(ITEM_SLOT).Find(ITEM).gameObject.SetActive(false);
             }
-            
+
         }
-        
-        for (int weaponIndex = 0; i < size; i++)
+
+        for (int weaponIndex = 0; index < size; index++)
         {
             item = player.WeaponInventory.GetItemInSlot(weaponIndex++);
-            if(item != null)
+            if (item != null)
             {
-                MyInvSlots[i].transform.Find(ITEM_SLOT).Find(ITEM).GetComponent<Image>().sprite = item.Image;
-                if (item is FirstAid)
-                {
-                    MyInvSlots[i].transform.Find(ITEM_SLOT).Find(BACKGROUND).Find(QUANTITY).GetComponent<Text>().text = player.WeaponInventory.GetQuantityInSlot(i) + "";
-                    MyInvSlots[i].transform.Find(ITEM_SLOT).Find(BACKGROUND).gameObject.SetActive(true);
-                }
-                else
-                {
-                    MyInvSlots[i].transform.Find(ITEM_SLOT).Find(BACKGROUND).gameObject.SetActive(false);
-                }
-                MyInvSlots[i].transform.Find(ITEM_SLOT).Find(ITEM).gameObject.SetActive(true);
+                MyInvSlots[index].transform.Find(ITEM_SLOT).Find(ITEM).GetComponent<Image>().sprite = item.Image;
+                MyInvSlots[index].transform.Find(ITEM_SLOT).Find(BACKGROUND).gameObject.SetActive(false);
+                MyInvSlots[index].transform.Find(ITEM_SLOT).Find(ITEM).gameObject.SetActive(true);
             }
             else
             {
-                MyInvSlots[i].transform.Find(ITEM_SLOT).Find(ITEM).gameObject.SetActive(false);
+                MyInvSlots[index].transform.Find(ITEM_SLOT).Find(ITEM).gameObject.SetActive(false);
             }
-            
+
         }
-
-
-    }
+     }
 
     private void SwapSlots()
     {
@@ -309,7 +310,8 @@ public class LootBagHandler : MonoBehaviour, ISubscriber<OnLootBagChangedEvent>
             }
             // update my slot
             player.MainInventory.ModifySlot(normalizedIndex, itemToCopy, quantityToCopy);
-            
+            Debug.Log(quantityToCopy);
+            EventAggregator.GetInstance().Publish(new OnMainInvChangedEvent(player.playerNumber, normalizedIndex, itemToCopy, quantityToCopy));
         }
         else
         {
@@ -317,12 +319,75 @@ public class LootBagHandler : MonoBehaviour, ISubscriber<OnLootBagChangedEvent>
             myItemQuantity = player.WeaponInventory.GetQuantityInSlot(normalizedIndex);
 
             // update my slot
-            player.WeaponInventory.ModifySlot(normalizedIndex, itemToCopy, quantityToCopy);
+            if (itemToCopy is Weapon)
+            {
+                bool equipped = false;
+                if (player.CanEquipWeapon((Weapon)itemToCopy))
+                {
+                    player.UpdatePlayerCurrentWeapon((Weapon)itemToCopy);
+                    equipped = true;
+                }
+                else
+                {
+                    Debug.Log("Cannot add it to weapon slot");
+                    BusyLooting = false;
+                    IteratingMainInv = true;
+                    return;
+
+                }
+                player.WeaponInventory.ModifySlot(normalizedIndex, itemToCopy, quantityToCopy);
+                Debug.Log(player.WeaponInventory.GetNumOfSlotUsed());
+                EventAggregator.GetInstance().Publish(new OnWeaponInvChangedEvent(player.playerNumber, normalizedIndex, itemToCopy, quantityToCopy, equipped));
+            }
+            else
+            {
+                Debug.Log("Cannot add it to weapon slot");
+                BusyLooting = false;
+                IteratingMainInv = true;
+                return;
+            }
+           
         }
          
         CurrentLootBag.Inventory.ModifySlot(LootBagSlotIndex, myItem, myItemQuantity);  // update Loot bag slot
-        EventAggregator.GetInstance().Publish<OnLootBagChangedEvent>(new OnLootBagChangedEvent(CurrentLootBag)); // announce that the loot bag have been altered
+        EventAggregator.GetInstance().Publish(new OnLootBagChangedEvent(CurrentLootBag)); // announce that the loot bag have been altered
+
+        //Update HUD bags
+        if(myItem == null)
+        {
+            LootBagSlots[LootBagSlotIndex].transform.Find(ITEM_SLOT).Find(ITEM).gameObject.SetActive(false);
+        }
+        else
+        {   
+            if(myItem.GetItemType() == Item.Type.HEALING_ITEM)
+            {
+                LootBagSlots[LootBagSlotIndex].transform.Find(ITEM_SLOT).Find(BACKGROUND).Find(QUANTITY).GetComponent<Text>().text = myItemQuantity + "";
+                LootBagSlots[LootBagSlotIndex].transform.Find(ITEM_SLOT).Find(BACKGROUND).gameObject.SetActive(true);
+            }
+            else
+            {
+                LootBagSlots[LootBagSlotIndex].transform.Find(ITEM_SLOT).Find(BACKGROUND).gameObject.SetActive(false);
+            }
+            LootBagSlots[LootBagSlotIndex].transform.Find(ITEM_SLOT).Find(ITEM).GetComponent<Image>().sprite = myItem.Image;
+            LootBagSlots[LootBagSlotIndex].transform.Find(ITEM_SLOT).Find(ITEM).gameObject.SetActive(true);
+        }
+
+        if(itemToCopy.GetItemType() == Item.Type.HEALING_ITEM)
+        {
+            MyInvSlots[MyInvSlotIndex].transform.Find(ITEM_SLOT).Find(BACKGROUND).Find(QUANTITY).GetComponent<Text>().text = quantityToCopy + "";
+            MyInvSlots[MyInvSlotIndex].transform.Find(ITEM_SLOT).Find(BACKGROUND).gameObject.SetActive(true);
+        }
+        else
+        {
+            MyInvSlots[MyInvSlotIndex].transform.Find(ITEM_SLOT).Find(BACKGROUND).gameObject.SetActive(false);
+        }
+
+        MyInvSlots[MyInvSlotIndex].transform.Find(ITEM_SLOT).Find(ITEM).GetComponent<Image>().sprite = itemToCopy.Image;
+        MyInvSlots[MyInvSlotIndex].transform.Find(ITEM_SLOT).Find(ITEM).gameObject.SetActive(true);
+        
+        IteratingMyInv = false;
         BusyLooting = false;
+        SwapSelectionHUD();
     }
 
     private void SwapSelectionHUD()
@@ -487,9 +552,7 @@ public class LootBagHandler : MonoBehaviour, ISubscriber<OnLootBagChangedEvent>
                     SwapSelectionHUD();
                 }
             }
-
             
-           
         }
 
         if (Settings.OS == "Windows" || (player.myControllerInput.inputType == InputType.KEYBOARD))

@@ -32,9 +32,7 @@ public class InventoryHUD : MonoBehaviour
         WeaponInvSlots[WeaponEquippedIndex].transform.GetChild(0).gameObject.SetActive(true);
     }
 
-    
-
-
+   
     public void OnItemAdd(Item item, int slot, int Quantity)
     {
         int stackQuantity = Quantity;
@@ -256,8 +254,33 @@ public class InventoryHUD : MonoBehaviour
         gameObject.SetActive(active);
     }
 
+
+    public void Clear()
+    {
+        for (int i = 0; i < MainInvSlots.Count; i++)
+        {
+            MainInvSlots[i].transform.Find("ItemSlot").Find("Item").gameObject.SetActive(false);
+            MainInvSlots[i].transform.Find("ItemSlot").Find("Background").gameObject.SetActive(false);
+        }
+
+        for(int i = 0; i < WeaponInvSlots.Count; i++)
+        {
+            WeaponInvSlots[i].transform.Find("ItemSlot").Find("Item").gameObject.SetActive(false);
+            WeaponInvSlots[i].transform.Find("ItemSlot").Find("Background").gameObject.SetActive(false);
+        }
+           
+    }
+    private void OnEnable()
+    {
+
+    }
+
+
+
     private void OnDisable()
     {
 
     }
+
+   
 }

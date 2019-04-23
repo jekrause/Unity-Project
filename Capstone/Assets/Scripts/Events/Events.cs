@@ -96,5 +96,37 @@ public class OnLootBagChangedEvent
         LootBag = lootBag;
     }
 }
+
+public class OnMainInvChangedEvent
+{
+    public int playerNumber { get; private set; }
+    public int slotNum { get; private set; }
+    public Item item { get; private set; }
+    public int Quantity { get; private set; }
+    public OnMainInvChangedEvent(int playerNum, int index, Item item, int quantity)
+    {
+        playerNumber = playerNum;
+        slotNum = index;
+        this.item = item;
+        Quantity = quantity;
+    }
+}
+
+public class OnWeaponInvChangedEvent
+{
+    public int playerNumber { get; private set; }
+    public int slotNum { get; private set; }
+    public Item item { get; private set; }
+    public int Quantity { get; private set; }
+    public bool Equipped { get; private set; }
+    public OnWeaponInvChangedEvent(int playerNum, int index, Item item, int quantity, bool equipped)
+    {
+        playerNumber = playerNum;
+        slotNum = index;
+        this.item = item;
+        Quantity = quantity;
+        Equipped = equipped;
+    }
+}
 // other events to add...
 

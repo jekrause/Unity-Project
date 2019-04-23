@@ -49,6 +49,7 @@ public class InteractionHandler : MonoBehaviour
 
     public void RemoveLoadBar()
     {
+        if (FillColor == null) return;
         HoldButtonDownBar.value = 0;
         FillColor.color = DefaultColor;
         HoldButtonDownBar.gameObject.SetActive(false);

@@ -1,4 +1,4 @@
-﻿
+﻿using UnityEngine;
 public class Slot 
 {
         private Item CurrentItem;
@@ -12,12 +12,13 @@ public class Slot
             }
             else
             {
-                if (quantity > CurrentItem.GetMaxStackSize())
+                if (quantity > item.GetMaxStackSize())
                     throw new System.ArgumentException("Quantity given is bigger than item's max stack size");
                 else if(quantity <= 0)
                     throw new System.ArgumentException("Quantity needs to be at least 1 or greater");
 
                 CurrentQuantity = quantity;
+                CurrentItem = item;
             }
         }
 
@@ -99,22 +100,6 @@ public class Slot
             {
                 IncrementQuantity();
                 ret = true;
-            }
-        }
-
-        if(ret == true)
-        {
-            if (item is RangedWeapon)
-            {
-                AudioManager.Play(((RangedWeapon)item).ReloadFinishSound);
-            }
-            else
-            {
-                if (item is QuestItem)
-                {
-                    EventAggregator.GetInstance().Publish<OnQuestItemPickUpEvent>(new OnQuestItemPickUpEvent((QuestItem)item));
-                }
-                AudioManager.Play("PickUpItem");
             }
         }
 

@@ -53,7 +53,6 @@ public class CameraControl : MonoBehaviour {
                 if (player.name == "Player1")
                 {
                     thisCam.rect = new Rect(0, 0.5f, 1, 0.5f);
-                    thisCam.rect = new Rect(0, 0, 1, 1);
                     player.GetComponent<Player>().MyHUD = HUD.transform.Find(HUD_2PLAYERS_MODE).Find(P1_HUD).gameObject;
                     player.GetComponent<InventoryHandler>().AssignInventoryHUD(HUD.transform.Find(HUD_2PLAYERS_MODE).Find(P1_HUD).gameObject);
                     player.GetComponent<LootBagHandler>().InitializeLootBagHandler(HUD.transform.Find(HUD_2PLAYERS_MODE).Find(P1_HUD).gameObject);
