@@ -157,6 +157,7 @@ public class LootBagHandler : MonoBehaviour, ISubscriber<OnLootBagChangedEvent>
         LootBagHUD.SetActive(false);
         MyInvBagHUD.SetActive(false);
         IteratingMyInv = false;
+        IteratingMainInv = true;
         LootBagSlots[LootBagSlotIndex].transform.Find(ITEM_SELECTED).gameObject.SetActive(false);
         MyInvSlots[MyInvSlotIndex].transform.Find(ITEM_SELECTED).gameObject.SetActive(false);
         MyInvSlotIndex = 0;
@@ -476,7 +477,7 @@ public class LootBagHandler : MonoBehaviour, ISubscriber<OnLootBagChangedEvent>
         if (IteratingMyInv)
         {
             MyInvSlotIndex = index;
-            If(index <= 5)
+            if(index <= 5)
                IteratingMyInv = true;
         }
         else
