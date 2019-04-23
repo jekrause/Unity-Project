@@ -331,7 +331,7 @@ public class LootBagHandler : MonoBehaviour, ISubscriber<OnLootBagChangedEvent>
                 {
                     Debug.Log("Cannot add it to weapon slot");
                     BusyLooting = false;
-                    IteratingMainInv = true;
+                    IteratingMyInv = true;
                     return;
 
                 }
@@ -343,7 +343,7 @@ public class LootBagHandler : MonoBehaviour, ISubscriber<OnLootBagChangedEvent>
             {
                 Debug.Log("Cannot add it to weapon slot");
                 BusyLooting = false;
-                IteratingMainInv = true;
+                IteratingMyInv = true;
                 return;
             }
            
