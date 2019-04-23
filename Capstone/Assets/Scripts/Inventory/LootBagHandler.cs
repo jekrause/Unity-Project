@@ -331,7 +331,6 @@ public class LootBagHandler : MonoBehaviour, ISubscriber<OnLootBagChangedEvent>
                 {
                     Debug.Log("Cannot add it to weapon slot");
                     BusyLooting = false;
-                    IteratingMyInv = true;
                     return;
 
                 }
@@ -343,7 +342,6 @@ public class LootBagHandler : MonoBehaviour, ISubscriber<OnLootBagChangedEvent>
             {
                 Debug.Log("Cannot add it to weapon slot");
                 BusyLooting = false;
-                IteratingMyInv = true;
                 return;
             }
            
@@ -451,9 +449,7 @@ public class LootBagHandler : MonoBehaviour, ISubscriber<OnLootBagChangedEvent>
         {
             if (index >= 6)
                 IteratingMainInv = false;
-            else
-                IteratingMainInv = true;
-
+            
             MyInvSlotIndex = index;
         }
         else
@@ -480,6 +476,8 @@ public class LootBagHandler : MonoBehaviour, ISubscriber<OnLootBagChangedEvent>
         if (IteratingMyInv)
         {
             MyInvSlotIndex = index;
+            If(index <= 5)
+               IteratingMyInv = true;
         }
         else
         {
