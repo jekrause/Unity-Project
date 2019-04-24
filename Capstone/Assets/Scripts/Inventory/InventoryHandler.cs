@@ -176,6 +176,11 @@ public class InventoryHandler : MonoBehaviour, ISubscriber<OnMainInvChangedEvent
                     {
                         IterateLeftList();
                     }
+                    
+                    if (Input.GetAxis(player.myControllerInput.DPadX_Windows) == 0 && Input.GetAxis(player.myControllerInput.DPadY_Windows) == 0)
+                    {
+                        actionInProgress = false; // user let go of button, so action is no longer in progress
+                    }
                 }
                 else
                 {
@@ -305,11 +310,6 @@ public class InventoryHandler : MonoBehaviour, ISubscriber<OnMainInvChangedEvent
                 {
                     EquipPrevWeapon();
                 }
-            }
-
-            if (Input.GetAxis(player.myControllerInput.DPadX_Windows) == 0 && Input.GetAxis(player.myControllerInput.DPadY_Windows) == 0)
-            {
-                actionInProgress = false; // user let go of button, so action is no longer in progress
             }
         }
 
