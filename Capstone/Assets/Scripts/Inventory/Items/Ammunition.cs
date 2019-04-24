@@ -24,7 +24,7 @@ public class Ammunition
         if (this.Amount == MAX_CAPACITY) return false;
         else
         {
-            Amount = Amount + amount >= MAX_CAPACITY ? MAX_CAPACITY : Amount;
+            Amount = Amount + amount >= MAX_CAPACITY ? MAX_CAPACITY : (Amount + amount);
             return true;
         }
        
