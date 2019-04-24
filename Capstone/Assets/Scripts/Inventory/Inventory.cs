@@ -53,19 +53,32 @@ public class Inventory
         if (item == null) throw new System.ArgumentNullException("Inventory AddItem(): Attempting to add null item");
 
         int ret = -1;
-
-        for (int i = 0; i < MAX_SLOT_SIZE; i++)
+        bool addSuccesfully = false;
+        
+        for(int i = 0; i < MAX_SLOT_SIZE; i++)
         {
-            bool addSuccessfully = Slots[i].AddItem(item);
-            if (addSuccessfully)
+            // attempt to find a slot that already contain the item
+            if (Slots[i].HasItem() && Slots[i].GetType() == item.GetType())
             {
-                if(Slots[i].CurrentQuantity == 1) // added a new item
+                if (!Slots[i].IsFull())
                 {
-                    slotUsed++;
+                    Slots[i].AddItem(item);
+                    return i;
                 }
+
+            }
+        }
+
+        for(int i = 0; i < MAX_SLOT_SIZE; i++)
+        {
+            addSuccesfully = Slots[i].AddItem(item);
+            if (addSuccesfully)
+            {
+                slotUsed++;
                 return i;
             }
         }
+       
 
         return ret;
     }

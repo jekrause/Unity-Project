@@ -511,10 +511,9 @@ public class Enemy : MonoBehaviour
                 Debug.Log("PlayerTarget position: " + playerTarget.transform.position);
                 return numPlayers;
             }
-
+            Destroy(playerTarget);
         }
-        Destroy(playerTarget);
-
+        
         playerTarget = null;
         return -1;
     }
