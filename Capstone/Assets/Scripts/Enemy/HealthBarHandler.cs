@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -7,7 +7,8 @@ public class HealthBarHandler : MonoBehaviour
 {
     private Slider HealthBar;
     private float maxHP = 100f; // by default
-    private bool HealthBarActive;
+    private float timer = 0;
+    private bool coroutineRunning = false;
 
     // Start is called before the first frame update
     void Start()
@@ -31,7 +32,9 @@ public class HealthBarHandler : MonoBehaviour
     public void OnDamaged(float hp)
     {
         HealthBar.value = CalculateHealth(hp);
-        StartCoroutine(DisplayHealthBar());
+        timer = 0;
+        if(!coroutineRunning)
+            StartCoroutine(DisplayHealthBar());
     }
 
     public void OnHealed(float hp)
@@ -52,18 +55,17 @@ public class HealthBarHandler : MonoBehaviour
     private void SetHealthBarActive(bool active)
     {
         HealthBar.gameObject.SetActive(active);
-        HealthBarActive = active;
+        coroutineRunning = active;
     }
 
     private IEnumerator DisplayHealthBar()
     {
         // display health bar for 3 seconds
         SetHealthBarActive(true);
-        int timer = 0;
-        while (HealthBarActive && timer < 3)
+        while (timer < 3)
         {
-            timer++;
-            yield return new WaitForSeconds(1);
+            yield return null;
+            timer += Time.deltaTime;
         }
         SetHealthBarActive(false);
     }
