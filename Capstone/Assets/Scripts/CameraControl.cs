@@ -71,40 +71,54 @@ public class CameraControl : MonoBehaviour {
                 if (player.name == "Player1")
                 {
                     thisCam.rect = new Rect(0, 0.5f, 1f, 0.5f);
+                    player.GetComponent<Player>().MyHUD = HUD.transform.Find(HUD_3PLAYERS_MODE).Find(P1_HUD).gameObject;
                     player.GetComponent<InventoryHandler>().AssignInventoryHUD(HUD.transform.Find(HUD_3PLAYERS_MODE).Find(P1_HUD).gameObject);
+                    player.GetComponent<LootBagHandler>().InitializeLootBagHandler(HUD.transform.Find(HUD_3PLAYERS_MODE).Find(P1_HUD).gameObject);
                     GameObject.FindWithTag("Camera4").SetActive(false);
                 }
                 else if (player.name == "Player2")
                 {
                     thisCam.rect = new Rect(0f, 0f, 0.5f, 0.5f);
+                    player.GetComponent<Player>().MyHUD = HUD.transform.Find(HUD_3PLAYERS_MODE).Find(P2_HUD).gameObject;
                     player.GetComponent<InventoryHandler>().AssignInventoryHUD(HUD.transform.Find(HUD_3PLAYERS_MODE).Find(P2_HUD).gameObject);
+                    player.GetComponent<LootBagHandler>().InitializeLootBagHandler(HUD.transform.Find(HUD_3PLAYERS_MODE).Find(P2_HUD).gameObject);
                 }
                 else if (player.name == "Player3")
                 {
                     thisCam.rect = new Rect(0.5f, 0, 0.5f, 0.5f);
+                    player.GetComponent<Player>().MyHUD = HUD.transform.Find(HUD_3PLAYERS_MODE).Find(P3_HUD).gameObject;
                     player.GetComponent<InventoryHandler>().AssignInventoryHUD(HUD.transform.Find(HUD_3PLAYERS_MODE).Find(P3_HUD).gameObject);
+                    player.GetComponent<LootBagHandler>().InitializeLootBagHandler(HUD.transform.Find(HUD_3PLAYERS_MODE).Find(P3_HUD).gameObject); ;
                 }
                 break;
             case 4:
                 if (player.name == "Player1")
                 {
                     thisCam.rect = new Rect(0, 0.5f, 0.5f, 0.5f);
+                    player.GetComponent<Player>().MyHUD = HUD.transform.Find(HUD_4PLAYERS_MODE).Find(P1_HUD).gameObject;
                     player.GetComponent<InventoryHandler>().AssignInventoryHUD(HUD.transform.Find(HUD_4PLAYERS_MODE).Find(P1_HUD).gameObject);
+                    player.GetComponent<LootBagHandler>().InitializeLootBagHandler(HUD.transform.Find(HUD_4PLAYERS_MODE).Find(P1_HUD).gameObject);
                 }
                 else if (player.name == "Player2")
                 {
                     thisCam.rect = new Rect(0.5f, 0.5f, 0.5f, 0.5f);
+                    player.GetComponent<Player>().MyHUD = HUD.transform.Find(HUD_4PLAYERS_MODE).Find(P2_HUD).gameObject;
                     player.GetComponent<InventoryHandler>().AssignInventoryHUD(HUD.transform.Find(HUD_4PLAYERS_MODE).Find(P2_HUD).gameObject);
+                    player.GetComponent<LootBagHandler>().InitializeLootBagHandler(HUD.transform.Find(HUD_4PLAYERS_MODE).Find(P2_HUD).gameObject);
                 }
                 else if (player.name == "Player3")
                 {
                     thisCam.rect = new Rect(0, 0, 0.5f, 0.5f);
+                    player.GetComponent<Player>().MyHUD = HUD.transform.Find(HUD_4PLAYERS_MODE).Find(P3_HUD).gameObject;
                     player.GetComponent<InventoryHandler>().AssignInventoryHUD(HUD.transform.Find(HUD_4PLAYERS_MODE).Find(P3_HUD).gameObject);
+                    player.GetComponent<LootBagHandler>().InitializeLootBagHandler(HUD.transform.Find(HUD_4PLAYERS_MODE).Find(P3_HUD).gameObject);
                 }
                 else if (player.name == "Player4")
                 {
                     thisCam.rect = new Rect(0.5f, 0, 0.5f, 0.5f);
+                    player.GetComponent<Player>().MyHUD = HUD.transform.Find(HUD_4PLAYERS_MODE).Find(P4_HUD).gameObject;
                     player.GetComponent<InventoryHandler>().AssignInventoryHUD(HUD.transform.Find(HUD_4PLAYERS_MODE).Find(P4_HUD).gameObject);
+                    player.GetComponent<LootBagHandler>().InitializeLootBagHandler(HUD.transform.Find(HUD_4PLAYERS_MODE).Find(P4_HUD).gameObject);
                 }
                 break;
         }
