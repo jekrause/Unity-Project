@@ -194,6 +194,10 @@ public class InventoryHandler : MonoBehaviour, ISubscriber<OnMainInvChangedEvent
                         {
                             IterateLeftList();
                         }
+                        else
+                        {
+                            actionInProgress = false;
+                        }
                     }
                     else
                     {
@@ -204,6 +208,10 @@ public class InventoryHandler : MonoBehaviour, ISubscriber<OnMainInvChangedEvent
                         else if (Input.GetButtonDown(player.myControllerInput.DPadLeft_Mac))
                         {
                             IterateLeftList();
+                        }
+                        else
+                        {
+                            actionInProgress = false;
                         }
                     }
                     
