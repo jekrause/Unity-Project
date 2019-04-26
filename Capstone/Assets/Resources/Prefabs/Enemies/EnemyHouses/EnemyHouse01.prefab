@@ -181,7 +181,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fHP: 200
   delaySeconds: 7
-  enemy: {fileID: 5197658978960714413, guid: 1964309d6a98d43ff85cf9876f88c1b9, type: 3}
+  enemyRifle: {fileID: 5197658978960714413, guid: 1964309d6a98d43ff85cf9876f88c1b9,
+    type: 3}
+  enemyHeavy: {fileID: 1031263647947930330, guid: 0ee34249bd1aa3e4fa645a059a763526,
+    type: 3}
+  enemyHandgun: {fileID: 7912580902075593183, guid: 3945f979a51aba742a054f82bc1371ca,
+    type: 3}
   destroyedHouse: {fileID: 522669741149292859, guid: 50dbb226d8db5491d9c5b1ac4dc31a15,
     type: 3}
   spawnPosition: {fileID: 5103403201881950480}

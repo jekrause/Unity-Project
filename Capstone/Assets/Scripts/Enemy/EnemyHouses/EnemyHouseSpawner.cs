@@ -9,7 +9,9 @@ public class EnemyHouseSpawner : MonoBehaviour
 
     public float fHP = 100;
     public float delaySeconds = 5;
-    public GameObject enemy;
+    public GameObject enemyRifle;
+    public GameObject enemyHeavy;
+    public GameObject enemyHandgun;
     public GameObject destroyedHouse;
     public Transform spawnPosition;
     public Transform goalPosition;
@@ -53,7 +55,20 @@ public class EnemyHouseSpawner : MonoBehaviour
 
         if (Waited() && (startSpawning == true))
         {
-            GameObject newEnemy = Instantiate(enemy, spawnPosition.transform.position, spawnPosition.transform.rotation);
+            int ii = Random.Range(0, 3);
+            GameObject newEnemy = null;
+            switch (ii)
+            {
+                case 0:
+                    newEnemy = Instantiate(enemyRifle, spawnPosition.transform.position, spawnPosition.transform.rotation);
+                    break;
+                case 1:
+                    newEnemy = Instantiate(enemyHeavy, spawnPosition.transform.position, spawnPosition.transform.rotation);
+                    break;
+                case 2:
+                    newEnemy = Instantiate(enemyHandgun, spawnPosition.transform.position, spawnPosition.transform.rotation);
+                    break;
+            }
             newEnemy.transform.Rotate(transform.rotation.x, transform.rotation.y, transform.rotation.z-90);
             // im not sure if this is correct???
 
