@@ -141,9 +141,34 @@ public class PlayerMenuScript : MonoBehaviour
         {
             // listen for a button press from connected controllers
             BindPlayerInput();
+            if (playerInputIndex > 3)
+            {
+                playerInputIndex = 3;
+            }
             //playerInputIndex++;
             //Debug.Log("Player " + (playerInputIndex + 1) + " has joined!");
         }
+
+
+        /*
+        if (Input.GetButton("J1XBOX_DownButton_" + Settings.OS))
+        {
+            print("XBOX Joystick 1 Detected, playerIndex = " + playerInputIndex);
+        }
+        else if (Input.GetButton("J2XBOX_DownButton_" + Settings.OS))
+        {
+            print("XBOX Joystick 2 Detected, playerIndex = " + playerInputIndex);
+        }
+        else if (Input.GetButton("J3XBOX_DownButton_" + Settings.OS))
+        {
+            print("XBOX Joystick 3 Detected, playerIndex = " + playerInputIndex);
+        }
+        else if (Input.GetButton("J4XBOX_DownButton_" + Settings.OS))
+        {
+            print("XBOX Joystick 4 Detected, playerIndex = " + playerInputIndex);
+        }
+        */
+
         //else
         //{
         //    playerInputIndex++;
@@ -415,6 +440,7 @@ public class PlayerMenuScript : MonoBehaviour
 
             //playerLists[index].myControllerInput = new MyControllerInput(InputType.KEYBOARD, 1);
             Settings.inputAssigned[0] = true;
+            playerInputIndex++;
             //transform.GetChild(index).GetComponentInChildren<TextMesh>().text = "P" + (index + 1) + " (Keyboard input)";
         }
         else if (Input.GetButton("J1PS4_DownButton_" + Settings.OS) && !Settings.inputAssigned[1])
@@ -425,6 +451,7 @@ public class PlayerMenuScript : MonoBehaviour
 
             //playerLists[index].myControllerInput = new MyControllerInput(InputType.PS4_CONTROLLER, 1);
             Settings.inputAssigned[1] = true;
+            playerInputIndex++;
             //transform.GetChild(index).GetComponentInChildren<TextMesh>().text = "P" + (index + 1) + " (PS4 input)";
 
         }
@@ -436,6 +463,7 @@ public class PlayerMenuScript : MonoBehaviour
 
             //playerLists[index].myControllerInput = new MyControllerInput(InputType.PS4_CONTROLLER, 2);
             Settings.inputAssigned[2] = true;
+            playerInputIndex++;
             //transform.GetChild(index).GetComponentInChildren<TextMesh>().text = "P" + (index + 1) + " (PS4 input)";
 
         }
@@ -446,6 +474,7 @@ public class PlayerMenuScript : MonoBehaviour
 
             //playerLists[index].myControllerInput = new MyControllerInput(InputType.PS4_CONTROLLER, 3);
             Settings.inputAssigned[3] = true;
+            playerInputIndex++;
             //transform.GetChild(index).GetComponentInChildren<TextMesh>().text = "P" + (index + 1) + " (PS4 input)";
         }
         else if (Input.GetButton("J4PS4_DownButton_" + Settings.OS) && !Settings.inputAssigned[4])
@@ -455,6 +484,7 @@ public class PlayerMenuScript : MonoBehaviour
 
             //playerLists[index].myControllerInput = new MyControllerInput(InputType.PS4_CONTROLLER, 4);
             Settings.inputAssigned[4] = true;
+            playerInputIndex++;
             //transform.GetChild(index).GetComponentInChildren<TextMesh>().text = "P" + (index + 1) + " (PS4 input)";
         }
         else if (Input.GetButton("J1XBOX_DownButton_" + Settings.OS) && !Settings.inputAssigned[1])
@@ -476,6 +506,7 @@ public class PlayerMenuScript : MonoBehaviour
             //playerLists[index].myControllerInput = new MyControllerInput(InputType.XBOX_CONTROLLER, 2);
             Settings.inputAssigned[2] = true;
             Debug.Log("Player " + (playerInputIndex + 1) + " has joined!");
+            playerInputIndex++;
             //transform.GetChild(index).GetComponentInChildren<TextMesh>().text = "P" + (index + 1) + " (XBOX input)";
         }
         else if (Input.GetButton("J3XBOX_DownButton_" + Settings.OS) && !Settings.inputAssigned[3])
@@ -486,6 +517,7 @@ public class PlayerMenuScript : MonoBehaviour
             //playerLists[index].myControllerInput = new MyControllerInput(InputType.XBOX_CONTROLLER, 3);
             Settings.inputAssigned[3] = true;
             Debug.Log("Player " + (playerInputIndex + 1) + " has joined!");
+            playerInputIndex++;
             //transform.GetChild(index).GetComponentInChildren<TextMesh>().text = "P" + (index + 1) + " (XBOX input)";
         }
         else if (Input.GetButton("J4XBOX_DownButton_" + Settings.OS) && !Settings.inputAssigned[4])
@@ -496,8 +528,20 @@ public class PlayerMenuScript : MonoBehaviour
             //playerLists[index].myControllerInput = new MyControllerInput(InputType.XBOX_CONTROLLER, 4);
             Settings.inputAssigned[4] = true;
             Debug.Log("Player " + (playerInputIndex + 1) + " has joined!");
+            playerInputIndex++;
             //transform.GetChild(index).GetComponentInChildren<TextMesh>().text = "P" + (index + 1) + " (XBOX input)";
         }
+
+
+        Debug.Log("menuControl[0] = " + MenuInputSelector.menuControl[0] +
+        "\nmenuControl[1] = " + MenuInputSelector.menuControl[1] +
+        "\nmenuControl[2] = " + MenuInputSelector.menuControl[2] +
+       "\nmenuControl[3] = " + MenuInputSelector.menuControl[3] +
+        "\ninputAssigned[0] = " + Settings.inputAssigned[0] +
+        "\ninputAssigned[1] = " + Settings.inputAssigned[1] +
+       "\ninputAssigned[2] = " + Settings.inputAssigned[2] +
+        "\ninputAssigned[3] = " + Settings.inputAssigned[3] +
+        "\ninputAssigned[4] = " + Settings.inputAssigned[4]);
 
     }
 
