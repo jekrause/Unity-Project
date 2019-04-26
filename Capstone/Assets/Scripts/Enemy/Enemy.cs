@@ -23,9 +23,7 @@ public class Enemy : MonoBehaviour
     // Start is called before the first frame update
     public int iBaseAttackRate = 1;
     protected LayerMask layerMask;
-    protected float fHP = 100f;
-    public float fDamage = 10f;         //default damage if no weapon is equipped
-    protected float fAttackRadius = 2f;
+    public float fHP = 100f;
     protected bool canShoot = true;
     protected MovementTypeEnum aiMvmt = MovementTypeEnum.None;
     protected Animator feetAnimation;
@@ -56,7 +54,10 @@ public class Enemy : MonoBehaviour
     //Weapon
     public Transform shootPosition;
     public Bullet bullet;
-    protected float fAttackTime = 3;
+    public float fAttackTime = 3;
+    public float attackDistance = 50;
+    public float fDamage = 10f;         //default damage if no weapon is equipped
+
 
     protected RaycastHit2D[] raycasts = new RaycastHit2D[7]; //raycast results list
     protected bool[] blockedPaths = new bool[7]; //array for the directions in the RayCastDir enum. Index will be true if blocked, false if clear.
@@ -142,7 +143,8 @@ public class Enemy : MonoBehaviour
 
         if ((canShoot && ((aiMvmt == MovementTypeEnum.Chase && playerTarget != null) ||
            (aiMvmt == MovementTypeEnum.Safe && !withInMinDistance)) && Time.time > fAttackTime) &&
-           raycasts[(int) RayCastDir.Forward].collider != null && raycasts[(int)RayCastDir.Forward].collider.gameObject == playerTarget)
+           //raycasts[(int)RayCastDir.Forward].collider != null && raycasts[(int)RayCastDir.Forward].collider.gameObject == playerTarget &&
+           Vector2.Distance(transform.position, playerTarget.transform.position) < attackDistance)
         {
             Debug.Log("Shooting");
             //face player
@@ -428,7 +430,7 @@ public class Enemy : MonoBehaviour
                     indexPlayerFoundAt = ii;
                 }
             }
-            else if (raycasts[ii].collider != null)
+            else if (raycasts[ii].collider != null && Vector2.Distance(raycasts[ii].collider.gameObject.transform.position, transform.position) < 5)
             {
                 //Debug.Log("Blocked path at " + ii + "  tag = " + raycasts[ii].collider.tag);
                 blockedPaths[ii] = true;
