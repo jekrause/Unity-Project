@@ -58,7 +58,7 @@ public class LootBagHandler : MonoBehaviour, ISubscriber<OnLootBagChangedEvent>
         EventAggregator.GetInstance().Unregister<OnLootBagChangedEvent>(this);
     }
 
-    public void InitializeLootBagHandler(GameObject HUD)
+    public void InitLootBagHandler(GameObject HUD)
     {
         player = GetComponent<Player>();
         LootBagHUD = HUD.transform.Find("LootBag").gameObject;
@@ -132,7 +132,7 @@ public class LootBagHandler : MonoBehaviour, ISubscriber<OnLootBagChangedEvent>
         }
     }
 
-    public void OnRayCastLootBagEnter(Collider2D collider)
+    public void OnLootBagTriggerEnter(Collider2D collider)
     {
         if(collider != null && CurrentLootBag == null)
         {
@@ -142,7 +142,7 @@ public class LootBagHandler : MonoBehaviour, ISubscriber<OnLootBagChangedEvent>
         }
     }
 
-    public void OnRayCastLootBagExit()
+    public void OnLootBagTriggerExit()
     {
         CloseBag();
     }

@@ -119,7 +119,7 @@ public class InventoryHandler : MonoBehaviour, ISubscriber<OnMainInvChangedEvent
 
     public GameObject GetHUD() => InventoryHUD.gameObject;
 
-    public void AssignInventoryHUD(GameObject HUD)
+    public void InitInventoryHandler(GameObject HUD)
     {
         if (HUD.GetComponent<InventoryHUD>() != null)
         {
@@ -323,7 +323,7 @@ public class InventoryHandler : MonoBehaviour, ISubscriber<OnMainInvChangedEvent
 
     }
 
-    public void OnRayCastItemEnter(Collider2D collider)
+    public void OnItemTriggerEnter(Collider2D collider)
     {
         if (collider != null && !InventoryHUDFocused)
         {
@@ -353,7 +353,7 @@ public class InventoryHandler : MonoBehaviour, ISubscriber<OnMainInvChangedEvent
         }
     }
 
-    public void OnRayCastItemExit()
+    public void OnItemTriggerExit()
     {
         itemOnGround = null;
         if (ItemFocused)

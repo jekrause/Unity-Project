@@ -42,14 +42,14 @@ public abstract class Player : MonoBehaviour
     public string DownPlatformButton { get; private set; } = "N/A";
     public string RightPlatformButton { get; private set; } = "N/A";
 
-    //player Interaction state
+    //player Interaction
     public InteractionState InteractionState = InteractionState.OPEN_STATE;
     public InteractionHandler InteractionPanel { get; private set; }
 
     public readonly Inventory MainInventory = new Inventory(6);
     public readonly Inventory WeaponInventory = new Inventory(3);
-	private InventoryHandler InventoryHandler;
-    private LootBagHandler LootBagHandler;
+	public InventoryHandler InventoryHandler;
+    public LootBagHandler LootBagHandler;
 
     // Revive functionality
     private ReviveBarHandler reviveBarHandler;
@@ -79,8 +79,8 @@ public abstract class Player : MonoBehaviour
         InventoryHandler = GetComponent<InventoryHandler>();
         reviveBarHandler = transform.Find("PlayerDownCanvas").GetComponent<ReviveBarHandler>();
         PlayerOriginalImage = GetComponent<SpriteRenderer>().sprite;
-        InteractionPanel = MyHUD.transform.Find("InteractionPanel").GetComponent<InteractionHandler>();
         LootBagHandler = GetComponent<LootBagHandler>();
+        InteractionPanel = transform.Find("InteractionCollider").GetComponent<InteractionHandler>();
 
         switch (myControllerInput.inputType)
         {
@@ -140,11 +140,7 @@ public abstract class Player : MonoBehaviour
                 PlayerState = PlayerState.DOWN;
                 reviveBarHandler.OnReviveHandler(MAX_DOWN_TIME, 0); //start the timer
             }
-            else
-            {
-                if(InteractionState != InteractionState.INVENTORY_STATE)
-                    CastRayCast();
-            }
+            
         }
         else if(PlayerState == PlayerState.DOWN)
         {
@@ -158,6 +154,33 @@ public abstract class Player : MonoBehaviour
             
         }
 
+    }
+
+    public void OnPlayerTriggerEnter(Collider2D collider)
+    {
+        downPlayer = collider.GetComponent<Player>();
+        if (downPlayer.PlayerState == PlayerState.DOWN) // only one player can revive another one at a time
+        {
+            MostRecentCollider = collider;
+            InteractionState = InteractionState.REVIVING_STATE;
+            if (ReviveTimer == 0)
+            {
+                downPlayer.OnReviveStart(myControllerInput.inputType);
+            }
+
+            RevivePlayer(downPlayer);
+        }
+    }
+
+    public void OnPlayerTriggerExit()
+    {
+        if (ReviveTimer < MAX_REVIVE_TIME && downPlayer != null)
+        {
+            ReviveTimer = 0; // reset as player went away from down player
+            downPlayer.OnReviveCancel();
+            downPlayer = null;
+            InteractionState = InteractionState.OPEN_STATE;
+        }
     }
 
     public void WaitForFireSprite(Sprite originalSprite, float delaySeconds)
@@ -352,94 +375,6 @@ public abstract class Player : MonoBehaviour
     }
 
     public abstract bool CanEquipWeapon(Item item);
-
-    private void CastRayCast()
-    {
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, transform.right, 2f);
-        if(hit.collider != null)
-        {
-            switch (hit.collider.tag)
-            {
-                case ("Player"):
-                    //Attempt to revive down player
-                        downPlayer = hit.collider.GetComponent<Player>();
-                    if (downPlayer.PlayerState == PlayerState.DOWN) // only one player can revive another one at a time
-                    {
-                        MostRecentCollider = hit.collider;
-                        InteractionState = InteractionState.REVIVING_STATE;
-                        if (ReviveTimer == 0)
-                        {
-                            downPlayer.OnReviveStart(myControllerInput.inputType);
-                        }
-                           
-                        RevivePlayer(downPlayer);
-                    }
-                        
-                    break;
-
-                case ("Item"):
-                    MostRecentCollider = hit.collider;
-                    InventoryHandler.OnRayCastItemEnter(hit.collider);
-                    break;
-
-                case ("Weapon"):
-                    MostRecentCollider = hit.collider;
-                    InventoryHandler.OnRayCastItemEnter(hit.collider);
-                    break;
-
-                case ("Helicopter"):
-                    break;
-
-                case ("LootBag"):
-                    MostRecentCollider = hit.collider;
-                    LootBagHandler.OnRayCastLootBagEnter(hit.collider);
-                    break;
-            }
-            
-        }
-        else
-        {
-            if(MostRecentCollider != null)
-            {
-                switch (MostRecentCollider.tag)
-                {
-                    case ("Player"):
-                        if (ReviveTimer < MAX_REVIVE_TIME && downPlayer != null)
-                        {
-                            ReviveTimer = 0; // reset as player went away from down player
-                            downPlayer.OnReviveCancel();
-                            downPlayer = null;
-                            InteractionState = InteractionState.OPEN_STATE;
-                        }
-                        break;
-
-                    case ("Item"):
-                        Debug.Log("RaycastExit Item");
-                        InventoryHandler.OnRayCastItemExit();
-                        break;
-
-                    case ("Weapon"):
-                        Debug.Log("RaycastExit Weapon");
-                        InventoryHandler.OnRayCastItemExit();
-                        break;
-
-                    case ("Helicopter"):
-                        Debug.Log("RaycastExit Helicopter");
-                        break;
-
-                    case ("LootBag"):
-                        Debug.Log("RaycastExit Bag");
-                        LootBagHandler.OnRayCastLootBagExit();
-                        break;
-                }
-            }
-
-            MostRecentCollider = null; // reset
-            
-           
-        }
-
-    }
 
     public float GetMoveRate()
     {
