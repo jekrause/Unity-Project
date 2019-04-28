@@ -14,7 +14,7 @@ public class Bullet : MonoBehaviour
     public string spawnSound;
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         AudioManager.Play(spawnSound);
         spawnPosition = transform.position;
@@ -44,7 +44,8 @@ public class Bullet : MonoBehaviour
             Destroy(gameObject);
             AudioManager.Play("BulletHit");
         }
-        else if(col.gameObject.tag == TAG_OBSTACLE)
+        else if(col.gameObject.tag == TAG_OBSTACLE || 
+            (Vector2.Distance(spawnPosition, transform.position) > 2 && (col.gameObject.tag == "Enemy" || col.gameObject.tag == "Player")))
         {
             AudioManager.Play("BulletHit");
             Instantiate(bulletPuff, gameObject.transform.position, gameObject.transform.rotation);
