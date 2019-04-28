@@ -208,7 +208,7 @@ public class Enemy : MonoBehaviour
             //transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
             transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.AngleAxis(angle, Vector3.forward), fRotationSpeed * Time.deltaTime);
 
-            if (Vector2.Distance(transform.position, playerTarget.transform.position) > 10)
+            if (Vector2.Distance(transform.position, playerTarget.transform.position) > attackDistance/4)
             {
                 transform.position = Vector2.MoveTowards(transform.position, playerTarget.transform.position, fMoveSpeed * Time.deltaTime);
                 feetAnimation.SetBool("Moving", true);
@@ -365,12 +365,6 @@ public class Enemy : MonoBehaviour
         
     }
 
-    /*
-    private void setPlayerLocation()
-    {
-        p_location = gameObject.GetComponent("Player").transform.position;
-    }
-    */
 
     private void OnCollisionEnter2D(Collision2D collision)
     {

@@ -131,3 +131,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 32df5bb7e1c387b40846a07fbca6fb93, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  bulletPuff: {fileID: 242607150661900184, guid: 9c3a3b3a630a64bdf98f813883278a25,
+    type: 3}
+  spawnSound: 
