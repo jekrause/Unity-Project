@@ -106,7 +106,7 @@ public class LootBagHandler : MonoBehaviour, ISubscriber<OnLootBagChangedEvent>
                 if(ButtonHeldTimer >= BUTTON_HELD_DOWN_TIME)
                 {
                     player.InteractionPanel.RemoveLoadBar();
-                    player.InteractionPanel.RemoveInteractivePanel();
+                    player.InteractionPanel.RemoveInteractionPanel();
                     OpenBag();
                 }
                 ButtonHeldTimer = 0;
@@ -118,8 +118,16 @@ public class LootBagHandler : MonoBehaviour, ISubscriber<OnLootBagChangedEvent>
             {
                 if (Input.GetButtonDown(player.myControllerInput.RightButton))
                 {
-                    if (!BusyLooting)
+                    if (!BusyLooting && !IteratingMyInv)
                         CloseBag();
+                    else
+                    {
+                        MyInvSlots[MyInvSlotIndex].transform.Find(ITEM_SELECTED).gameObject.SetActive(false);
+                        ResetSelection();
+                        IteratingMyInv = false;
+                        SwapSelectionHUD();
+                    }
+                        
                 }
 
                 ListenForUserInput();
@@ -152,14 +160,19 @@ public class LootBagHandler : MonoBehaviour, ISubscriber<OnLootBagChangedEvent>
     private void CloseBag()
     {
         CurrentLootBag = null;
-        player.InteractionPanel.RemoveInteractivePanel();
+        player.InteractionPanel.RemoveInteractionPanel();
         player.InteractionState = InteractionState.OPEN_STATE;
         LootBagHUD.SetActive(false);
         MyInvBagHUD.SetActive(false);
-        IteratingMyInv = false;
-        IteratingMainInv = true;
         LootBagSlots[LootBagSlotIndex].transform.Find(ITEM_SELECTED).gameObject.SetActive(false);
         MyInvSlots[MyInvSlotIndex].transform.Find(ITEM_SELECTED).gameObject.SetActive(false);
+        ResetSelection();
+    }
+
+    private void ResetSelection()
+    {
+        IteratingMyInv = false;
+        IteratingMainInv = true;
         MyInvSlotIndex = 0;
         LootBagSlotIndex = 0;
     }
@@ -208,15 +221,23 @@ public class LootBagHandler : MonoBehaviour, ISubscriber<OnLootBagChangedEvent>
                 if (item != null)
                 {
                     LootBagSlots[i].transform.Find(ITEM_SLOT).Find(ITEM).GetComponent<Image>().sprite = item.Image;
-                    if (!(item is Weapon || item is QuestItem))
+                    if (item is FirstAid)
                     {
                         LootBagSlots[i].transform.Find(ITEM_SLOT).Find(BACKGROUND).Find(QUANTITY).GetComponent<Text>().text = CurrentLootBag.Inventory.GetQuantityInSlot(i) + "";
+                        LootBagSlots[i].transform.Find(ITEM_SLOT).Find(BACKGROUND).gameObject.SetActive(true);
+                    }
+                    else
+                    {
+                        LootBagSlots[i].transform.Find(ITEM_SLOT).Find(BACKGROUND).gameObject.SetActive(false);
+                        LootBagSlots[i].transform.Find(ITEM_SLOT).Find(BACKGROUND).Find(QUANTITY).GetComponent<Text>().text = "";
                     }
                     LootBagSlots[i].transform.Find(ITEM_SLOT).Find(ITEM).gameObject.SetActive(true);
                 }
                 else
                 {
                     LootBagSlots[i].transform.Find(ITEM_SLOT).Find(ITEM).gameObject.SetActive(false);
+                    LootBagSlots[i].transform.Find(ITEM_SLOT).Find(BACKGROUND).gameObject.SetActive(false);
+                    LootBagSlots[i].transform.Find(ITEM_SLOT).Find(BACKGROUND).Find(QUANTITY).GetComponent<Text>().text = "";
                 }
             }
         }
@@ -307,6 +328,8 @@ public class LootBagHandler : MonoBehaviour, ISubscriber<OnLootBagChangedEvent>
                 else
                 {
                     quantityToCopy = myItemQuantity + quantityToCopy;
+                    myItemQuantity = 0;
+                    myItem = null;
                 }
             }
             // update my slot
@@ -332,6 +355,7 @@ public class LootBagHandler : MonoBehaviour, ISubscriber<OnLootBagChangedEvent>
                 {
                     Debug.Log("Cannot add it to weapon slot");
                     BusyLooting = false;
+                    IteratingMainInv = false;
                     return;
 
                 }
@@ -343,6 +367,7 @@ public class LootBagHandler : MonoBehaviour, ISubscriber<OnLootBagChangedEvent>
             {
                 Debug.Log("Cannot add it to weapon slot");
                 BusyLooting = false;
+                IteratingMainInv = false;
                 return;
             }
            
@@ -355,6 +380,7 @@ public class LootBagHandler : MonoBehaviour, ISubscriber<OnLootBagChangedEvent>
         if(myItem == null)
         {
             LootBagSlots[LootBagSlotIndex].transform.Find(ITEM_SLOT).Find(ITEM).gameObject.SetActive(false);
+            LootBagSlots[LootBagSlotIndex].transform.Find(ITEM_SLOT).Find(BACKGROUND).gameObject.SetActive(false);
         }
         else
         {   
@@ -369,6 +395,7 @@ public class LootBagHandler : MonoBehaviour, ISubscriber<OnLootBagChangedEvent>
             }
             LootBagSlots[LootBagSlotIndex].transform.Find(ITEM_SLOT).Find(ITEM).GetComponent<Image>().sprite = myItem.Image;
             LootBagSlots[LootBagSlotIndex].transform.Find(ITEM_SLOT).Find(ITEM).gameObject.SetActive(true);
+            InventoryHandler.ObjectsPickedUp.Remove(myItem.gameObject);
         }
 
         if(itemToCopy.GetItemType() == Item.Type.HEALING_ITEM)
@@ -383,7 +410,8 @@ public class LootBagHandler : MonoBehaviour, ISubscriber<OnLootBagChangedEvent>
 
         MyInvSlots[MyInvSlotIndex].transform.Find(ITEM_SLOT).Find(ITEM).GetComponent<Image>().sprite = itemToCopy.Image;
         MyInvSlots[MyInvSlotIndex].transform.Find(ITEM_SLOT).Find(ITEM).gameObject.SetActive(true);
-        
+        InventoryHandler.ObjectsPickedUp.Add(itemToCopy.gameObject);
+
         IteratingMyInv = false;
         BusyLooting = false;
         SwapSelectionHUD();
@@ -478,7 +506,7 @@ public class LootBagHandler : MonoBehaviour, ISubscriber<OnLootBagChangedEvent>
         {
             MyInvSlotIndex = index;
             if(index <= 5)
-               IteratingMyInv = true;
+               IteratingMainInv = true;
         }
         else
         {

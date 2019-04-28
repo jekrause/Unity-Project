@@ -9,11 +9,12 @@ public class InteractionHandler : MonoBehaviour
     private Image FillColor;
     private Color DefaultColor;
     private Player player;
+    private Helicopter Helicopter;
 
     // Use this for initialization
     void Start()
     {
-        
+        GameObject.Find("Helicopter").GetComponent<Helicopter>();
     }
 
     // Update is called once per frame
@@ -27,7 +28,7 @@ public class InteractionHandler : MonoBehaviour
         player = transform.GetComponentInParent<Player>();
         InteractionPanel = HUD.transform.Find("InteractionPanel").gameObject;
         HoldButtonDownBar = InteractionPanel.transform.Find("HoldButtonBar").GetComponent<Slider>();
-        ItemTypeText = InteractionPanel.transform.Find("MainTextPanel").Find("InventoryText").gameObject;
+        ItemTypeText = InteractionPanel.transform.Find("MainTextPanel").Find("ItemTypeText").gameObject;
         HoldButtonDownBar.value = 0;
         FillColor = HoldButtonDownBar.transform.Find("Fill Area").Find("Fill").GetComponent<Image>();
         DefaultColor = FillColor.color;
@@ -40,7 +41,7 @@ public class InteractionHandler : MonoBehaviour
         InteractionPanel.gameObject.SetActive(true);
     }
 
-    public void RemoveInteractivePanel()
+    public void RemoveInteractionPanel()
     {
         InteractionPanel.gameObject.SetActive(false);
     }
@@ -89,6 +90,7 @@ public class InteractionHandler : MonoBehaviour
                     break;
 
                 case ("Helicopter"):
+                    Helicopter.OnHelicopterTriggerEnter(collision);
                     break;
 
                 case ("LootBag"):

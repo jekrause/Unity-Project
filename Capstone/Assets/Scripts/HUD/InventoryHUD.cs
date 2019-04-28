@@ -43,6 +43,10 @@ public class InventoryHUD : MonoBehaviour
             MainInvSlots[slot].transform.Find("ItemSlot").Find("Background").Find("Quantity").GetComponent<Text>().text = stackQuantity + "";
             MainInvSlots[slot].transform.Find("ItemSlot").Find("Background").gameObject.SetActive(true);
         }
+        else
+        {
+            MainInvSlots[slot].transform.Find("ItemSlot").Find("Background").gameObject.SetActive(false);
+        }
 
     }
 

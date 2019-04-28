@@ -149,7 +149,7 @@ public class InventoryHandler : MonoBehaviour, ISubscriber<OnMainInvChangedEvent
                 {
                     AudioManager.Play("Close_Inventory");
                     player.InteractionState = InteractionState.OPEN_STATE;
-                    player.InteractionPanel.RemoveInteractivePanel();
+                    player.InteractionPanel.RemoveInteractionPanel();
                     if (ItemFocused)
                     {
                         if (itemOnGround != null)
@@ -359,7 +359,7 @@ public class InventoryHandler : MonoBehaviour, ISubscriber<OnMainInvChangedEvent
         if (ItemFocused)
             ItemFocused = false;
         if (!InventoryHUDFocused)
-            player.InteractionPanel.RemoveInteractivePanel();
+            player.InteractionPanel.RemoveInteractionPanel();
     }
 
 
@@ -375,7 +375,7 @@ public class InventoryHandler : MonoBehaviour, ISubscriber<OnMainInvChangedEvent
     /// </summary>
     private void UpdateAndDisplayInteractionPanel()
     {
-        player.InteractionPanel.RemoveInteractivePanel();
+        player.InteractionPanel.RemoveInteractionPanel();
         Item item = null;
         string actionMessageToShow = "";
         if (IteratingMainInv)
@@ -493,7 +493,7 @@ public class InventoryHandler : MonoBehaviour, ISubscriber<OnMainInvChangedEvent
                     itemOnGround.gameObject.SetActive(false);
                     ObjectsPickedUp.Add(itemOnGround.gameObject);
                     ItemFocused = false;
-                    player.InteractionPanel.RemoveInteractivePanel();
+                    player.InteractionPanel.RemoveInteractionPanel();
                 }
                 else
                 {
@@ -608,7 +608,7 @@ public class InventoryHandler : MonoBehaviour, ISubscriber<OnMainInvChangedEvent
                 EventAggregator.GetInstance().Publish<OnPlayerAmmoChangedEvent>(new OnPlayerAmmoChangedEvent(player.playerNumber, player.Ammunition));
                 AudioManager.Play("SalvagedWeapon");
                 ItemFocused = false;
-                player.InteractionPanel.RemoveInteractivePanel();
+                player.InteractionPanel.RemoveInteractionPanel();
                 Debug.Log("InventoryHandler: " + itemToSalvage.GetType() + " weapon salvaged for ammo.");
                 Destroy(itemToSalvage.gameObject);
 
@@ -658,7 +658,7 @@ public class InventoryHandler : MonoBehaviour, ISubscriber<OnMainInvChangedEvent
                     int itemIndex = 0;
                     for (int i = 0; i < ObjectsPickedUp.Count; i++)
                     {
-                        if (ObjectsPickedUp[i].GetComponent<Item>().GetType() == itemToRemove.GetType())
+                        if (ObjectsPickedUp[i]?.GetComponent<Item>()?.GetType() == itemToRemove?.GetType())
                         {
                             Vector3 itemDropPosition = new Vector3(transform.position.x + 1f, transform.position.y - 1f);
                             ObjectsPickedUp[i].transform.position = itemDropPosition;
