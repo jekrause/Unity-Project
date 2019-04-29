@@ -14,7 +14,7 @@ public abstract class Player : MonoBehaviour
     [SerializeField] protected float fHP = 100f; // serialize field for testing purposes
 
     protected float fDamage = 10f;         //default damage if no weapon is equipped
-    protected float fMoveRate = 1f;
+    [SerializeField] protected float fMoveRate = 1f;
     protected float fAttackRadius = 2f;
     protected float fProjSpeed = 20f;
     [SerializeField] public int playerNumber;
@@ -74,13 +74,6 @@ public abstract class Player : MonoBehaviour
     }
     protected void Start()
     {
-        feetAnimation = transform.Find("Feet").GetComponent<Animator>();
-        rb = GetComponent<Rigidbody2D>();
-        InventoryHandler = GetComponent<InventoryHandler>();
-        reviveBarHandler = transform.Find("PlayerDownCanvas").GetComponent<ReviveBarHandler>();
-        PlayerOriginalImage = GetComponent<SpriteRenderer>().sprite;
-        LootBagHandler = GetComponent<LootBagHandler>();
-        InteractionPanel = transform.Find("InteractionCollider").GetComponent<InteractionHandler>();
 
         switch (myControllerInput.inputType)
         {
@@ -100,6 +93,15 @@ public abstract class Player : MonoBehaviour
                 RightPlatformButton = "B";
                 break;
         }
+
+        feetAnimation = transform.Find("Feet").GetComponent<Animator>();
+        rb = GetComponent<Rigidbody2D>();
+        InventoryHandler = GetComponent<InventoryHandler>();
+        reviveBarHandler = transform.Find("PlayerDownCanvas").GetComponent<ReviveBarHandler>();
+        PlayerOriginalImage = GetComponent<SpriteRenderer>().sprite;
+        LootBagHandler = GetComponent<LootBagHandler>();
+        InteractionPanel = transform.Find("InteractionCollider").GetComponent<InteractionHandler>();
+        InteractionPanel.InitInteraction(MyHUD);
     }
 
     protected void FixedUpdate()
@@ -484,7 +486,6 @@ public abstract class Player : MonoBehaviour
         IsBeingRevived = false;
         reviveBarHandler.OnReviveCancelHandler();
     }
-
 }
 
 public enum PlayerState { ALIVE, DOWN, KILLED } 

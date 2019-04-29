@@ -98,17 +98,21 @@ public class LootBagHandler : MonoBehaviour, ISubscriber<OnLootBagChangedEvent>
                     ButtonHeldTimer += Time.deltaTime;
                     player.InteractionPanel.ShowLoadBar(ButtonHeldTimer, BUTTON_HELD_DOWN_TIME);
                 }
+                else if(ButtonHeldTimer >= BUTTON_HELD_DOWN_TIME)
+                {
+                    if(player.InteractionState != InteractionState.LOOTING_STATE)
+                    {
+                        player.InteractionPanel.RemoveInteractionPanel();
+                        OpenBag();
+                        UpdateItemSelectionHUD();
+                        ButtonHeldTimer = 0;
+                    }
+                }
               
             }
 
             if (Input.GetButtonUp(player.myControllerInput.DownButton))
             {
-                if(ButtonHeldTimer >= BUTTON_HELD_DOWN_TIME)
-                {
-                    player.InteractionPanel.RemoveLoadBar();
-                    player.InteractionPanel.RemoveInteractionPanel();
-                    OpenBag();
-                }
                 ButtonHeldTimer = 0;
             }
         }
@@ -452,13 +456,48 @@ public class LootBagHandler : MonoBehaviour, ISubscriber<OnLootBagChangedEvent>
         if (IteratingMyInv)
         {
             MyInvSlots[previous].transform.Find(ITEM_SELECTED).gameObject.SetActive(false);
-            MyInvSlots[MyInvSlotIndex].transform.Find(ITEM_SELECTED).gameObject.SetActive(true);
+            MyInvSlots[MyInvSlotIndex].transform.Find(ITEM_SELECTED).gameObject.SetActive(true); 
         }
         else
         {
             LootBagSlots[previous].transform.Find(ITEM_SELECTED).gameObject.SetActive(false);
             LootBagSlots[LootBagSlotIndex].transform.Find(ITEM_SELECTED).gameObject.SetActive(true);
         }
+        UpdateItemSelectionHUD();
+    }
+
+    private void UpdateItemSelectionHUD()
+    {
+
+        string itemType = "N/A";
+        string action = "-Press '" + player.DownPlatformButton + "' : Swap-" + "\n-Press '" + player.RightPlatformButton + "' : Cancel-";
+        if (IteratingMyInv)
+        {
+            if (IteratingMainInv)
+            {
+                if (player.MainInventory.GetItemInSlot(NormalizedIndex()) != null)
+                    itemType = player.MainInventory.GetItemInSlot(NormalizedIndex()).GetType() + "";
+                else
+                    action = "-Press '" + player.DownPlatformButton + "' : Add to slot-" + "\n-Press '" + player.RightPlatformButton + "' : Cancel-";
+            }
+            else
+            {
+                if (player.WeaponInventory.GetItemInSlot(NormalizedIndex()) != null)
+                    itemType = player.WeaponInventory.GetItemInSlot(NormalizedIndex()).GetType() + "";
+                else
+                    action = "-Press '" + player.DownPlatformButton + "' : Add to slot-" + "\n-Press '" + player.RightPlatformButton + "' : Cancel-";
+            }
+        }
+        else
+        {
+            if (CurrentLootBag != null && CurrentLootBag.Inventory.GetItemInSlot(LootBagSlotIndex) != null)
+                itemType = CurrentLootBag.Inventory.GetItemInSlot(LootBagSlotIndex).GetType() + "";
+            else
+                action = "-Empty-";
+
+        }
+       
+        player.InteractionPanel.ShowInteractionPanel(itemType, action);
     }
 
     private void OnIterateDown(int index)
@@ -570,6 +609,7 @@ public class LootBagHandler : MonoBehaviour, ISubscriber<OnLootBagChangedEvent>
             if (IteratingMyInv)
             {
                 SwapSlots();
+                UpdateItemSelectionHUD();
             }
             else
             {
@@ -577,6 +617,7 @@ public class LootBagHandler : MonoBehaviour, ISubscriber<OnLootBagChangedEvent>
                 {
                     IteratingMyInv = !IteratingMyInv;
                     SwapSelectionHUD();
+                    UpdateItemSelectionHUD();
                 }
             }
             

@@ -10,11 +10,14 @@ public class InteractionHandler : MonoBehaviour
     private Color DefaultColor;
     private Player player;
     private Helicopter Helicopter;
+    public string DownPlatformButton { get; private set; }
+    public string RightPlatformButton { get; private set; }
+    public MyControllerInput PlayerInput { get; private set; }
 
     // Use this for initialization
     void Start()
     {
-        GameObject.Find("Helicopter").GetComponent<Helicopter>();
+        Helicopter = GameObject.Find("Helicopter").GetComponent<Helicopter>();
     }
 
     // Update is called once per frame
@@ -23,9 +26,12 @@ public class InteractionHandler : MonoBehaviour
 
     }
 
-    public void InitInteractionPanel(GameObject HUD)
+    public void InitInteraction(GameObject HUD)
     {
         player = transform.GetComponentInParent<Player>();
+        DownPlatformButton = player.DownPlatformButton;
+        RightPlatformButton = player.RightPlatformButton;
+        PlayerInput = player.myControllerInput;
         InteractionPanel = HUD.transform.Find("InteractionPanel").gameObject;
         HoldButtonDownBar = InteractionPanel.transform.Find("HoldButtonBar").GetComponent<Slider>();
         ItemTypeText = InteractionPanel.transform.Find("MainTextPanel").Find("ItemTypeText").gameObject;
@@ -44,6 +50,7 @@ public class InteractionHandler : MonoBehaviour
     public void RemoveInteractionPanel()
     {
         InteractionPanel.gameObject.SetActive(false);
+        RemoveLoadBar();
     }
 
     public void ShowLoadBar(float time, float maxTime)
@@ -90,7 +97,8 @@ public class InteractionHandler : MonoBehaviour
                     break;
 
                 case ("Helicopter"):
-                    Helicopter.OnHelicopterTriggerEnter(collision);
+                    Debug.Log("Helicopter triggered");
+                    Helicopter.OnHelicopterTriggerEnter(this);
                     break;
 
                 case ("LootBag"):
@@ -120,6 +128,7 @@ public class InteractionHandler : MonoBehaviour
                     break;
 
                 case ("Helicopter"):
+                    Helicopter.OnHelicopterTriggerExit(this);
                     break;
 
                 case ("LootBag"):
@@ -128,6 +137,8 @@ public class InteractionHandler : MonoBehaviour
             }
         }
     }
+
+    public bool InteractionPanelIsActive() => InteractionPanel.gameObject.activeSelf == true;
 
 
 }

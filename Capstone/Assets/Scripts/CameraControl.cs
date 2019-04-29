@@ -44,7 +44,7 @@ public class CameraControl : MonoBehaviour {
                     player.GetComponent<Player>().MyHUD = HUD.transform.Find(HUD_SINGLEPLAYER_MODE).gameObject;
                     player.GetComponent<InventoryHandler>().InitInventoryHandler(HUD.transform.Find(HUD_SINGLEPLAYER_MODE).gameObject);
                     player.GetComponent<LootBagHandler>().InitLootBagHandler(HUD.transform.Find(HUD_SINGLEPLAYER_MODE).gameObject);
-                    player.transform.Find("InteractionCollider").GetComponent<InteractionHandler>().InitInteractionPanel(HUD.transform.Find(HUD_SINGLEPLAYER_MODE).gameObject);
+                    player.transform.Find("InteractionCollider").GetComponent<InteractionHandler>().InitInteraction(HUD.transform.Find(HUD_SINGLEPLAYER_MODE).gameObject);
                     GameObject.FindWithTag("Camera2").SetActive(false);
                     GameObject.FindWithTag("Camera3").SetActive(false);
                     GameObject.FindWithTag("Camera4").SetActive(false);
@@ -57,7 +57,7 @@ public class CameraControl : MonoBehaviour {
                     player.GetComponent<Player>().MyHUD = HUD.transform.Find(HUD_2PLAYERS_MODE).Find(P1_HUD).gameObject;
                     player.GetComponent<InventoryHandler>().InitInventoryHandler(HUD.transform.Find(HUD_2PLAYERS_MODE).Find(P1_HUD).gameObject);
                     player.GetComponent<LootBagHandler>().InitLootBagHandler(HUD.transform.Find(HUD_2PLAYERS_MODE).Find(P1_HUD).gameObject);
-                    player.transform.Find("InteractionCollider").GetComponent<InteractionHandler>().InitInteractionPanel(HUD.transform.Find(HUD_2PLAYERS_MODE).Find(P1_HUD).gameObject);
+                    player.transform.Find("InteractionCollider").GetComponent<InteractionHandler>().InitInteraction(HUD.transform.Find(HUD_2PLAYERS_MODE).Find(P1_HUD).gameObject);
                     GameObject.FindWithTag("Camera3").SetActive(false);
                     GameObject.FindWithTag("Camera4").SetActive(false);
                 }
@@ -67,7 +67,7 @@ public class CameraControl : MonoBehaviour {
                     player.GetComponent<Player>().MyHUD = HUD.transform.Find(HUD_2PLAYERS_MODE).Find(P2_HUD).gameObject;
                     player.GetComponent<InventoryHandler>().InitInventoryHandler(HUD.transform.Find(HUD_2PLAYERS_MODE).Find(P2_HUD).gameObject);
                     player.GetComponent<LootBagHandler>().InitLootBagHandler(HUD.transform.Find(HUD_2PLAYERS_MODE).Find(P2_HUD).gameObject);
-                    player.transform.Find("InteractionCollider").GetComponent<InteractionHandler>().InitInteractionPanel(HUD.transform.Find(HUD_2PLAYERS_MODE).Find(P2_HUD).gameObject);
+                    player.transform.Find("InteractionCollider").GetComponent<InteractionHandler>().InitInteraction(HUD.transform.Find(HUD_2PLAYERS_MODE).Find(P2_HUD).gameObject);
                 }
                 break;
             case 3:
@@ -77,7 +77,7 @@ public class CameraControl : MonoBehaviour {
                     player.GetComponent<Player>().MyHUD = HUD.transform.Find(HUD_3PLAYERS_MODE).Find(P1_HUD).gameObject;
                     player.GetComponent<InventoryHandler>().InitInventoryHandler(HUD.transform.Find(HUD_3PLAYERS_MODE).Find(P1_HUD).gameObject);
                     player.GetComponent<LootBagHandler>().InitLootBagHandler(HUD.transform.Find(HUD_3PLAYERS_MODE).Find(P1_HUD).gameObject);
-                    player.transform.Find("InteractionCollider").GetComponent<InteractionHandler>().InitInteractionPanel(HUD.transform.Find(HUD_3PLAYERS_MODE).Find(P1_HUD).gameObject);
+                    player.transform.Find("InteractionCollider").GetComponent<InteractionHandler>().InitInteraction(HUD.transform.Find(HUD_3PLAYERS_MODE).Find(P1_HUD).gameObject);
                     GameObject.FindWithTag("Camera4").SetActive(false);
                 }
                 else if (player.name == "Player2")
@@ -86,7 +86,7 @@ public class CameraControl : MonoBehaviour {
                     player.GetComponent<Player>().MyHUD = HUD.transform.Find(HUD_3PLAYERS_MODE).Find(P2_HUD).gameObject;
                     player.GetComponent<InventoryHandler>().InitInventoryHandler(HUD.transform.Find(HUD_3PLAYERS_MODE).Find(P2_HUD).gameObject);
                     player.GetComponent<LootBagHandler>().InitLootBagHandler(HUD.transform.Find(HUD_3PLAYERS_MODE).Find(P2_HUD).gameObject);
-                    player.transform.Find("InteractionCollider").GetComponent<InteractionHandler>().InitInteractionPanel(HUD.transform.Find(HUD_3PLAYERS_MODE).Find(P2_HUD).gameObject);
+                    player.transform.Find("InteractionCollider").GetComponent<InteractionHandler>().InitInteraction(HUD.transform.Find(HUD_3PLAYERS_MODE).Find(P2_HUD).gameObject);
                 }
                 else if (player.name == "Player3")
                 {
@@ -94,7 +94,7 @@ public class CameraControl : MonoBehaviour {
                     player.GetComponent<Player>().MyHUD = HUD.transform.Find(HUD_3PLAYERS_MODE).Find(P3_HUD).gameObject;
                     player.GetComponent<InventoryHandler>().InitInventoryHandler(HUD.transform.Find(HUD_3PLAYERS_MODE).Find(P3_HUD).gameObject);
                     player.GetComponent<LootBagHandler>().InitLootBagHandler(HUD.transform.Find(HUD_3PLAYERS_MODE).Find(P3_HUD).gameObject);
-                    player.transform.Find("InteractionCollider").GetComponent<InteractionHandler>().InitInteractionPanel(HUD.transform.Find(HUD_3PLAYERS_MODE).Find(P3_HUD).gameObject);
+                    player.transform.Find("InteractionCollider").GetComponent<InteractionHandler>().InitInteraction(HUD.transform.Find(HUD_3PLAYERS_MODE).Find(P3_HUD).gameObject);
                 }
                 break;
             case 4:
@@ -104,7 +104,7 @@ public class CameraControl : MonoBehaviour {
                     player.GetComponent<Player>().MyHUD = HUD.transform.Find(HUD_4PLAYERS_MODE).Find(P1_HUD).gameObject;
                     player.GetComponent<InventoryHandler>().InitInventoryHandler(HUD.transform.Find(HUD_4PLAYERS_MODE).Find(P1_HUD).gameObject);
                     player.GetComponent<LootBagHandler>().InitLootBagHandler(HUD.transform.Find(HUD_4PLAYERS_MODE).Find(P1_HUD).gameObject);
-                    player.transform.Find("InteractionCollider").GetComponent<InteractionHandler>().InitInteractionPanel(HUD.transform.Find(HUD_4PLAYERS_MODE).Find(P1_HUD).gameObject);
+                    player.transform.Find("InteractionCollider").GetComponent<InteractionHandler>().InitInteraction(HUD.transform.Find(HUD_4PLAYERS_MODE).Find(P1_HUD).gameObject);
                 }
                 else if (player.name == "Player2")
                 {
@@ -112,7 +112,7 @@ public class CameraControl : MonoBehaviour {
                     player.GetComponent<Player>().MyHUD = HUD.transform.Find(HUD_4PLAYERS_MODE).Find(P2_HUD).gameObject;
                     player.GetComponent<InventoryHandler>().InitInventoryHandler(HUD.transform.Find(HUD_4PLAYERS_MODE).Find(P2_HUD).gameObject);
                     player.GetComponent<LootBagHandler>().InitLootBagHandler(HUD.transform.Find(HUD_4PLAYERS_MODE).Find(P2_HUD).gameObject);
-                    player.transform.Find("InteractionCollider").GetComponent<InteractionHandler>().InitInteractionPanel(HUD.transform.Find(HUD_4PLAYERS_MODE).Find(P2_HUD).gameObject);
+                    player.transform.Find("InteractionCollider").GetComponent<InteractionHandler>().InitInteraction(HUD.transform.Find(HUD_4PLAYERS_MODE).Find(P2_HUD).gameObject);
                 }
                 else if (player.name == "Player3")
                 {
@@ -120,7 +120,7 @@ public class CameraControl : MonoBehaviour {
                     player.GetComponent<Player>().MyHUD = HUD.transform.Find(HUD_4PLAYERS_MODE).Find(P3_HUD).gameObject;
                     player.GetComponent<InventoryHandler>().InitInventoryHandler(HUD.transform.Find(HUD_4PLAYERS_MODE).Find(P3_HUD).gameObject);
                     player.GetComponent<LootBagHandler>().InitLootBagHandler(HUD.transform.Find(HUD_4PLAYERS_MODE).Find(P3_HUD).gameObject);
-                    player.transform.Find("InteractionCollider").GetComponent<InteractionHandler>().InitInteractionPanel(HUD.transform.Find(HUD_4PLAYERS_MODE).Find(P3_HUD).gameObject);
+                    player.transform.Find("InteractionCollider").GetComponent<InteractionHandler>().InitInteraction(HUD.transform.Find(HUD_4PLAYERS_MODE).Find(P3_HUD).gameObject);
                 }
                 else if (player.name == "Player4")
                 {
@@ -128,7 +128,7 @@ public class CameraControl : MonoBehaviour {
                     player.GetComponent<Player>().MyHUD = HUD.transform.Find(HUD_4PLAYERS_MODE).Find(P4_HUD).gameObject;
                     player.GetComponent<InventoryHandler>().InitInventoryHandler(HUD.transform.Find(HUD_4PLAYERS_MODE).Find(P4_HUD).gameObject);
                     player.GetComponent<LootBagHandler>().InitLootBagHandler(HUD.transform.Find(HUD_4PLAYERS_MODE).Find(P4_HUD).gameObject);
-                    player.transform.Find("InteractionCollider").GetComponent<InteractionHandler>().InitInteractionPanel(HUD.transform.Find(HUD_4PLAYERS_MODE).Find(P4_HUD).gameObject);
+                    player.transform.Find("InteractionCollider").GetComponent<InteractionHandler>().InitInteraction(HUD.transform.Find(HUD_4PLAYERS_MODE).Find(P4_HUD).gameObject);
                 }
                 break;
         }

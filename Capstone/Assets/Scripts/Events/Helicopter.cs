@@ -7,22 +7,23 @@ public class Helicopter : MonoBehaviour, ISubscriber<OnQuestItemPickUpEvent>, IS
     private bool HaveHelicopterKey = false;
     private int EnemyKilledCounter;
     private const int ENEMY_KILLED_REQUIREMENT = 20;
-    private string DefaultMessage = "We need to find the 'Helicopter Key' first";
+    private string DefaultMessage = "We need to find the \n'Helicopter Key' first";
     private string ActionMessage = "";
-    private string platformButton = "";
     private int NumOfPlayersInRange = 0; // all players need to be at the helicopter
     private const float BUTTON_HELD_DOWN_TIME = 0.5f;
     private float ButtonHeldTimer = 0f;
+    private InteractionHandler CurrentInteractor; // the one who is interacting with this object (Helicopter)
 
     // Start is called before the first frame update
-    void OnEnable()
+
+    private void Start()
     {
         EventAggregator.GetInstance().Register<OnQuestItemDroppedEvent>(this);
         EventAggregator.GetInstance().Register<OnQuestItemPickUpEvent>(this);
         EventAggregator.GetInstance().Register<OnEnemyKilledEvent>(this);
     }
 
-    private void OnDisable()
+    private void OnDestroy()
     {
         EventAggregator.GetInstance().Unregister<OnQuestItemDroppedEvent>(this);
         EventAggregator.GetInstance().Unregister<OnQuestItemPickUpEvent>(this);
@@ -31,54 +32,75 @@ public class Helicopter : MonoBehaviour, ISubscriber<OnQuestItemPickUpEvent>, IS
 
     private void Update()
     {
-        
-    }
-
-    public void OnHelicopterTriggerEnter(Collider2D collider)
-    {
-        Player player = collider.GetComponent<Player>();
-        if (player != null)
+        if(CurrentInteractor != null)
         {
-            if (platformButton.Equals(""))
-                platformButton = player.DownPlatformButton;
-
-            if (HaveHelicopterKey && EnemyKilledCounter >= ENEMY_KILLED_REQUIREMENT)
+            if (HaveHelicopterKey && NumOfPlayersInRange == Settings.NumOfPlayers)
             {
-                ActionMessage = "-Hold " + platformButton + " to use 'Helicopter Key'";
-                player.InteractionPanel.ShowInteractionPanel(this.name, ActionMessage);
+                ActionMessage = "Hold '" + CurrentInteractor.DownPlatformButton + "' to use \n'Helicopter Key'";
+                CurrentInteractor.ShowInteractionPanel(this.name, ActionMessage);
                 ListenForUserInput();
+            }
+            else if (HaveHelicopterKey && NumOfPlayersInRange != Settings.NumOfPlayers)
+            {
+                string message = "Need all players here to fly the helicopter";
+                CurrentInteractor.ShowInteractionPanel(this.name, message);
             }
             else
             {
-                player.InteractionPanel.ShowInteractionPanel(this.name, DefaultMessage);
-                Debug.Log("We need to have the helicopter key and kill atleast 20 enemies\nStatus: " + "Have Helicopter Key: " + HaveHelicopterKey +
-                          ", Enemies Killed So Far: " + EnemyKilledCounter);
+                CurrentInteractor.ShowInteractionPanel(this.name, DefaultMessage);
             }
         }
     }
 
-    public void OnHelicopterTriggerExit(Collider2D collider)
+    public void OnHelicopterTriggerEnter(InteractionHandler interactor)
     {
-        Player player = collider.GetComponent<Player>();
-        if(player != null)
+        if (interactor != null)
         {
-            player.InteractionPanel.RemoveInteractionPanel();
+            NumOfPlayersInRange++;
+            CurrentInteractor = interactor;
+            this.enabled = true;
         }
+    }
+
+    public void OnHelicopterTriggerExit(InteractionHandler interactor)
+    {
+        if(interactor!= null)
+        {
+            interactor.RemoveInteractionPanel();
+            NumOfPlayersInRange--;
+        }
+        CurrentInteractor = null;
+        this.enabled = false;
     }
 
     public void ListenForUserInput()
     {
+        if(CurrentInteractor != null)
+        {
+            if (Input.GetButton(CurrentInteractor.PlayerInput.DownButton))
+            {
+                if (ButtonHeldTimer < BUTTON_HELD_DOWN_TIME)
+                {
+                    ButtonHeldTimer += Time.deltaTime;
+                    CurrentInteractor.ShowLoadBar(ButtonHeldTimer, BUTTON_HELD_DOWN_TIME);
+                }
+                else
+                {
+                    CurrentInteractor.RemoveInteractionPanel();
+                    //Load next level
+                    Debug.Log("Hello World");
+                    ButtonHeldTimer = 0;
+                    this.enabled = false;
+                }
+                
+            }
 
-    }
-
-    public void OnTriggerEnter2D(Collider2D collision)
-    {
-        NumOfPlayersInRange++;
-    }
-
-    public void OnTriggerExit2D(Collider2D collision)
-    {
-        NumOfPlayersInRange--;
+            if (Input.GetButtonUp(CurrentInteractor.PlayerInput.DownButton))
+            {
+                CurrentInteractor.RemoveLoadBar();
+                ButtonHeldTimer = 0;
+            }
+        }
     }
 
     public void OnEventHandler(OnQuestItemPickUpEvent eventData)
