@@ -27,6 +27,10 @@ public class WarpStar : MonoBehaviour
                 ((Player)other.gameObject.GetComponent("Player")).transform.position = destination.transform.position;
                 Debug.Log("Entered WarpStar");
             }
+            else if(other.gameObject.GetComponent<ObstacleBox>() != null)
+            {
+                ((ObstacleBox)other.gameObject.GetComponent("Obstacle")).transform.position = destination.transform.position;
+            }
             
 
                 //Vector2 pos = destination.transform.position;
