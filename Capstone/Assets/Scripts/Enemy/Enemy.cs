@@ -311,11 +311,7 @@ public class Enemy : MonoBehaviour
             do
             {
                 //Debug.Log("Iterations: " + ++j);
-                int moveSpotMinDistance;
-                do
-                {
-                    moveSpotMinDistance = UnityEngine.Random.Range(-10, 10);
-                } while (moveSpotMinDistance < 5 || moveSpotMinDistance > -5);
+                int moveSpotMinDistance = UnityEngine.Random.Range(-5, 5); // removed do loop, 
                 moveSpots[i] = new Vector2(moveSpotMinDistance + moveSpots[i - 1].x, UnityEngine.Random.Range(-10, 10) + moveSpots[i - 1].y);
 
                 p = Physics2D.CircleCast(moveSpots[i - 1], radius, moveSpots[i] - moveSpots[i - 1], layersToAvoid, raycasts, Vector2.Distance(moveSpots[i], moveSpots[i - 1]));
