@@ -59,10 +59,7 @@ public abstract class Player : MonoBehaviour
     private float ReviveTimer = 0; // counts up to TIME_TO_REVIVE
     private float DownStateTimer = MAX_DOWN_TIME; // counts down to 0
     private bool IsBeingRevived = false; // when true, pause the DownStateTimer to allow reviving
-    private Player downPlayer;
-
-    // Used to keep track what was our last Raycast since they don't have RaycastExit like colliderExit
-    private Collider2D MostRecentCollider;
+    private Player downPlayer; // the player to revive (if any)
 
     public GameObject MyHUD;
 
@@ -142,6 +139,18 @@ public abstract class Player : MonoBehaviour
                 PlayerState = PlayerState.DOWN;
                 reviveBarHandler.OnReviveHandler(MAX_DOWN_TIME, 0); //start the timer
             }
+            else
+            {
+                if (downPlayer != null && InteractionState == InteractionState.OPEN_STATE)
+                {
+                    InteractionState = InteractionState.REVIVING_STATE;
+                    if (ReviveTimer == 0)
+                    {
+                        downPlayer.OnReviveStart(myControllerInput.inputType);
+                    }
+                    RevivePlayer(downPlayer);
+                }
+            }
             
         }
         else if(PlayerState == PlayerState.DOWN)
@@ -161,17 +170,6 @@ public abstract class Player : MonoBehaviour
     public void OnPlayerTriggerEnter(Collider2D collider)
     {
         downPlayer = collider.GetComponent<Player>();
-        if (downPlayer.PlayerState == PlayerState.DOWN) // only one player can revive another one at a time
-        {
-            MostRecentCollider = collider;
-            InteractionState = InteractionState.REVIVING_STATE;
-            if (ReviveTimer == 0)
-            {
-                downPlayer.OnReviveStart(myControllerInput.inputType);
-            }
-
-            RevivePlayer(downPlayer);
-        }
     }
 
     public void OnPlayerTriggerExit()

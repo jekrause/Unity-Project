@@ -80,12 +80,13 @@ public class InteractionHandler : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision != null)
+        if (player.PlayerState == PlayerState.ALIVE && collision != null)
         {
             switch (collision.tag)
             {
                 case ("Player"):
-                    player.OnPlayerTriggerEnter(collision);
+                    if(collision.GetComponent<Player>().PlayerState == PlayerState.DOWN)
+                        player.OnPlayerTriggerEnter(collision);
                     break;
 
                 case ("Item"):
