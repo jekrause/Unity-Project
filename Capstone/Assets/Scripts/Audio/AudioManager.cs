@@ -12,6 +12,11 @@ public class AudioManager : MonoBehaviour
     public static Sound[] soundsGlob;
     public  Sound[] sounds;
 
+    private string OS = Settings.OS;
+
+    //for windows gamepad checks
+    public static bool[] playerAxisInUse = new bool[4];
+
     //public static AudioManager instance;  //may not need this
 
     void Awake()
@@ -88,4 +93,89 @@ public class AudioManager : MonoBehaviour
 
 
     }
+
+
+    public void AdjustMasterVolume(int playerIndex)
+    {
+        float masterVolumePrev = masterVolume;
+
+        if (MenuInputSelector.menuControl[playerIndex] != null)
+        {
+            if (MenuInputSelector.menuControl[playerIndex].inputType == InputType.KEYBOARD)
+            {
+
+
+                if (Input.GetKeyDown(KeyCode.RightArrow))
+                {
+                    masterVolume = AdjustAmount(masterVolume, 0.05f);
+                }
+
+                if (Input.GetKeyDown(KeyCode.LeftArrow))
+                {
+                    masterVolume = AdjustAmount(masterVolume, -0.05f);
+                }
+            }
+            else
+            {
+                if (OS.Equals("Mac"))
+                {
+
+                    if (Input.GetButtonDown(MenuInputSelector.menuControl[playerIndex].DPadRight_Mac))
+                    {
+                        masterVolume = AdjustAmount(masterVolume, 0.05f);
+                    }
+
+                    if (Input.GetButtonDown(MenuInputSelector.menuControl[playerIndex].DPadLeft_Mac))
+                    {
+                        masterVolume = AdjustAmount(masterVolume, -0.05f);
+                    }
+                }
+                else   //for xbox(windows) and PS4
+                {
+                    if (!playerAxisInUse[0] && MenuInputSelector.menuControl[playerIndex] != null)
+                    {
+                        playerAxisInUse[0] = true;
+
+
+                        if (Input.GetAxis(MenuInputSelector.menuControl[playerIndex].DPadX_Windows) > 0)
+                        {
+                            masterVolume = AdjustAmount(masterVolume, 0.05f);
+                        }
+
+                        if (Input.GetAxis(MenuInputSelector.menuControl[playerIndex].DPadX_Windows) < 0)
+                        {
+                            masterVolume = AdjustAmount(masterVolume, -0.05f);
+                        }
+
+                    }
+
+                    if (MenuInputSelector.menuControl[0] != null
+                        && (Input.GetAxis(MenuInputSelector.menuControl[playerIndex].DPadY_Windows) == 0 && Input.GetAxis(MenuInputSelector.menuControl[playerIndex].DPadX_Windows) == 0))
+                    {
+                        // if player is not pressing any axis, reset boolean to allow us to check user input again. 
+                        // The player shouldn't be pressing more than 1 D-Pad button at the same time when searching.
+                        playerAxisInUse[playerIndex] = false;
+                    }
+                }
+            }
+
+        }
+
+
+        if (masterVolume != masterVolumePrev)
+        {
+            Awake(); //reupdate volume values
+        }
+        
+    }
+
+    private float AdjustAmount(float value, float amount)
+    {
+        return value = value + amount;
+    }
+
+    
+
+   
+
 }

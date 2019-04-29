@@ -7,6 +7,7 @@ public class MenuScript : MonoBehaviour
 {
     public GameObject mainmenu;
     public GameObject titlescreen;
+    public GameObject optionsmenu;
     //public GameObject howmanymenu;
     public GameObject characterselectmenu;
     public static Vector2Int menuSelect;
@@ -23,6 +24,8 @@ public class MenuScript : MonoBehaviour
     private int player1InputAssigned = 0;
 
 
+
+
     private void Awake()
     {
         //deactivate all menus besides titlescreen
@@ -30,6 +33,7 @@ public class MenuScript : MonoBehaviour
         mainmenu.SetActive(false);
         //howmanymenu.SetActive(false);
         characterselectmenu.SetActive(false);
+        optionsmenu.SetActive(false);
         currentMenu = titlescreen;
         previousMenu = currentMenu;
 
@@ -61,7 +65,7 @@ public class MenuScript : MonoBehaviour
 
 
 
-        if (currentMenu != characterselectmenu)
+        if ((currentMenu != characterselectmenu) && (currentMenu != optionsmenu))
         {
             menuNavigate();
         }
@@ -341,6 +345,19 @@ public class MenuScript : MonoBehaviour
         characterselectmenu.SetActive(true);
         currentMenu.SetActive(false);
         currentMenu = characterselectmenu;
+        totalMenuItemsX = 1;
+        totalMenuItemsY = 1;
+    }
+
+    public void GotoOptionsMenu()
+    {
+        AudioManager.Play("Select");
+        previousMenu = mainmenu;
+        menuSelect.x = 0;
+        menuSelect.y = 0;
+        optionsmenu.SetActive(true);
+        currentMenu.SetActive(false);
+        currentMenu = optionsmenu;
         totalMenuItemsX = 1;
         totalMenuItemsY = 1;
     }
