@@ -17,6 +17,9 @@ TagManager:
   - HUD
   - CharacterList
   - Ground
+  - Item
+  - LootBag
+  - Helicopter
   layers:
   - Default
   - TransparentFX
