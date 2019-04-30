@@ -217,13 +217,17 @@ public abstract class Player : MonoBehaviour
 
     private void getRotationPosition()
     {
+        float angle;
+        Quaternion eulerRot;
         if (myControllerInput.inputType == InputType.KEYBOARD)
         {
             Vector3 position = Input.mousePosition;
             position = myCamera.ScreenToWorldPoint(position);
-            direction = new Vector2(position.x - transform.position.x, position.y - transform.position.y);
-            //Debug.Log("direction: " +direction + "\nx: " + position.x + "\ny: " + position.y );
-            transform.right = direction; //transform may vary depending on sprite's image
+            position.x = position.x - transform.position.x;
+            position.y = position.y - transform.position.y;
+            angle = Mathf.Atan2(position.y, position.x) * Mathf.Rad2Deg;
+            eulerRot = Quaternion.Euler(0.0f, 0.0f, angle);
+            transform.rotation = Quaternion.Slerp(transform.rotation, eulerRot, Time.deltaTime * 120);
         }
         else //use controller inputs 
         {
@@ -242,8 +246,8 @@ public abstract class Player : MonoBehaviour
                 {
                     
                     rb.freezeRotation = false;
-                    float angle = Mathf.Atan2(vertical, horizontal) * Mathf.Rad2Deg;
-                    Quaternion eulerRot = Quaternion.Euler(0.0f, 0.0f, angle);
+                    angle = Mathf.Atan2(vertical, horizontal) * Mathf.Rad2Deg;
+                    eulerRot = Quaternion.Euler(0.0f, 0.0f, angle);
                     transform.localRotation = Quaternion.Slerp(transform.rotation, eulerRot, Time.deltaTime * 120);
                     
                 }

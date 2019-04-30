@@ -13,6 +13,7 @@ public class InteractionHandler : MonoBehaviour
     public string DownPlatformButton { get; private set; }
     public string RightPlatformButton { get; private set; }
     public MyControllerInput PlayerInput { get; private set; }
+    public Collider2D MostRecentCollider { get; private set; }
 
     // Use this for initialization
     void Start()
@@ -82,6 +83,8 @@ public class InteractionHandler : MonoBehaviour
     {
         if (player.PlayerState == PlayerState.ALIVE && collision != null)
         {
+            MostRecentCollider = collision;
+            Debug.Log(MostRecentCollider.tag);
             switch (collision.tag)
             {
                 case ("Player"):
@@ -111,6 +114,7 @@ public class InteractionHandler : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D collision)
     {
+        MostRecentCollider = null;
 
         if (collision != null)
         {

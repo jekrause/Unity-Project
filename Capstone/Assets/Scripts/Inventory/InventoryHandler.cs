@@ -150,14 +150,14 @@ public class InventoryHandler : MonoBehaviour, ISubscriber<OnMainInvChangedEvent
                     AudioManager.Play("Close_Inventory");
                     player.InteractionState = InteractionState.OPEN_STATE;
                     player.InteractionPanel.RemoveInteractionPanel();
-                    if (ItemFocused)
+                    if (ItemFocused && itemOnGround != null)
                     {
-                        if (itemOnGround != null)
-                            player.InteractionPanel.ShowInteractionPanel(itemOnGround.GetType() + "", PickUpItemMessage);
+                        player.InteractionPanel.ShowInteractionPanel(itemOnGround.GetType() + "", PickUpItemMessage);
                     }
                     else
                     {
                         itemOnGround = null;
+                        ItemFocused = false;
                     }
                         
                     
@@ -219,7 +219,16 @@ public class InventoryHandler : MonoBehaviour, ISubscriber<OnMainInvChangedEvent
 
                 if (Input.GetButtonDown(player.myControllerInput.RightButton)) // item remove
                 {
-                    RemoveItemFromInv();
+                    if(player.InteractionPanel.MostRecentCollider != null)
+                    {
+                        if(!player.InteractionPanel.MostRecentCollider.tag.Equals("Obstacle"))
+                            RemoveItemFromInv();
+                    }
+                    else
+                    {
+                        RemoveItemFromInv();
+                    }
+                      
                 }
                 else if (Input.GetButton(player.myControllerInput.DownButton))
                 {
@@ -356,8 +365,7 @@ public class InventoryHandler : MonoBehaviour, ISubscriber<OnMainInvChangedEvent
     public void OnItemTriggerExit()
     {
         itemOnGround = null;
-        if (ItemFocused)
-            ItemFocused = false;
+        ItemFocused = false;
         if (!InventoryHUDFocused)
             player.InteractionPanel.RemoveInteractionPanel();
     }
@@ -543,7 +551,7 @@ public class InventoryHandler : MonoBehaviour, ISubscriber<OnMainInvChangedEvent
             }
             else
             {
-                if (MainInventory.UseItem(GetComponent<Player>(), MainSlotIndex))
+                if (MainInventory.UseItem(GetComponent<Player>(), MainSlotIndex) == true)
                 {
                     InventoryHUD.OnItemRemove(MainInventory.GetQuantityInSlot(MainSlotIndex));
                     ObjectsPickedUp.Remove(itemToUse.gameObject);
@@ -650,9 +658,10 @@ public class InventoryHandler : MonoBehaviour, ISubscriber<OnMainInvChangedEvent
         if (!actionInProgress)
         {
             actionInProgress = true;
+            Item itemToRemove;
             if (IteratingMainInv)
             {
-                Item itemToRemove = MainInventory.GetItemInSlot(MainSlotIndex);
+                itemToRemove = MainInventory.GetItemInSlot(MainSlotIndex);
                 if (itemToRemove != null)
                 {
                     int itemIndex = 0;
@@ -660,7 +669,7 @@ public class InventoryHandler : MonoBehaviour, ISubscriber<OnMainInvChangedEvent
                     {
                         if (ObjectsPickedUp[i]?.GetComponent<Item>()?.GetType() == itemToRemove?.GetType())
                         {
-                            Vector3 itemDropPosition = new Vector3(transform.position.x + 1f, transform.position.y - 1f);
+                            Vector3 itemDropPosition = new Vector3(player.InteractionPanel.transform.position.x, player.InteractionPanel.transform.position.y);
                             ObjectsPickedUp[i].transform.position = itemDropPosition;
                             ObjectsPickedUp[i].SetActive(true);
                             AudioManager.Play("ItemDropped");
@@ -671,14 +680,16 @@ public class InventoryHandler : MonoBehaviour, ISubscriber<OnMainInvChangedEvent
                     }
                     InventoryHUD.OnItemRemove(MainInventory.GetQuantityInSlot(MainSlotIndex));
                     ObjectsPickedUp.RemoveAt(itemIndex);
+                    itemOnGround = itemToRemove;
+                    ItemFocused = true;
                 }
             }
             else
             {
-                Weapon weaponToRemove = (Weapon)WeaponInventory.GetItemInSlot(WeaponSlotIndex);
-                if (weaponToRemove != null)
+                itemToRemove = (Weapon)WeaponInventory.GetItemInSlot(WeaponSlotIndex);
+                if (itemToRemove != null)
                 {
-                    if (player.CurrentWeapon != null && player.CurrentWeapon == weaponToRemove)
+                    if (player.CurrentWeapon != null && player.CurrentWeapon == itemToRemove)
                     {
                         InterruptWeaponReload();
                         player.UpdatePlayerCurrentWeapon(null);
@@ -688,7 +699,7 @@ public class InventoryHandler : MonoBehaviour, ISubscriber<OnMainInvChangedEvent
                     int itemIndex = 0;
                     for (int i = 0; i < ObjectsPickedUp.Count; i++)
                     {
-                        if (ObjectsPickedUp[i].GetComponent<Weapon>() == weaponToRemove)
+                        if (ObjectsPickedUp[i].GetComponent<Weapon>() == itemToRemove)
                         {
                             ObjectsPickedUp[i].transform.position = transform.position;
                             ObjectsPickedUp[i].SetActive(true);
@@ -700,6 +711,8 @@ public class InventoryHandler : MonoBehaviour, ISubscriber<OnMainInvChangedEvent
                     }
                     InventoryHUD.OnItemRemove(WeaponInventory.GetQuantityInSlot(WeaponSlotIndex));
                     ObjectsPickedUp.RemoveAt(itemIndex);
+                    itemOnGround = itemToRemove;
+                    ItemFocused = true;
                 }
 
             }
