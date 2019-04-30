@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 //using System.DateTime;
@@ -112,7 +112,7 @@ public class Enemy : MonoBehaviour
             EnemyRayCast();
         }
 
-        if (fHP < LOW_HP_THRESHOLD && SafteyRadius() > -1)
+        if (fHP <= LOW_HP_THRESHOLD)
         {
             aiMvmt = MovementTypeEnum.Safe;
         }
@@ -227,7 +227,7 @@ public class Enemy : MonoBehaviour
             withInMinDistance = true;
             LookAt(LookDir.Away);
             transform.position = Vector2.MoveTowards(transform.position, playerTarget.transform.position, fMoveSpeed * Time.deltaTime * -1f);
-            transform.LookAt(2 * transform.position - playerTarget.transform.position);
+            //transform.LookAt(2 * transform.position - playerTarget.transform.position);
             //transform.LookAt(playerTarget.transform.position);
             //transform.position += transform.forward * fSpeed * Time.deltaTime;
             //Debug.Log("Player is within minDistance.");
@@ -268,15 +268,23 @@ public class Enemy : MonoBehaviour
         aiMvmt = MovementTypeEnum.Manual;
     }
 
+
     private void LookAt(LookDir lookDir)
     {
+        Vector3 dir;
+        float angle;
+
         switch (lookDir)
         {
-            case LookDir.Towards:
-                transform.forward = playerTarget.transform.position - transform.position;
-                break;
             case LookDir.Away:
-                transform.forward = transform.position - playerTarget.transform.position;
+                dir = -(playerTarget.transform.position - transform.position);
+                angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+                transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+                break;
+            case LookDir.Towards:
+                dir = playerTarget.transform.position - transform.position;
+                angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+                transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
                 break;
         }
     }
@@ -483,7 +491,7 @@ public class Enemy : MonoBehaviour
         canShoot = false;
     }
 
-    private int SafteyRadius()
+    private int SafetyRadius()
     {
         players = Physics2D.OverlapCircleAll(transform.position, fVisionDistance, playersToAvoid);
         int numPlayers = 0;
@@ -495,18 +503,18 @@ public class Enemy : MonoBehaviour
             {
                 if (player.gameObject.tag == "Player")
                 {
-                    playerTarget.transform.position += player.transform.position;
+                    playerTarget.transform.position += player.transform.position; 
                     ++numPlayers;
-                    Debug.Log("Player position: " + player.transform.position);
+                    Debug.Log(this.name + numPlayers + "");
 
                 }
             }
 
-            Debug.Log("Players in radius = " + numPlayers);
+            Debug.Log(this.name + ": Players in radius = " + numPlayers);
             if (numPlayers > 0)
             {
                 playerTarget.transform.position /= numPlayers; // Average out the positions of all players
-                Debug.Log("PlayerTarget position: " + playerTarget.transform.position);
+                Debug.Log(this.name + ": PlayerTarget position: " + playerTarget.transform.position);
                 return numPlayers;
             }
             Destroy(playerTarget);
