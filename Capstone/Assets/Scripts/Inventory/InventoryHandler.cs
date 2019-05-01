@@ -329,7 +329,8 @@ public class InventoryHandler : MonoBehaviour, ISubscriber<OnMainInvChangedEvent
                 }
             }
         }
-
+         if (Input.GetButtonUp(player.myControllerInput.DownButton))
+            timerButtonHeldDown = 0;
     }
 
     public void OnItemTriggerEnter(Collider2D collider)
