@@ -8,6 +8,12 @@ public class AudioManager : MonoBehaviour
 {
     [Range(0f,1f)]
     public float masterVolume = 1;
+    [Range(0f, 1f)]
+    public float musicVolume = 1;
+    [Range(0f, 1f)]
+    public float sfxVolume = 1;
+
+    public string StartSongName;
 
     public static Sound[] soundsGlob;
     public  Sound[] sounds;
@@ -16,6 +22,8 @@ public class AudioManager : MonoBehaviour
 
     //for windows gamepad checks
     public static bool[] playerAxisInUse = new bool[4];
+
+    
 
     //public static AudioManager instance;  //may not need this
 
@@ -44,11 +52,17 @@ public class AudioManager : MonoBehaviour
         {
             s.source = gameObject.AddComponent<AudioSource>();
             s.source.clip = s.clip;
-
             s.source.volume = s.volume * masterVolume;
             s.source.pitch = s.pitch;
             s.source.loop = s.loop;
         }
+
+        UpdateAudioManagerMasterVolume();
+    }
+
+    private void Start()
+    {
+        AudioManager.Play(StartSongName);
     }
 
     public static void Play(string name)
@@ -94,88 +108,65 @@ public class AudioManager : MonoBehaviour
 
     }
 
-
-    public void AdjustMasterVolume(int playerIndex)
+    public void UpdateAudioManagerMasterVolume()
     {
-        float masterVolumePrev = masterVolume;
+        float newMasterVolume = Settings.MasterVolume;
+        float newMusicVolume = Settings.MusicVolume;
+        float newSFXVolume = Settings.SFXVolume;
 
-        if (MenuInputSelector.menuControl[playerIndex] != null)
+        foreach (Sound s in soundsGlob)
         {
-            if (MenuInputSelector.menuControl[playerIndex].inputType == InputType.KEYBOARD)
+            s.source.clip = s.clip;
+
+            if (s.isMusic)
             {
-
-
-                if (Input.GetKeyDown(KeyCode.RightArrow))
-                {
-                    masterVolume = AdjustAmount(masterVolume, 0.05f);
-                }
-
-                if (Input.GetKeyDown(KeyCode.LeftArrow))
-                {
-                    masterVolume = AdjustAmount(masterVolume, -0.05f);
-                }
+                s.source.volume = s.volume * newMasterVolume * newMusicVolume;
             }
             else
             {
-                if (OS.Equals("Mac"))
-                {
-
-                    if (Input.GetButtonDown(MenuInputSelector.menuControl[playerIndex].DPadRight_Mac))
-                    {
-                        masterVolume = AdjustAmount(masterVolume, 0.05f);
-                    }
-
-                    if (Input.GetButtonDown(MenuInputSelector.menuControl[playerIndex].DPadLeft_Mac))
-                    {
-                        masterVolume = AdjustAmount(masterVolume, -0.05f);
-                    }
-                }
-                else   //for xbox(windows) and PS4
-                {
-                    if (!playerAxisInUse[0] && MenuInputSelector.menuControl[playerIndex] != null)
-                    {
-                        playerAxisInUse[0] = true;
-
-
-                        if (Input.GetAxis(MenuInputSelector.menuControl[playerIndex].DPadX_Windows) > 0)
-                        {
-                            masterVolume = AdjustAmount(masterVolume, 0.05f);
-                        }
-
-                        if (Input.GetAxis(MenuInputSelector.menuControl[playerIndex].DPadX_Windows) < 0)
-                        {
-                            masterVolume = AdjustAmount(masterVolume, -0.05f);
-                        }
-
-                    }
-
-                    if (MenuInputSelector.menuControl[0] != null
-                        && (Input.GetAxis(MenuInputSelector.menuControl[playerIndex].DPadY_Windows) == 0 && Input.GetAxis(MenuInputSelector.menuControl[playerIndex].DPadX_Windows) == 0))
-                    {
-                        // if player is not pressing any axis, reset boolean to allow us to check user input again. 
-                        // The player shouldn't be pressing more than 1 D-Pad button at the same time when searching.
-                        playerAxisInUse[playerIndex] = false;
-                    }
-                }
+                s.source.volume = s.volume * newMasterVolume * newSFXVolume;
             }
-
+            s.source.pitch = s.pitch;
+            s.source.loop = s.loop;
         }
-
-
-        if (masterVolume != masterVolumePrev)
-        {
-            Awake(); //reupdate volume values
-        }
-        
     }
 
-    private float AdjustAmount(float value, float amount)
+    /*
+    public void UpdateAudioManagerMusicVolume()
     {
-        return value = value + amount;
+        float newMusicVolume = Settings.MusicVolume;
+
+        foreach (Sound s in soundsGlob)
+        {
+            if (s.isMusic)
+            {
+                s.source.clip = s.clip;
+                s.source.volume = s.volume * newMusicVolume;
+                s.source.pitch = s.pitch;
+                s.source.loop = s.loop;
+            }
+        }
     }
 
-    
+    public void UpdateAudioManagerSFXVolume()
+    {
+        float newSFXVolume = Settings.MusicVolume;
 
-   
+        foreach (Sound s in soundsGlob)
+        {
+            if (!s.isMusic)
+            {
+                s.source.clip = s.clip;
+                s.source.volume = s.volume * newSFXVolume;
+                s.source.pitch = s.pitch;
+                s.source.loop = s.loop;
+            }
+        }
+    }
+    */
+
+
+
+
 
 }

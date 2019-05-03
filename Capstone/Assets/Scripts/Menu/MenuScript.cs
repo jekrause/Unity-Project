@@ -62,7 +62,10 @@ public class MenuScript : MonoBehaviour
         {
             BindPlayer1();
         }
-
+        else if (currentMenu == optionsmenu)
+        {
+            OptionsNavigate(0);
+        }
 
 
         if ((currentMenu != characterselectmenu) && (currentMenu != optionsmenu))
@@ -78,7 +81,190 @@ public class MenuScript : MonoBehaviour
         }
 
     }
-    
+
+    private void OptionsNavigate(int playerIndex)
+    {
+        if (MenuInputSelector.menuControl[playerIndex] != null)
+        {
+            bool isPressed = false; //if a button is pressed than play sound
+
+            if (MenuInputSelector.menuControl[playerIndex].inputType == InputType.KEYBOARD)
+            {
+
+                if (Input.GetKeyDown(KeyCode.UpArrow))
+                {
+                    int oldMenuSelect = menuSelect.y;
+                    menuSelect.y = menuSelect.y + 1;
+                    if (menuSelect.y > totalMenuItemsY - 1)
+                    {
+                        menuSelect.y = 0;
+                    }
+                    if (oldMenuSelect != menuSelect.y)
+                    {
+                        isPressed = true;
+                    }
+                }
+
+                if (Input.GetKeyDown(KeyCode.DownArrow))
+                {
+                    int oldMenuSelect = menuSelect.y;
+                    menuSelect.y = menuSelect.y - 1;
+                    if (menuSelect.y < 0)
+                    {
+                        menuSelect.y = totalMenuItemsY - 1;
+                    }
+                    if (oldMenuSelect != menuSelect.y)
+                    {
+                        isPressed = true;
+                    }
+                }
+
+
+                if (Input.GetKeyDown(KeyCode.RightArrow))
+                {
+                    if (menuSelect.y == 0)
+                    {
+                        isPressed = Settings.IncreaseMasterVolume();
+                    }else if (menuSelect.y == 1)
+                    {
+                        isPressed = Settings.IncreaseSFXVolume();
+                    }
+                    else
+                    {
+                        isPressed = Settings.IncreaseMusicVolume();
+                    }
+                }
+
+                if (Input.GetKeyDown(KeyCode.LeftArrow))
+                {
+                    if (menuSelect.y == 0)
+                    {
+                        isPressed = Settings.DecreaseMasterVolume();
+                    }
+                    else if (menuSelect.y == 1)
+                    {
+                        isPressed = Settings.DecreaseSFXVolume();
+                    }
+                    else
+                    {
+                        isPressed = Settings.DecreaseMusicVolume();
+                    }
+                }
+
+            }
+            else
+            {
+                if (OS.Equals("Mac"))
+                {
+
+                    /*
+                    if (Input.GetButtonDown(MenuInputSelector.menuControl[playerIndex].DPadUp_Mac))
+                    {
+                        int oldMenuSelect = menuSelect.y;
+                        menuSelect.y = menuSelect.y + 1;
+                        if (menuSelect.y > totalMenuItemsY - 1)
+                        {
+                            menuSelect.y = 0;
+                        }
+                        if (oldMenuSelect != menuSelect.y)
+                        {
+                            isPressed = true;
+                        }
+                    }
+
+                    if (Input.GetButtonDown(MenuInputSelector.menuControl[playerIndex].DPadDown_Mac))
+                    {
+                        int oldMenuSelect = menuSelect.y;
+                        menuSelect.y = menuSelect.y - 1;
+                        if (menuSelect.y < 0)
+                        {
+                            menuSelect.y = totalMenuItemsY - 1;
+                        }
+                        if (oldMenuSelect != menuSelect.y)
+                        {
+                            isPressed = true;
+                        }
+                    }
+                    */
+
+                    if (Input.GetButtonDown(MenuInputSelector.menuControl[playerIndex].DPadRight_Mac))
+                    {
+                        isPressed = Settings.IncreaseMasterVolume();
+                    }
+
+                    if (Input.GetButtonDown(MenuInputSelector.menuControl[playerIndex].DPadLeft_Mac))
+                    {
+                        isPressed = Settings.DecreaseMasterVolume();
+                    }
+                }
+                else
+                {
+                    // for xbox(windows) and PS4
+
+                    if (!PlayerMenuScript.playerAxisInUse[playerIndex] && MenuInputSelector.menuControl[playerIndex] != null)
+                    {
+                        PlayerMenuScript.playerAxisInUse[playerIndex] = true;
+                        /*
+                        if (Input.GetAxis(MenuInputSelector.menuControl[playerIndex].DPadY_Windows) > 0)
+                        {
+                            int oldMenuSelect = menuSelect.y;
+                            menuSelect.y = menuSelect.y + 1;
+                            if (menuSelect.y > totalMenuItemsY - 1)
+                            {
+                                menuSelect.y = 0;
+                            }
+                            if (oldMenuSelect != menuSelect.y)
+                            {
+                                isPressed = true;
+                            }
+                        }
+                        if (Input.GetAxis(MenuInputSelector.menuControl[playerIndex].DPadY_Windows) < 0)
+                        {
+                            int oldMenuSelect = menuSelect.y;
+                            menuSelect.y = menuSelect.y - 1;
+                            if (menuSelect.y < 0)
+                            {
+                                menuSelect.y = totalMenuItemsY - 1;
+                            }
+                            if (oldMenuSelect != menuSelect.y)
+                            {
+                                isPressed = true;
+                            }
+                        }
+                        */
+
+                        if (Input.GetAxis(MenuInputSelector.menuControl[playerIndex].DPadX_Windows) > 0)
+                        {
+                            isPressed = Settings.IncreaseMasterVolume();
+                        }
+
+                        if (Input.GetAxis(MenuInputSelector.menuControl[playerIndex].DPadX_Windows) < 0)
+                        {
+                            isPressed = Settings.DecreaseMasterVolume();
+                        }
+
+                    }
+
+                    if (MenuInputSelector.menuControl[playerIndex] != null
+                        && (Input.GetAxis(MenuInputSelector.menuControl[playerIndex].DPadY_Windows) == 0 && Input.GetAxis(MenuInputSelector.menuControl[playerIndex].DPadX_Windows) == 0))
+                    {
+                        // if player is not pressing any axis, reset boolean to allow us to check user input again. 
+                        // The player shouldn't be pressing more than 1 D-Pad button at the same time when searching.
+                        PlayerMenuScript.playerAxisInUse[playerIndex] = false;
+                    }
+
+                }
+
+            }
+
+            if (isPressed == true)
+            {
+                AudioManager.Play("Move");
+                Settings.PrintAudioVolumes();
+            }
+
+        }
+    }
 
     private void pressDirection(int playerIndex)
     {
@@ -359,7 +545,7 @@ public class MenuScript : MonoBehaviour
         currentMenu.SetActive(false);
         currentMenu = optionsmenu;
         totalMenuItemsX = 1;
-        totalMenuItemsY = 1;
+        totalMenuItemsY = 3;
     }
 
     public void GotoLevel(int howManyPlayers)
