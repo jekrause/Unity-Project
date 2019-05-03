@@ -101,7 +101,6 @@ public class Enemy : MonoBehaviour
         //death 
         if (fHP <= 0)
         {
-            EventAggregator.GetInstance().Publish<OnEnemyKilledEvent>(new OnEnemyKilledEvent());
             Object.Destroy(gameObject);
             Destroy(this);
         }
@@ -222,6 +221,7 @@ public class Enemy : MonoBehaviour
 
     protected void MvmtSafe()// Should be used when enemy has low health AND enemies are nearby
     {
+        if (playerTarget == null || transform == null) return;
         if (Vector2.Distance(transform.position, playerTarget.transform.position) < minDistance)
         {
             withInMinDistance = true;
@@ -355,7 +355,11 @@ public class Enemy : MonoBehaviour
             if (storage[1] != null)
             {
                 GameObject temp = (GameObject)storage[1];
-                if(playerTarget == null && Vector3.Distance(temp.transform.position, gameObject.transform.position) < fVisionDistance)
+                if(temp.GetComponent<Player>() != null && fHP <= 0)
+                {
+                    EventAggregator.GetInstance().Publish<OnEnemyKilledEvent>(new OnEnemyKilledEvent(temp.GetComponent<Player>().playerNumber, 100));
+                }
+                if (playerTarget == null && Vector3.Distance(temp.transform.position, gameObject.transform.position) < fVisionDistance)
                 {
                     Debug.Log("Detected that " + temp.name + " shot at enemy");
                     playerTarget = temp;

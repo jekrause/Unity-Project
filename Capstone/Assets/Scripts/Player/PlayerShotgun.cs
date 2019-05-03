@@ -8,10 +8,10 @@ public class PlayerShotgun : Player
     new void Start()
     {
         base.Start();
+        MyHUD.transform.Find("HealthBarPanel").GetComponent<HealthHUD>().SetMaxHP(Stats);
         fAttackRadius = 2f;
         fMoveRate = 6f;
         fProjSpeed = 20f;
-
     }
 
     protected override void Update()

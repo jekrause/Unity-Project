@@ -10,7 +10,7 @@ public class PlayerFast : Player
         base.Start();
         fMoveRate = 10f;
         fProjSpeed = 20f;
-
+        MyHUD.transform.Find("HealthBarPanel").GetComponent<HealthHUD>().SetMaxHP(Stats);
         for (int i = 0; i < gameObject.transform.childCount; i++)
         {
             GameObject child = gameObject.transform.GetChild(i).gameObject;
@@ -21,7 +21,7 @@ public class PlayerFast : Player
                 break;
             }
         }
-        
+  
     }
 
     protected override void Update()

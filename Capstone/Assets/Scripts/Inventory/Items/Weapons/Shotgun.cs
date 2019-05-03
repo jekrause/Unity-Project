@@ -2,6 +2,11 @@
 
 public class Shotgun : RangedWeapon
 {
+
+    public readonly float DEFAULT_ATTACK_RATE = 2f;
+    public readonly float DEFAULT_RELOAD_TIME = 4f;
+    public readonly float DEFAULT_PROJ_DAMAGE = 10f;
+
     private readonly Vector3[] projAngles = new Vector3[]
     {
         new Vector3(0,0,-5),
@@ -13,13 +18,20 @@ public class Shotgun : RangedWeapon
     
     public Shotgun() {
         weight = 3;
-        projDamage = 10f;
+        projDamage = DEFAULT_PROJ_DAMAGE;
         projSpeed = 350;
         AmmoClip = new AmmoClip(25, 5);
-        ReloadTime = 4;
-        attackRate = 2;
+        ReloadTime = DEFAULT_RELOAD_TIME;
+        attackRate = DEFAULT_ATTACK_RATE;
         ReloadSound = "Shotgun_Reload";
         ReloadFinishSound = "Shotgun_Reload_Finished";
+    }
+
+    public override void UpdateWeaponStats(Stats playerStats)
+    {
+        ReloadTime = DEFAULT_RELOAD_TIME - (DEFAULT_RELOAD_TIME * playerStats.ReloadMultiplier);
+        attackRate = DEFAULT_ATTACK_RATE - (DEFAULT_ATTACK_RATE * playerStats.AttackRateMultiplier);
+        projDamage = DEFAULT_PROJ_DAMAGE + playerStats.DamageMultiplier;
     }
 
     public override void Fire(Player player)

@@ -8,10 +8,9 @@ using System.Collections.Generic;
  * 
  */
 // https://unity3d.com/learn/tutorials/projects/2d-roguelike-tutorial/writing-player-script
-public abstract class Player : MonoBehaviour
+public abstract class Player : MonoBehaviour, ISubscriber<OnLevelUpEvent>
 {
     protected float fAttackTime = 3;  //The higher this number, the more frequent you can shoot
-    [SerializeField] protected float fHP = 100f; // serialize field for testing purposes
 
     protected float fDamage = 10f;         //default damage if no weapon is equipped
     [SerializeField] protected float fMoveRate = 1f;
@@ -30,6 +29,7 @@ public abstract class Player : MonoBehaviour
     public Weapon CurrentWeapon;
     public Transform shootPosition;
     public readonly Ammunition Ammunition = new Ammunition(500);
+    public Stats Stats { get; private set; }
 
     // mouse
     private Vector2 direction;
@@ -91,6 +91,7 @@ public abstract class Player : MonoBehaviour
                 break;
         }
 
+        Stats = GetComponent<Stats>();
         feetAnimation = transform.Find("Feet").GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
         InventoryHandler = GetComponent<InventoryHandler>();
@@ -99,6 +100,16 @@ public abstract class Player : MonoBehaviour
         LootBagHandler = GetComponent<LootBagHandler>();
         InteractionPanel = transform.Find("InteractionCollider").GetComponent<InteractionHandler>();
         InteractionPanel.InitInteraction(MyHUD);
+    }
+
+    private void OnEnable()
+    {
+        EventAggregator.GetInstance().Register<OnLevelUpEvent>(this);
+    }
+
+    private void OnDisable()
+    {
+        EventAggregator.GetInstance().Unregister<OnLevelUpEvent>(this);
     }
 
     protected void FixedUpdate()
@@ -134,7 +145,7 @@ public abstract class Player : MonoBehaviour
     {
         if (PlayerState == PlayerState.ALIVE)
         {
-            if(fHP <= 0)
+            if(Stats.Health <= 0)
             {
                 PlayerState = PlayerState.DOWN;
                 reviveBarHandler.OnReviveHandler(MAX_DOWN_TIME, 0); //start the timer
@@ -265,16 +276,16 @@ public abstract class Player : MonoBehaviour
     public bool Healed(float f)
     {
         //TODO: maybe a healing animation gets called here
-        bool gotHealed = fHP == 100f ? false : true; // used to indicate if player is already max health
-        float difference = 100f - f;
-        fHP += f;
-        if (fHP > 100f)
+        bool gotHealed = Stats.Health == Stats.MaxHealth ? false : true; // used to indicate if player is already max health
+
+        Stats.Health += f;
+        if (Stats.Health > Stats.MaxHealth)
         {
-            fHP = 100f;
+            Stats.Health = Stats.MaxHealth;
         }
         if (gotHealed)
         {
-            EventAggregator.GetInstance().Publish(new PlayerHealedEvent(fHP, playerNumber));
+            EventAggregator.GetInstance().Publish(new PlayerHealedEvent(Stats.Health, playerNumber));
         }
         return gotHealed;
     }
@@ -284,10 +295,10 @@ public abstract class Player : MonoBehaviour
         try
         {
             Debug.Log("Received " + storage[0] + " damage");
-            if (fHP > 0)
+            if (Stats.Health > 0)
             {
-                fHP -= (int)storage[0];
-                EventAggregator.GetInstance().Publish(new PlayerDamagedEvent(fHP, playerNumber)); // fire event
+                Stats.Health -= (int)storage[0];
+                EventAggregator.GetInstance().Publish(new PlayerDamagedEvent(Stats.Health, playerNumber)); // fire event
                 return true;
             }
             else
@@ -463,6 +474,7 @@ public abstract class Player : MonoBehaviour
             if(CurrentWeapon is RangedWeapon)
             {
                 AudioManager.Play(((RangedWeapon)CurrentWeapon).ReloadFinishSound);
+                ((RangedWeapon)CurrentWeapon).UpdateWeaponStats(Stats);
             }
         }
         EventAggregator.GetInstance().Publish(new OnPlayerWeaponChangedEvent(playerNumber, currentWeapon, Ammunition));
@@ -470,11 +482,11 @@ public abstract class Player : MonoBehaviour
 
     public virtual void OnReviveCompleted() 
     {
-        fHP = 50f;
+        Stats.Health = 50f;
         PlayerState = PlayerState.ALIVE;
         reviveBarHandler.OnReviveFinishHandler();
         DownStateTimer = MAX_DOWN_TIME; // reset down timer
-        EventAggregator.GetInstance().Publish(new PlayerHealedEvent(fHP, playerNumber));
+        EventAggregator.GetInstance().Publish(new PlayerHealedEvent(Stats.Health, playerNumber));
         IsBeingRevived = false;
     }
 
@@ -487,6 +499,18 @@ public abstract class Player : MonoBehaviour
     {
         IsBeingRevived = false;
         reviveBarHandler.OnReviveCancelHandler();
+    }
+
+    public void OnEventHandler(OnLevelUpEvent eventData)
+    {
+        if(eventData.PlayerNumber == playerNumber)
+        {
+            if(CurrentWeapon != null && CurrentWeapon is RangedWeapon)
+            {
+                ((RangedWeapon)CurrentWeapon).UpdateWeaponStats(Stats);
+            }
+                
+        }
     }
 }
 

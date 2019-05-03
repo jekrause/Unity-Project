@@ -74,6 +74,8 @@ public abstract class RangedWeapon : Weapon
         
     }
 
+    public abstract void UpdateWeaponStats(Stats playerStats);
+
     // In the case the player switch or drop the weapon while it is reloading
     public void ReloadingInterrupted(int playerNumber)
     {

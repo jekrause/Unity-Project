@@ -6,15 +6,15 @@ public class PlayerSniper : Player
 {
     // Start is called before the first frame update
     new void Start()
-    { 
+    {
         base.Start();
-
         fMoveRate = 7f;
-        fHP *= 0.75f;          
+        Stats.Health *= 0.75f;
+        Stats.SetMaxHP(Stats.Health);
+        MyHUD.transform.Find("HealthBarPanel").GetComponent<HealthHUD>().SetMaxHP(Stats);
         fAttackRadius = 10f;
         fProjSpeed = 20f;
-      
-
+     
     }
 
     protected override void Update()

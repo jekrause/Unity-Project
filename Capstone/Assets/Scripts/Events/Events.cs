@@ -16,7 +16,13 @@ public class PlayerHealedEvent
 
 public class OnEnemyKilledEvent
 {
-    public OnEnemyKilledEvent() { }
+    public int PlayerNumber { get; private set; } // the one who killed the enemy
+    public int EXP { get; private set; } 
+    public OnEnemyKilledEvent(int playerNum, int EXP)
+    {
+        this.PlayerNumber = playerNum;
+        this.EXP = EXP;
+    }
 }
 
 public class OnPlayerWeaponChangedEvent
@@ -128,5 +134,18 @@ public class OnWeaponInvChangedEvent
         Equipped = equipped;
     }
 }
+
+public class OnLevelUpEvent
+{
+    public int PlayerNumber { get; private set; }
+    public Stats Stats { get; private set; }
+
+    public OnLevelUpEvent(int playerNum, Stats stat)
+    {
+        this.PlayerNumber = playerNum;
+        this.Stats = stat;
+    }
+}
+
 // other events to add...
 

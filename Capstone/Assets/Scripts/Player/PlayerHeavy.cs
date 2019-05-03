@@ -9,9 +9,10 @@ public class PlayerHeavy : Player
     new void Start()
     {
         base.Start();
-
         fMoveRate = 5f;
-        fHP *= 1.5f;
+        Stats.Health *= 1.5f;
+        Stats.SetMaxHP(Stats.Health);
+        MyHUD.transform.Find("HealthBarPanel").GetComponent<HealthHUD>().SetMaxHP(Stats);
         fAttackRadius = 5f;
         fProjSpeed = 10f;
 
@@ -19,7 +20,6 @@ public class PlayerHeavy : Player
         {
             WeaponInventory.AddItem(basicWeapon);
         }
-
     }
 
     public override void OnReviveCompleted()

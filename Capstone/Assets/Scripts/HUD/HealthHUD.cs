@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class HealthHUD : MonoBehaviour, ISubscriber<PlayerHealedEvent>, ISubscriber<PlayerDamagedEvent>
+public class HealthHUD : MonoBehaviour, ISubscriber<PlayerHealedEvent>, ISubscriber<PlayerDamagedEvent>, ISubscriber<OnLevelUpEvent>
 {
     public int playerNumHUD;
     private Slider HealthBar;
-
+    private float MaxHP = 100f;
 
     // Start is called before the first frame update
     void Start()
@@ -20,15 +20,17 @@ public class HealthHUD : MonoBehaviour, ISubscriber<PlayerHealedEvent>, ISubscri
         // listen for player hp events
         EventAggregator.GetInstance().Register<PlayerHealedEvent>(this);
         EventAggregator.GetInstance().Register<PlayerDamagedEvent>(this);
+        EventAggregator.GetInstance().Register<OnLevelUpEvent>(this);
 
         HealthBar.value = 1; // full health
         
     }
 
-    // Update is called once per frame
-    void Update()
+    public void SetMaxHP(Stats stats)
     {
-        
+        MaxHP = stats.MaxHealth;
+        RectTransform rt = GetComponent<RectTransform>();
+        rt.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, rt.rect.width + (stats.Level * 10)); // increase the length of Health bar
     }
 
     private void OnDamaged(float hp)
@@ -45,7 +47,7 @@ public class HealthHUD : MonoBehaviour, ISubscriber<PlayerHealedEvent>, ISubscri
 
     private float CalculateHealth(float hp)
     {
-        return hp / 100;
+        return hp / MaxHP;
     }
 
     private void OnDeath(float amount)
@@ -58,6 +60,7 @@ public class HealthHUD : MonoBehaviour, ISubscriber<PlayerHealedEvent>, ISubscri
         // unsubscribe the events
         EventAggregator.GetInstance().Unregister<PlayerHealedEvent>(this);
         EventAggregator.GetInstance().Unregister<PlayerDamagedEvent>(this);
+        EventAggregator.GetInstance().Unregister<OnLevelUpEvent>(this);
     }
 
 
@@ -76,5 +79,14 @@ public class HealthHUD : MonoBehaviour, ISubscriber<PlayerHealedEvent>, ISubscri
         {
             OnDamaged(eventData.Health);
         }
+    }
+
+    public void OnEventHandler(OnLevelUpEvent eventData)
+    {
+        RectTransform rt = GetComponent<RectTransform>();
+        rt.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, rt.rect.width + 10);
+        MaxHP = eventData.Stats.MaxHealth;
+        HealthBar.value = eventData.Stats.Health / MaxHP;
+
     }
 }
