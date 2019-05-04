@@ -9,6 +9,10 @@ public class EnemyHouseSpawner : MonoBehaviour
 
     public float fHP = 100;
     public float delaySeconds = 5;
+    ContactFilter2D filter;
+    protected LayerMask layerMask;
+    protected Collider2D[] resultsList = new Collider2D[20];
+
     public GameObject enemyRifle;
     public GameObject enemyHeavy;
     public GameObject enemyHandgun;
@@ -27,6 +31,8 @@ public class EnemyHouseSpawner : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        layerMask = 1 << 9;
+        filter.SetLayerMask(layerMask);
         //to catch bugs
         if (fHP <= 0f)
         {
@@ -55,28 +61,43 @@ public class EnemyHouseSpawner : MonoBehaviour
 
         if (Waited() && (startSpawning == true))
         {
-            int ii = Random.Range(0, 3);
-            GameObject newEnemy = null;
-            switch (ii)
+            //check to see if there are already 3 enemies in the radius
+            
+            int totalCollisions = Physics2D.OverlapCircle(transform.position, 20, filter, resultsList);
+            int enemyCount = 0;
+            for (int ii = 0; ii < totalCollisions; ii++)
             {
-                case 0:
-                    newEnemy = Instantiate(enemyRifle, spawnPosition.transform.position, spawnPosition.transform.rotation);
-                    break;
-                case 1:
-                    newEnemy = Instantiate(enemyHeavy, spawnPosition.transform.position, spawnPosition.transform.rotation);
-                    break;
-                case 2:
-                    newEnemy = Instantiate(enemyHandgun, spawnPosition.transform.position, spawnPosition.transform.rotation);
-                    break;
+                if (resultsList[ii].tag == "Enemy")
+                {
+                    enemyCount++;
+                }
             }
-            newEnemy.transform.Rotate(transform.rotation.x, transform.rotation.y, transform.rotation.z-90);
-            // im not sure if this is correct???
+            Debug.Log("Enemy count is " + enemyCount + "total count = " + totalCollisions);
+            if (enemyCount < 4)
+            {
+                int ii = Random.Range(0, 3);
+                GameObject newEnemy = null;
+                switch (ii)
+                {
+                    case 0:
+                        newEnemy = Instantiate(enemyRifle, spawnPosition.transform.position, spawnPosition.transform.rotation);
+                        break;
+                    case 1:
+                        newEnemy = Instantiate(enemyHeavy, spawnPosition.transform.position, spawnPosition.transform.rotation);
+                        break;
+                    case 2:
+                        newEnemy = Instantiate(enemyHandgun, spawnPosition.transform.position, spawnPosition.transform.rotation);
+                        break;
+                }
+                newEnemy.transform.Rotate(transform.rotation.x, transform.rotation.y, transform.rotation.z - 90);
+                // im not sure if this is correct???
 
 
-            //Debug.Log("transformz = "+transform.rotation.z);
-            //Debug.Log("transformz+90 = " + transform.rotation.z + -90);
+                //Debug.Log("transformz = "+transform.rotation.z);
+                //Debug.Log("transformz+90 = " + transform.rotation.z + -90);
 
-            newEnemy.SendMessage("SetManualDestination", goalPosition.transform.position);
+                newEnemy.SendMessage("SetManualDestination", goalPosition.transform.position);
+            }
         }
 
     }
