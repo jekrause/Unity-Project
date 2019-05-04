@@ -87,6 +87,7 @@ public class PlayerMenuScript : MonoBehaviour
     void Start()
     {
         //deactivate all menus besides titlescreen
+        UnAssignAllInfo();
         playerInputIndex = 1;
         UnAssignAllInputsExceptPlayer1();
 
@@ -359,8 +360,9 @@ public class PlayerMenuScript : MonoBehaviour
         {
             //goBack to MainMenu and reset all characterSelectMenu Variables
             UnAssignAllInputsExceptPlayer1();
+            UnAssignAllInfo();
             GameObject mainMenu = GameObject.Find("Menus");
-            mainMenu.GetComponent<MenuScript>().GotoMainMenu(); //maybe do all of that in this method called??
+            mainMenu.GetComponent<MenuScript>().GotoMainMenu();
 
         }else if(previousMenu == newGameOrLoadMenu)
         {
@@ -662,6 +664,16 @@ public class PlayerMenuScript : MonoBehaviour
         Settings.inputAssigned[2] = false;
         Settings.inputAssigned[3] = false;
         Settings.inputAssigned[4] = false;
+    }
+
+    private void UnAssignAllInfo()
+    {
+        for (int i = 0; i < 4; i += 1)
+        {
+            MenuInputSelector.PlayerNames[i] = "";
+            MenuInputSelector.PlayerClasses[i] = 0;
+            MenuInputSelector.PlayersReady[i] = false;
+        }
     }
 
     private void UnAssignAllInputsExceptPlayer1()
