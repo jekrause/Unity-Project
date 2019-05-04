@@ -21,6 +21,8 @@ public class MenuScript : MonoBehaviour
     private GameObject previousMenu;
     private string OS = Settings.OS;
 
+    private bool backButtonReleased = true;
+
     private int player1InputAssigned = 0;
 
 
@@ -43,7 +45,7 @@ public class MenuScript : MonoBehaviour
 
         totalMenuItemsX = 1;
         totalMenuItemsY = 1;
-
+        backButtonReleased = true;
        
     }
 
@@ -66,21 +68,100 @@ public class MenuScript : MonoBehaviour
         {
             OptionsNavigate(0);
         }
-
-
-        if ((currentMenu != characterselectmenu) && (currentMenu != optionsmenu))
+        else if (currentMenu == mainmenu)
         {
             menuNavigate();
         }
 
-
-        //to go back to previous menu for now
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (currentMenu != characterselectmenu  && backButtonReleased)
         {
-            gotoPreviousMenu();
+            BackButtonChecker();
+        }
+        
+        if (backButtonReleased == false)
+        {
+            CheckForBackButtonRelease();
+        }
+        
+
+    }
+
+    private bool BackButtonisPressed()
+    {
+        if (MenuInputSelector.menuControl[0] != null)
+        {
+            if (MenuInputSelector.menuControl[0].inputType == InputType.KEYBOARD)
+            {
+
+                if (Input.GetKey(KeyCode.Escape))
+                {
+                    return true;
+                }
+            }
+            else
+            {
+                if (Input.GetButton(MenuInputSelector.menuControl[0].RightButton))
+                {
+                    return true;
+                }
+
+            }
+
+        }
+
+        return false;
+    }
+
+    private void CheckForBackButtonRelease()
+    {
+        if (MenuInputSelector.menuControl[0] != null)
+        {
+            if (MenuInputSelector.menuControl[0].inputType == InputType.KEYBOARD)
+            {
+
+                if (Input.GetKeyUp(KeyCode.Escape))
+                {
+                    backButtonReleased = true;
+                }
+            }
+            else
+            {
+                if (Input.GetButtonUp(MenuInputSelector.menuControl[0].RightButton))
+                {
+                    backButtonReleased = true;
+                }
+
+            }
+
         }
 
     }
+
+    private void BackButtonChecker()
+    {
+        if (MenuInputSelector.menuControl[0] != null)
+        {
+            if (MenuInputSelector.menuControl[0].inputType == InputType.KEYBOARD)
+            {
+
+                if (Input.GetKeyDown(KeyCode.Escape))
+                {
+                    gotoPreviousMenu();
+                }
+            }
+            else
+            {
+                if (Input.GetButtonDown(MenuInputSelector.menuControl[0].RightButton))
+                {
+                    gotoPreviousMenu();
+                }
+
+            }
+
+        }
+    }
+
+   
 
     private void OptionsNavigate(int playerIndex)
     {
@@ -157,7 +238,7 @@ public class MenuScript : MonoBehaviour
                 if (OS.Equals("Mac"))
                 {
 
-                    /*
+                    
                     if (Input.GetButtonDown(MenuInputSelector.menuControl[playerIndex].DPadUp_Mac))
                     {
                         int oldMenuSelect = menuSelect.y;
@@ -185,16 +266,38 @@ public class MenuScript : MonoBehaviour
                             isPressed = true;
                         }
                     }
-                    */
+                    
 
                     if (Input.GetButtonDown(MenuInputSelector.menuControl[playerIndex].DPadRight_Mac))
                     {
-                        isPressed = Settings.IncreaseMasterVolume();
+                        if (menuSelect.y == 0)
+                        {
+                            isPressed = Settings.IncreaseMasterVolume();
+                        }
+                        else if (menuSelect.y == 1)
+                        {
+                            isPressed = Settings.IncreaseSFXVolume();
+                        }
+                        else
+                        {
+                            isPressed = Settings.IncreaseMusicVolume();
+                        }
                     }
 
                     if (Input.GetButtonDown(MenuInputSelector.menuControl[playerIndex].DPadLeft_Mac))
                     {
-                        isPressed = Settings.DecreaseMasterVolume();
+                        if (menuSelect.y == 0)
+                        {
+                            isPressed = Settings.DecreaseMasterVolume();
+                        }
+                        else if (menuSelect.y == 1)
+                        {
+                            isPressed = Settings.DecreaseSFXVolume();
+                        }
+                        else
+                        {
+                            isPressed = Settings.DecreaseMusicVolume();
+                        }
                     }
                 }
                 else
@@ -204,7 +307,7 @@ public class MenuScript : MonoBehaviour
                     if (!PlayerMenuScript.playerAxisInUse[playerIndex] && MenuInputSelector.menuControl[playerIndex] != null)
                     {
                         PlayerMenuScript.playerAxisInUse[playerIndex] = true;
-                        /*
+                        
                         if (Input.GetAxis(MenuInputSelector.menuControl[playerIndex].DPadY_Windows) > 0)
                         {
                             int oldMenuSelect = menuSelect.y;
@@ -231,16 +334,38 @@ public class MenuScript : MonoBehaviour
                                 isPressed = true;
                             }
                         }
-                        */
+                        
 
                         if (Input.GetAxis(MenuInputSelector.menuControl[playerIndex].DPadX_Windows) > 0)
                         {
-                            isPressed = Settings.IncreaseMasterVolume();
+                                if (menuSelect.y == 0)
+                                {
+                                    isPressed = Settings.IncreaseMasterVolume();
+                                }
+                                else if (menuSelect.y == 1)
+                                {
+                                    isPressed = Settings.IncreaseSFXVolume();
+                                }
+                                else
+                                {
+                                    isPressed = Settings.IncreaseMusicVolume();
+                                }
                         }
 
                         if (Input.GetAxis(MenuInputSelector.menuControl[playerIndex].DPadX_Windows) < 0)
                         {
-                            isPressed = Settings.DecreaseMasterVolume();
+                                if (menuSelect.y == 0)
+                                {
+                                    isPressed = Settings.DecreaseMasterVolume();
+                                }
+                                else if (menuSelect.y == 1)
+                                {
+                                    isPressed = Settings.DecreaseSFXVolume();
+                                }
+                                else
+                                {
+                                    isPressed = Settings.DecreaseMusicVolume();
+                                }
                         }
 
                     }
@@ -496,6 +621,7 @@ public class MenuScript : MonoBehaviour
         currentMenu = titlescreen;
         totalMenuItemsX = 1;
         totalMenuItemsY = 1;
+        backButtonReleased = true;
         //MenuInputSelector.menuControl[0] = null;    //set player 1 to null
         UnAssignAllInputs();    //unassign all inputs to restart input selection
 
@@ -503,13 +629,18 @@ public class MenuScript : MonoBehaviour
 
     public void GotoMainMenu()
     {
-        if (currentMenu == characterselectmenu)
+        if (currentMenu == titlescreen)
         {
-            AudioManager.Play("Back");
+            AudioManager.Play("Select");
         }
         else
         {
-            AudioManager.Play("Select");
+            AudioManager.Play("Back");
+            if (BackButtonisPressed())
+            {
+                backButtonReleased = false;
+            }
+            
         }
         previousMenu = titlescreen;
         menuSelect.x = 0;
@@ -557,31 +688,16 @@ public class MenuScript : MonoBehaviour
 
     public void gotoPreviousMenu()
     {
-        if (currentMenu != previousMenu)
+        if (previousMenu == titlescreen)
         {
-            if(currentMenu == characterselectmenu)
-            {
-                GotoTitleScreen();  //for now
-                return;
-                /*Debug.Log("before inputAssigned = " + player1InputAssigned);
-                Debug.Log("player1assigned = " + Settings.inputAssigned[player1InputAssigned]);
-                UnAssignAllInputsExceptPlayer1();
-                GotoMainMenu();
-                Debug.Log("after inputAssigned = " + player1InputAssigned);
-                Debug.Log("player1assigned = " + Settings.inputAssigned[player1InputAssigned]);
-                return;
-                */               
-            }
-            if(previousMenu == titlescreen)
+            if (currentMenu != previousMenu)
             {
                 GotoTitleScreen();
-                return;
             }
-            if(previousMenu == mainmenu)
-            {
-                GotoMainMenu();
-                return;
-            }
+        }
+        else if(previousMenu == mainmenu)
+        {
+            GotoMainMenu();
         }
     }
 
@@ -599,7 +715,7 @@ public class MenuScript : MonoBehaviour
             player1InputAssigned = 0;
             //transform.GetChild(index).GetComponentInChildren<TextMesh>().text = "P" + (index + 1) + " (Keyboard input)";
         }
-        else if (Input.GetButton("J1PS4_DownButton_" + Settings.OS) && !Settings.inputAssigned[1])
+        else if (Input.GetButtonDown("J1PS4_DownButton_" + Settings.OS) && !Settings.inputAssigned[1])
         {
             print("PS4 Joystick 1 Detected");
             //bind player's inputs to PS4 controller
@@ -611,7 +727,7 @@ public class MenuScript : MonoBehaviour
             //transform.GetChild(index).GetComponentInChildren<TextMesh>().text = "P" + (index + 1) + " (PS4 input)";
 
         }
-        else if (Input.GetButton("J2PS4_DownButton_" + Settings.OS) && !Settings.inputAssigned[2])
+        else if (Input.GetButtonDown("J2PS4_DownButton_" + Settings.OS) && !Settings.inputAssigned[2])
         {
             print("PS4 Joystick 2 detected");
             //bind to player inputs to PS4 2nd controller
@@ -623,7 +739,7 @@ public class MenuScript : MonoBehaviour
             //transform.GetChild(index).GetComponentInChildren<TextMesh>().text = "P" + (index + 1) + " (PS4 input)";
 
         }
-        else if (Input.GetButton("J3PS4_DownButton_" + Settings.OS) && !Settings.inputAssigned[3])
+        else if (Input.GetButtonDown("J3PS4_DownButton_" + Settings.OS) && !Settings.inputAssigned[3])
         {
             print("PS4 Joystick 3 detected");
             MenuInputSelector.menuControl[0] = new MyControllerInput(InputType.PS4_CONTROLLER, 3);
@@ -633,7 +749,7 @@ public class MenuScript : MonoBehaviour
             player1InputAssigned = 3;
             //transform.GetChild(index).GetComponentInChildren<TextMesh>().text = "P" + (index + 1) + " (PS4 input)";
         }
-        else if (Input.GetButton("J4PS4_DownButton_" + Settings.OS) && !Settings.inputAssigned[3])
+        else if (Input.GetButtonDown("J4PS4_DownButton_" + Settings.OS) && !Settings.inputAssigned[3])
         {
             print("PS4 Joystick 4 detected");
             MenuInputSelector.menuControl[0] = new MyControllerInput(InputType.PS4_CONTROLLER, 4);
@@ -643,7 +759,7 @@ public class MenuScript : MonoBehaviour
             player1InputAssigned = 4;
             //transform.GetChild(index).GetComponentInChildren<TextMesh>().text = "P" + (index + 1) + " (PS4 input)";
         }
-        else if (Input.GetButton("J1XBOX_DownButton_" + Settings.OS) && !Settings.inputAssigned[1])
+        else if (Input.GetButtonDown("J1XBOX_DownButton_" + Settings.OS) && !Settings.inputAssigned[1])
         {
             print("XBOX Joystick 1 Detected");
             MenuInputSelector.menuControl[0] = new MyControllerInput(InputType.XBOX_CONTROLLER, 1);
@@ -653,7 +769,7 @@ public class MenuScript : MonoBehaviour
             player1InputAssigned = 1;
             //transform.GetChild(index).GetComponentInChildren<TextMesh>().text = "P" + (index + 1) + " (XBOX input)";
         }
-        else if (Input.GetButton("J2XBOX_DownButton_" + Settings.OS) && !Settings.inputAssigned[2])
+        else if (Input.GetButtonDown("J2XBOX_DownButton_" + Settings.OS) && !Settings.inputAssigned[2])
         {
             print("XBOX Joystick 2 Detected");
             MenuInputSelector.menuControl[0] = new MyControllerInput(InputType.XBOX_CONTROLLER, 2);
@@ -663,7 +779,7 @@ public class MenuScript : MonoBehaviour
             player1InputAssigned = 2;
             //transform.GetChild(index).GetComponentInChildren<TextMesh>().text = "P" + (index + 1) + " (XBOX input)";
         }
-        else if (Input.GetButton("J3XBOX_DownButton_" + Settings.OS) && !Settings.inputAssigned[3])
+        else if (Input.GetButtonDown("J3XBOX_DownButton_" + Settings.OS) && !Settings.inputAssigned[3])
         {
             print("XBOX Joystick 3 Detected");
             MenuInputSelector.menuControl[0] = new MyControllerInput(InputType.XBOX_CONTROLLER, 3);
@@ -673,7 +789,7 @@ public class MenuScript : MonoBehaviour
             player1InputAssigned = 3;
             //transform.GetChild(index).GetComponentInChildren<TextMesh>().text = "P" + (index + 1) + " (XBOX input)";
         }
-        else if (Input.GetButton("J4XBOX_DownButton_" + Settings.OS) && !Settings.inputAssigned[3])
+        else if (Input.GetButtonDown("J4XBOX_DownButton_" + Settings.OS) && !Settings.inputAssigned[3])
         {
             print("XBOX Joystick 4 Detected");
             MenuInputSelector.menuControl[0] = new MyControllerInput(InputType.XBOX_CONTROLLER, 4);
@@ -683,6 +799,7 @@ public class MenuScript : MonoBehaviour
             player1InputAssigned = 4;
             //transform.GetChild(index).GetComponentInChildren<TextMesh>().text = "P" + (index + 1) + " (XBOX input)";
         }
+        MenuInputSelector.Player1InputAssigned = player1InputAssigned;
     }
 
     private void UnAssignAllInputs()

@@ -11,11 +11,20 @@ public class MenuTextBounce : MonoBehaviour
 
     private bool moveUp = true;
     private Vector3 newPosition;
+    private Vector3 startPosition;
     private int moveCount;
+    private int orininalMoveCount;
 
     void Start()
     {
-        
+        startPosition = transform.position;
+    }
+
+    private void OnDisable()    //make sure to reset values to keep bouncing in-sync
+    {
+        transform.position = startPosition;
+        moveCount = 0;
+        moveUp = true;
     }
 
     // Update is called once per frame

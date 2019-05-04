@@ -43,6 +43,8 @@ public class PlayerMenuScript : MonoBehaviour
 
     private PlayerMenuScript.PlayerMenuNode nextButtons;
     private GameObject currentMenu;
+    private GameObject previousMenu;
+    private bool loadedName = false;
 
     /*
     private void Awake()
@@ -85,7 +87,8 @@ public class PlayerMenuScript : MonoBehaviour
     void Start()
     {
         //deactivate all menus besides titlescreen
-
+        playerInputIndex = 1;
+        UnAssignAllInputsExceptPlayer1();
 
         if (playerNum == 1)
         {
@@ -94,6 +97,7 @@ public class PlayerMenuScript : MonoBehaviour
             newGameOrLoadMenu.SetActive(true);
             currentMenu = newGameOrLoadMenu;
             Settings.NumOfPlayers = 1;
+            previousMenu = joinScreen;
             //nextButtons = initialButton.GetComponent<PlayerMenuInitialButtonScript>().initialButton.GetComponentInChildren<MenuPlayerButtonScript>().nextButtons;
         }
         else
@@ -102,6 +106,7 @@ public class PlayerMenuScript : MonoBehaviour
             playerNumText.SetActive(false);
             newGameOrLoadMenu.SetActive(false);
             currentMenu = joinScreen;
+            previousMenu = null;
             //nextButtons = initialButton.GetComponent<PlayerMenuInitialButtonScript>().initialButton.GetComponentInChildren<MenuPlayerButtonScript>().nextButtons;
         }
         nextButtons = currentMenu.GetComponent<PlayerMenuInitialButtonScript>().initialButton.GetComponentInChildren<MenuPlayerButtonScript>().nextButtons;
@@ -122,6 +127,11 @@ public class PlayerMenuScript : MonoBehaviour
         currentButton = 0;
     }
 
+    private void OnEnable()
+    {
+        Start();
+    }
+
 
     private void Update()
     {
@@ -129,13 +139,13 @@ public class PlayerMenuScript : MonoBehaviour
         //menuNavigate(playerNum);
 
         //to back a to title screen for now
-        if (Input.GetKeyDown(KeyCode.Escape))
+        /*if (Input.GetKeyDown(KeyCode.Escape))
         {
             UnAssignAllInputs();
             playerInputIndex = 1;
             Start();
         }
-
+        */
 
         if (MenuInputSelector.menuControl[playerInputIndex] == null)
         {
@@ -150,30 +160,7 @@ public class PlayerMenuScript : MonoBehaviour
         }
 
 
-        /*
-        if (Input.GetButton("J1XBOX_DownButton_" + Settings.OS))
-        {
-            print("XBOX Joystick 1 Detected, playerIndex = " + playerInputIndex);
-        }
-        else if (Input.GetButton("J2XBOX_DownButton_" + Settings.OS))
-        {
-            print("XBOX Joystick 2 Detected, playerIndex = " + playerInputIndex);
-        }
-        else if (Input.GetButton("J3XBOX_DownButton_" + Settings.OS))
-        {
-            print("XBOX Joystick 3 Detected, playerIndex = " + playerInputIndex);
-        }
-        else if (Input.GetButton("J4XBOX_DownButton_" + Settings.OS))
-        {
-            print("XBOX Joystick 4 Detected, playerIndex = " + playerInputIndex);
-        }
-        */
-
-        //else
-        //{
-        //    playerInputIndex++;
-        //}
-
+        GoBackButtonChecker(playerNum-1); //goes back to previous menu if back button is pressed
         menuNavigate(playerNum);
     }
 
@@ -288,6 +275,109 @@ public class PlayerMenuScript : MonoBehaviour
         }
     }
 
+    private void GoBackButtonChecker(int playerIndex)
+    {
+        if (MenuInputSelector.menuControl[playerIndex] != null)
+        {
+            if (MenuInputSelector.menuControl[playerIndex].inputType == InputType.KEYBOARD)
+            {
+
+                if (Input.GetKeyDown(KeyCode.Escape))
+                {
+                    GotoPreviousMenu();
+                }
+            }
+            else
+            {
+                if (Input.GetButtonDown(MenuInputSelector.menuControl[playerIndex].RightButton))
+                {
+                    GotoPreviousMenu();
+                }
+
+                /*
+                if (OS.Equals("Mac"))
+                {
+                    if (Input.GetButtonDown(MenuInputSelector.menuControl[playerIndex].RightButton))
+                    {
+                        GotoPreviousMenu();
+                    }
+                }
+                else   //for xbox(windows) and PS4
+                {
+
+                    if (Input.GetButtonDown(MenuInputSelector.menuControl[playerIndex].RightButton))
+                    {
+                        GotoPreviousMenu();
+                    }
+                }
+                */
+            }
+
+        }
+    }
+
+    private void GotoPreviousMenuHelper(GameObject pMenu)
+    {
+        AudioManager.Play("Back");
+        pMenu.SetActive(true);
+        currentMenu.SetActive(false);
+        currentMenu = pMenu;
+        currentButton = 0;
+        nextButtons = pMenu.GetComponent<PlayerMenuInitialButtonScript>().initialButton.GetComponentInChildren<MenuPlayerButtonScript>().nextButtons;
+    }
+
+    private void GotoPreviousMenu()
+    {
+        if (previousMenu == createNameMenu)
+        {
+            MenuInputSelector.PlayerNames[playerNum-1] = "";
+            previousMenu = newGameOrLoadMenu;
+            GotoPreviousMenuHelper(createNameMenu);
+        }
+        else if(previousMenu == selectNameMenu)
+        {
+            MenuInputSelector.PlayerNames[playerNum-1] = "";
+            previousMenu = newGameOrLoadMenu;
+            GotoPreviousMenuHelper(selectNameMenu);
+            loadedName = false;
+        }
+        else if (previousMenu == chooseClassMenu)
+        {
+            //MenuInputSelector.PlayerClasses[playerNum] = 0; //may not need??
+            MenuInputSelector.PlayersReady[playerNum - 1] = false;
+            GotoPreviousMenuHelper(chooseClassMenu);
+            if (loadedName == true)
+            {
+                previousMenu = selectNameMenu;
+            }
+            else
+            {
+                previousMenu = createNameMenu; 
+            }
+
+        }else if(previousMenu == joinScreen)
+        {
+            //goBack to MainMenu and reset all characterSelectMenu Variables
+            UnAssignAllInputsExceptPlayer1();
+            GameObject mainMenu = GameObject.Find("Menus");
+            mainMenu.GetComponent<MenuScript>().GotoMainMenu(); //maybe do all of that in this method called??
+
+        }else if(previousMenu == newGameOrLoadMenu)
+        {
+            previousMenu = joinScreen;
+
+
+
+
+            GotoPreviousMenuHelper(newGameOrLoadMenu);
+        }
+
+
+
+
+        return;
+    }
+
     //helper for gotomenu methods
     private void GotoMenuHelper(GameObject nextmenu)
     {
@@ -305,11 +395,15 @@ public class PlayerMenuScript : MonoBehaviour
 
     public void GotoNewNameMenu()
     {
+        MenuInputSelector.PlayerNames[playerNum - 1] = "";
+        previousMenu = newGameOrLoadMenu;
         GotoMenuHelper(createNameMenu);
     }
 
     public void GotoLoadMenu()
     {
+        MenuInputSelector.PlayerNames[playerNum - 1] = "";
+        previousMenu = newGameOrLoadMenu;
         GotoMenuHelper(selectNameMenu);
     }
 
@@ -319,6 +413,8 @@ public class PlayerMenuScript : MonoBehaviour
         if (nameText.GetComponent<UpdateNameText>().checkNameIsValid())
         {
             playerName = nameText.GetComponent<UpdateNameText>().sampleText.text;
+            MenuInputSelector.PlayerNames[playerNum - 1] = playerName; //set name chosen to global PlayerName variable
+            previousMenu = createNameMenu;
             GotoMenuHelper(chooseClassMenu);
         }
     }
@@ -332,14 +428,22 @@ public class PlayerMenuScript : MonoBehaviour
             AudioManager.Play("Wait");
             Debug.Log("Cannot load Blank Name!!!");
         }
-        else if (selectNameMenu.transform.parent.parent.GetComponent<CSSTopMenuScript>().NameIsTaken(playerName,playerNum))
+        /*else if (selectNameMenu.transform.parent.parent.GetComponent<CSSTopMenuScript>().NameIsTaken(playerName,playerNum))
+        {
+            AudioManager.Play("Wait");
+            Debug.Log("Name is already taken!");
+        }*/
+        else if (MenuInputSelector.NameIsTaken(playerName, playerNum - 1))
         {
             AudioManager.Play("Wait");
             Debug.Log("Name is already taken!");
         }
         else
         {
+            MenuInputSelector.PlayerNames[playerNum - 1] = playerName;  //set name chosen to global PlayerName variable
+            previousMenu = selectNameMenu;
             GotoMenuHelper(chooseClassMenu);
+            loadedName = true;
         }
 
     }
@@ -347,6 +451,7 @@ public class PlayerMenuScript : MonoBehaviour
     public void GotoReadyScreen(int classNum)
     {
         playerClass = SetPlayerClass(classNum);
+        previousMenu = chooseClassMenu;
         GotoMenuHelper(playerReadyScreen);
     }
 
@@ -365,11 +470,12 @@ public class PlayerMenuScript : MonoBehaviour
 
     public void GotoLevel()
     {
-        playerReadyScreen.transform.parent.parent.GetComponent<CSSTopMenuScript>().setPlayerReady(playerNum);
+        //playerReadyScreen.transform.parent.parent.GetComponent<CSSTopMenuScript>().setPlayerReady(playerNum);
+        MenuInputSelector.PlayersReady[playerNum - 1] = true;
         //this.GetComponent<Image>().enabled = true;   //highlight "Ready" button
 
 
-        if (playerReadyScreen.transform.parent.parent.GetComponent<CSSTopMenuScript>().AllPlayersReady())
+        if (MenuInputSelector.AllPlayersReady())
         {
             AudioManager.Play("StartLevel");
             //SceneManager.LoadScene("SampleScene");
@@ -391,6 +497,7 @@ public class PlayerMenuScript : MonoBehaviour
         Settings.NumOfPlayers = Settings.NumOfPlayers + 1;
         Debug.Log("numofplayers = " + Settings.NumOfPlayers);
         GotoMenuHelper(newGameOrLoadMenu);
+        previousMenu = joinScreen;   //After player has joined, they will only be able to back up to "NewOrLoad" menu, going back anymore will cause the game to go back to MainMenu
         //newGameOrLoadMenu.SetActive(true);
         //currentMenu = newGameOrLoadMenu;
         //currentButton = 0;
@@ -425,7 +532,6 @@ public class PlayerMenuScript : MonoBehaviour
                 break;
         }
         MenuInputSelector.PlayerClasses[playerNum - 1] = classNum;  //set global PlayerClass variable
-        MenuInputSelector.PlayerNames[playerNum - 1] = playerName;  //also set global PlayerName variable 
         return output;
     }
 
@@ -556,6 +662,31 @@ public class PlayerMenuScript : MonoBehaviour
         Settings.inputAssigned[2] = false;
         Settings.inputAssigned[3] = false;
         Settings.inputAssigned[4] = false;
+    }
+
+    private void UnAssignAllInputsExceptPlayer1()
+    {
+        MenuInputSelector.menuControl[1] = null;
+        MenuInputSelector.menuControl[2] = null;
+        MenuInputSelector.menuControl[3] = null;
+        playerInputIndex = 1;   //reset playerInputIndex back to 1 to wait for player2 to join again
+
+        int player1Input = MenuInputSelector.Player1InputAssigned;
+        for (int i = 0; i < 5; i += 1)
+        {
+            if (i != player1Input)
+            {
+                Settings.inputAssigned[i] = false;
+            }
+            Debug.Log("InputAssigned[" + i + "] = " + Settings.inputAssigned[i]);
+        }
+
+        for (int i = 0; i < 4; i += 1)
+        {
+            Debug.Log("menuControl[" + i + "] = " + MenuInputSelector.menuControl[i]);
+        }
+
+
     }
 
 }

@@ -24,6 +24,7 @@ public class CSSTopMenuScript : MonoBehaviour
         
     }
 
+    /*
     public void setPlayerReady(int playerNum)
     {
         switch (playerNum)
@@ -42,7 +43,9 @@ public class CSSTopMenuScript : MonoBehaviour
                 break;
         }
     }
+    */
 
+    /*
     public bool AllPlayersReady()
     {
         if (Settings.NumOfPlayers == 1)
@@ -79,7 +82,9 @@ public class CSSTopMenuScript : MonoBehaviour
 
         return false;
     }
+    */
 
+    /*
     public bool NameIsTaken(string name, int playerNum)
     {
         Debug.Log("Name: " + name + " playerNum: " + playerNum);
@@ -125,6 +130,6 @@ public class CSSTopMenuScript : MonoBehaviour
         return false;
 
     }
-
+    */
 
 }
