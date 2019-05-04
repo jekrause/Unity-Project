@@ -8,9 +8,9 @@ public class MenuInputSelector : MonoBehaviour
     static public int[] PlayerClasses = { 0, 0, 0, 0 };  //0= assault, 1= heavy, 2= shotgun, 3= sniper
     static public string[] PlayerNames = { "", "", "", "" };
     static public int[] PlayerAssaultLevels = { 1, 1, 1, 1 };
-    static public int[] PlayerHeavyLevels = { 25, 1, 1, 1 };
-    static public int[] PlayerShotgunLevels = { 50, 1, 1, 1 };
-    static public int[] PlayerSniperLevels = { 100, 1, 1, 1 };
+    static public int[] PlayerHeavyLevels = { 1, 1, 1, 1 };
+    static public int[] PlayerShotgunLevels = { 1, 1, 1, 1 };
+    static public int[] PlayerSniperLevels = { 1, 1, 1, 1 };
     static public bool[] PlayersReady = { false, false, false, false };
     static public int Player1InputAssigned = 0;
 
