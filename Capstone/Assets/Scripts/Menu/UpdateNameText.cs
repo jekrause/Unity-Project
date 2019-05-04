@@ -18,6 +18,10 @@ public class UpdateNameText : MonoBehaviour
         sampleText.text = "";
 
     }
+    private void OnEnable()
+    {
+        Start();
+    }
 
 
     public void addLetter(string letter)
@@ -53,7 +57,7 @@ public class UpdateNameText : MonoBehaviour
             return false;
         }
         else
-        {
+        {   //file with this name doesnt exist yet, so create new file
             SaveProfile.saveProfile(sampleText.text);
             Debug.Log("Name is Good, created new profile!");
             
