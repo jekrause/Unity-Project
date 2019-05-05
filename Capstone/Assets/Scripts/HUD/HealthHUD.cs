@@ -21,7 +21,6 @@ public class HealthHUD : MonoBehaviour, ISubscriber<PlayerHealedEvent>, ISubscri
         EventAggregator.GetInstance().Register<PlayerHealedEvent>(this);
         EventAggregator.GetInstance().Register<PlayerDamagedEvent>(this);
         EventAggregator.GetInstance().Register<OnLevelUpEvent>(this);
-
         HealthBar.value = 1; // full health
         
     }
@@ -30,7 +29,7 @@ public class HealthHUD : MonoBehaviour, ISubscriber<PlayerHealedEvent>, ISubscri
     {
         MaxHP = stats.MaxHealth;
         RectTransform rt = GetComponent<RectTransform>();
-        rt.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, rt.rect.width + (stats.Level * 10)); // increase the length of Health bar
+        rt.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, rt.rect.width + (stats.Level * 5)); // increase the length of Health bar
     }
 
     private void OnDamaged(float hp)
@@ -83,10 +82,12 @@ public class HealthHUD : MonoBehaviour, ISubscriber<PlayerHealedEvent>, ISubscri
 
     public void OnEventHandler(OnLevelUpEvent eventData)
     {
-        RectTransform rt = GetComponent<RectTransform>();
-        rt.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, rt.rect.width + 10);
-        MaxHP = eventData.Stats.MaxHealth;
-        HealthBar.value = eventData.Stats.Health / MaxHP;
-
+        if(eventData.PlayerNumber == playerNumHUD)
+        {
+            RectTransform rt = GetComponent<RectTransform>();
+            rt.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, (rt.rect.width + 5));
+            MaxHP = eventData.Stats.MaxHealth;
+            HealthBar.value = eventData.Stats.Health / MaxHP;
+        }
     }
 }

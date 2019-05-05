@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class Stats : MonoBehaviour, ISubscriber<OnEnemyKilledEvent>
@@ -42,7 +42,9 @@ public class Stats : MonoBehaviour, ISubscriber<OnEnemyKilledEvent>
 
     public void SetMaxHP(float HP)
     {
-        if (HP < MaxHealth) throw new System.ArgumentException("Attempted to lower Max HP. Cannot have max hp lower than previous max hp");
+        if (HP < MaxHealth)
+            Debug.Log("WARNING: You've lowered Max HP. Max HP was: " + MaxHealth + ", Max HP is now: " + HP);
+        
         MaxHealth = HP;
         Health = MaxHealth;
     }
