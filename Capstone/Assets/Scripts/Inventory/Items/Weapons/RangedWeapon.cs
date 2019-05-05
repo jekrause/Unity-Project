@@ -75,6 +75,7 @@ public abstract class RangedWeapon : Weapon
     }
 
     public abstract void UpdateWeaponStats(Stats playerStats);
+    public abstract void ResetWeaponStats();
 
     // In the case the player switch or drop the weapon while it is reloading
     public void ReloadingInterrupted(int playerNumber)
@@ -112,7 +113,6 @@ public class AmmoClip
     public readonly int MAX_CLIP_SIZE;
     public readonly int AMMO_USE_PER_BULLET;
     public int CurrentAmmoRaw { get; private set; }
-    private int CurrentAmmo;
 
     public AmmoClip(int maxClipSize, int ammoPerBullet)
     {
@@ -126,6 +126,11 @@ public class AmmoClip
         {
             throw new System.ArgumentException("AmmoClip() Constructor: Invalid argument given.");
         }
+    }
+
+    public AmmoClip(int startAmmoClip, int maxClipSize, int ammoPerBullet) : this(maxClipSize, ammoPerBullet)
+    { 
+        CurrentAmmoRaw = startAmmoClip;
     }
 
     public void LoadAmmunition(Ammunition ammunition)
@@ -157,6 +162,6 @@ public class AmmoClip
     
     public int GetCurrentAmmo()
     {
-        return CurrentAmmo = CurrentAmmoRaw / AMMO_USE_PER_BULLET;
+        return CurrentAmmoRaw / AMMO_USE_PER_BULLET;
     }
 }

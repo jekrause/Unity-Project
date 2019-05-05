@@ -460,24 +460,28 @@ public abstract class Player : MonoBehaviour, ISubscriber<OnLevelUpEvent>
     /// <summary>
     /// Change the player's sprite and current weapon to the Weapon passed in. If the weapon is null, the original player image is used instead.
     /// </summary>
-    public void UpdatePlayerCurrentWeapon(Weapon currentWeapon)
+    public void UpdatePlayerCurrentWeapon(Weapon weaponToEquipped)
     {
-        if (currentWeapon == null)
+        if (weaponToEquipped == null)
         {
+            if(CurrentWeapon is RangedWeapon)
+            {
+                ((RangedWeapon)CurrentWeapon).ResetWeaponStats();
+            }
             CurrentWeapon = null;
             GetComponent<SpriteRenderer>().sprite = PlayerOriginalImage;
         }
         else
         {
-            CurrentWeapon = currentWeapon;
-            GetComponent<SpriteRenderer>().sprite = currentWeapon.PlayerImage;
+            CurrentWeapon = weaponToEquipped;
+            GetComponent<SpriteRenderer>().sprite = weaponToEquipped.PlayerImage;
             if(CurrentWeapon is RangedWeapon)
             {
                 AudioManager.Play(((RangedWeapon)CurrentWeapon).ReloadFinishSound);
                 ((RangedWeapon)CurrentWeapon).UpdateWeaponStats(Stats);
             }
         }
-        EventAggregator.GetInstance().Publish(new OnPlayerWeaponChangedEvent(playerNumber, currentWeapon, Ammunition));
+        EventAggregator.GetInstance().Publish(new OnPlayerWeaponChangedEvent(playerNumber, weaponToEquipped, Ammunition));
     }
 
     public virtual void OnReviveCompleted() 
