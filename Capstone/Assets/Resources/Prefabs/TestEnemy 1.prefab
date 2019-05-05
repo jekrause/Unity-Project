@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 549990855}
   - component: {fileID: 549990856}
-  m_Layer: 5
+  m_Layer: 13
   m_Name: Fill Area
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -55,7 +55,7 @@ GameObject:
   m_Component:
   - component: {fileID: 578430003}
   - component: {fileID: 578430004}
-  m_Layer: 5
+  m_Layer: 13
   m_Name: HealthBar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -146,7 +146,7 @@ GameObject:
   - component: {fileID: 889521194}
   - component: {fileID: 889521193}
   - component: {fileID: 889521192}
-  m_Layer: 9
+  m_Layer: 13
   m_Name: TestEnemy 1
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -204,7 +204,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1383078145
-  m_SortingLayer: 4
+  m_SortingLayer: 6
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 44ff630efeab545f89b537d2eb8e8026, type: 3}
   m_Color: {r: 0.9339623, g: 0.6480595, b: 0.374466, a: 1}
@@ -229,6 +229,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d169b6d4f112c445a533671e7dfdf8f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  iBaseAttackRate: 1
+  fHP: 100
+  fMoveSpeed: 3
   moveSpots:
   - {x: 0, y: 0}
   - {x: 0, y: 0}
@@ -237,7 +240,9 @@ MonoBehaviour:
   - {x: 0, y: 0}
   shootPosition: {fileID: 1313075948}
   bullet: {fileID: 2338026660133703715, guid: 92cfefeb70e1bc940babcdb62c9c91b6, type: 3}
-  radiusCollider: {fileID: 0}
+  fAttackTime: 3
+  attackDistance: 50
+  fDamage: 10
 --- !u!114 &889521194
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -306,7 +311,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1313075948}
-  m_Layer: 9
+  m_Layer: 13
   m_Name: ShootPosition
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -338,7 +343,7 @@ GameObject:
   - component: {fileID: 1476792578}
   - component: {fileID: 1476792580}
   - component: {fileID: 1476792579}
-  m_Layer: 5
+  m_Layer: 13
   m_Name: Background
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -412,7 +417,7 @@ GameObject:
   - component: {fileID: 1593246357}
   - component: {fileID: 1593246359}
   - component: {fileID: 1593246358}
-  m_Layer: 5
+  m_Layer: 13
   m_Name: Fill
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -488,7 +493,7 @@ GameObject:
   - component: {fileID: 1845781685}
   - component: {fileID: 1845781684}
   - component: {fileID: 1845781683}
-  m_Layer: 5
+  m_Layer: 13
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -610,7 +615,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1376148759
-  m_SortingLayer: 5
+  m_SortingLayer: 8
   m_SortingOrder: 0
   m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}

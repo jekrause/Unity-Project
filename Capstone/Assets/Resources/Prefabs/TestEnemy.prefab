@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4105345858956943135}
   - component: {fileID: 6959568753061850414}
   - component: {fileID: 1751192113668168599}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Feet
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -114,7 +114,7 @@ GameObject:
   - component: {fileID: 2310485460840450569}
   - component: {fileID: 2310485460840450570}
   - component: {fileID: 1625568421035271149}
-  m_Layer: 9
+  m_Layer: 13
   m_Name: TestEnemy
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -198,6 +198,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d169b6d4f112c445a533671e7dfdf8f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  iBaseAttackRate: 1
+  fHP: 100
+  fMoveSpeed: 3
   moveSpots:
   - {x: 0, y: 0}
   - {x: 0, y: 0}
@@ -206,6 +209,9 @@ MonoBehaviour:
   - {x: 0, y: 0}
   shootPosition: {fileID: 2086454351693460974}
   bullet: {fileID: 4644192146566282934, guid: 30761f5d69e28eb46b5491574b1bcf13, type: 3}
+  fAttackTime: 3
+  attackDistance: 50
+  fDamage: 10
 --- !u!114 &2310485460840450568
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -291,7 +297,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2310485461154315271}
   - component: {fileID: 2310485461154315270}
-  m_Layer: 5
+  m_Layer: 13
   m_Name: HealthBar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -381,7 +387,7 @@ GameObject:
   - component: {fileID: 2310485461231517771}
   - component: {fileID: 2310485461231517772}
   - component: {fileID: 8299876106501085404}
-  m_Layer: 5
+  m_Layer: 13
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -503,7 +509,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1376148759
-  m_SortingLayer: 7
+  m_SortingLayer: 8
   m_SortingOrder: 0
   m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -527,7 +533,7 @@ GameObject:
   - component: {fileID: 2310485461333029107}
   - component: {fileID: 2310485461333029105}
   - component: {fileID: 2310485461333029106}
-  m_Layer: 5
+  m_Layer: 13
   m_Name: Background
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -601,7 +607,7 @@ GameObject:
   - component: {fileID: 2310485461365321112}
   - component: {fileID: 2310485461365321094}
   - component: {fileID: 2310485461365321095}
-  m_Layer: 5
+  m_Layer: 13
   m_Name: Fill
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -674,7 +680,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2310485462315578217}
   - component: {fileID: 2310485462315578216}
-  m_Layer: 5
+  m_Layer: 13
   m_Name: Fill Area
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -718,7 +724,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2086454351693460974}
-  m_Layer: 9
+  m_Layer: 13
   m_Name: ShootPosition
   m_TagString: Untagged
   m_Icon: {fileID: 0}
