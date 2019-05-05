@@ -76,7 +76,7 @@ public class Enemy : MonoBehaviour
 
     void Start()
     {
-        layerMask = (1 << 4) | (1 << 8) | (1<<9) | (1<<12);
+        layerMask = (1 << 4) | (1<<9) | (1<<12);
         //layersToAvoid.layerMask = 4608;//
         layersToAvoid.layerMask = LayerMask.GetMask("Obstacles", "Player"); // It may be helpful to put Enemies in seperate layer or get rid of Player layer.
         playersToAvoid = LayerMask.GetMask("Player");
@@ -140,12 +140,17 @@ public class Enemy : MonoBehaviour
                 break;
         }
 
+        if(playerTarget != null && playerTarget.GetComponent<Player>().PlayerState != PlayerState.ALIVE)
+        {
+            playerTarget = null;
+        }
+
         if ((canShoot && ((aiMvmt == MovementTypeEnum.Chase && playerTarget != null) ||
            (aiMvmt == MovementTypeEnum.Safe && !withInMinDistance)) && Time.time > fAttackTime) &&
-           //raycasts[(int)RayCastDir.Forward].collider != null && raycasts[(int)RayCastDir.Forward].collider.gameObject == playerTarget &&
+           raycasts[(int)RayCastDir.Forward].collider != null && raycasts[(int)RayCastDir.Forward].collider.gameObject == playerTarget &&
            Vector2.Distance(transform.position, playerTarget.transform.position) < attackDistance)
         {
-            Debug.Log("Shooting");
+            Debug.Log("RayCastDir.forward collider tag = " + raycasts[(int)RayCastDir.Forward].collider.tag + "    collider name = " +raycasts[(int)RayCastDir.Forward].collider.name); 
             //face player
             Vector2 dir = playerTarget.transform.position - shootPosition.position;
             var angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
@@ -421,7 +426,7 @@ public class Enemy : MonoBehaviour
         {
             
             int ii = (int)castDir;
-            if (raycasts[ii].collider != null && raycasts[ii].collider.gameObject.tag == "Player")
+            if (raycasts[ii].collider != null && raycasts[ii].collider.gameObject.tag == "Player" && raycasts[ii].collider.gameObject.GetComponent<Player>().PlayerState == PlayerState.ALIVE)
             {
                 blockedPaths[ii] = false;
 
