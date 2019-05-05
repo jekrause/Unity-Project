@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-//using UnityEngine.UI;
+using UnityEngine.UI;
 
 public class PlayerMenuScript : MonoBehaviour
 {
@@ -14,6 +14,8 @@ public class PlayerMenuScript : MonoBehaviour
     public GameObject selectNameMenu;
     public GameObject chooseClassMenu;
     public GameObject playerReadyScreen;
+    public GameObject StartText;
+    public GameObject SelectCharText;
     public int currentButton;
     public string playerName;
     public string playerClass;
@@ -90,6 +92,9 @@ public class PlayerMenuScript : MonoBehaviour
         UnAssignAllInfo();
         playerInputIndex = 1;
         UnAssignAllInputsExceptPlayer1();
+        GetComponent<Image>().enabled = false;
+        StartText.SetActive(false);
+        SelectCharText.SetActive(true);
 
         if (playerNum == 1)
         {
@@ -346,6 +351,9 @@ public class PlayerMenuScript : MonoBehaviour
         {
             //MenuInputSelector.PlayerClasses[playerNum] = 0; //may not need??
             MenuInputSelector.PlayersReady[playerNum - 1] = false;
+            StartText.SetActive(false);
+            SelectCharText.SetActive(true);
+            GetComponent<Image>().enabled = false;
             GotoPreviousMenuHelper(chooseClassMenu);
             if (loadedName == true)
             {
@@ -473,22 +481,40 @@ public class PlayerMenuScript : MonoBehaviour
     public void GotoLevel()
     {
         //playerReadyScreen.transform.parent.parent.GetComponent<CSSTopMenuScript>().setPlayerReady(playerNum);
-        MenuInputSelector.PlayersReady[playerNum - 1] = true;
+
+        //MenuInputSelector.PlayersReady[playerNum - 1] = true;
+
         //this.GetComponent<Image>().enabled = true;   //highlight "Ready" button
 
-
-        if (MenuInputSelector.AllPlayersReady())
+        if (MenuInputSelector.PlayersReady[playerNum - 1] == false)
         {
             AudioManager.Play("StartLevel");
-            //SceneManager.LoadScene("SampleScene");
-            SceneManager.LoadScene("LoadingScreenScene");
-            //SceneManager.LoadScene("SampleScene2");
+            MenuInputSelector.PlayersReady[playerNum - 1] = true;
+            GetComponent<Image>().enabled = true;
+            if(MenuInputSelector.AllPlayersReady() == true)
+            {
+                Debug.Log("Got to ALLPLAYERSREADY check");
+                StartText.SetActive(true);
+                SelectCharText.SetActive(false);
+            }
         }
         else
         {
-            AudioManager.Play("Wait");
-            Debug.Log("Not all players are ready yet!!");
+            if (MenuInputSelector.AllPlayersReady())
+            {
+                //AudioManager.Play("StartLevel");
+                //SceneManager.LoadScene("SampleScene");
+                SceneManager.LoadScene("LoadingScreenScene");
+                //SceneManager.LoadScene("SampleScene2");
+            }
+            else
+            {
+                AudioManager.Play("Back"); //Wait
+                Debug.Log("Not all players are ready yet!!");
+            }
         }
+
+
     }
 
     public void JoinGame()
@@ -503,6 +529,13 @@ public class PlayerMenuScript : MonoBehaviour
         //newGameOrLoadMenu.SetActive(true);
         //currentMenu = newGameOrLoadMenu;
         //currentButton = 0;
+
+        if (!MenuInputSelector.AllPlayersReady())
+        {
+            StartText.SetActive(false);
+            SelectCharText.SetActive(true);
+        }
+
     }
     
 
