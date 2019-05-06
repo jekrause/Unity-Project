@@ -30,6 +30,7 @@ public class MenuScript : MonoBehaviour
 
     private void Awake()
     {
+        UnAssignAllInputs();    //always reset all inputs when first loading titlescreen
         //deactivate all menus besides titlescreen
         titlescreen.SetActive(true);
         mainmenu.SetActive(false);
