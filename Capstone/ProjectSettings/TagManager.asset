@@ -34,11 +34,11 @@ TagManager:
   - Ground
   - Bullet
   - Obstacle
-  - 
-  - 
-  - 
-  - 
-  - 
+  - Enemy
+  - Player1Aim
+  - Player2Aim
+  - Player3Aim
+  - Player4Aim
   - 
   - 
   - 
@@ -77,6 +77,18 @@ TagManager:
     locked: 0
   - name: Helicopter
     uniqueID: 3890704865
+    locked: 0
+  - name: Player1Aim
+    uniqueID: 386827965
+    locked: 0
+  - name: Player2Aim
+    uniqueID: 1003181215
+    locked: 0
+  - name: Player3Aim
+    uniqueID: 2665849171
+    locked: 0
+  - name: Player4Aim
+    uniqueID: 1383181285
     locked: 0
   - name: UI
     uniqueID: 1376148759

@@ -31,7 +31,7 @@ public class EnemyHouseSpawner : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        layerMask = 1 << 9;
+        layerMask = 1 << 13;
         filter.SetLayerMask(layerMask);
         //to catch bugs
         if (fHP <= 0f)
