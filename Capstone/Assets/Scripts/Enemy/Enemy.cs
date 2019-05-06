@@ -15,10 +15,10 @@ public class Enemy : MonoBehaviour
      * Manual - Set by enemy spawning houses. This forces the enemy to walk to a given spot before entering the patrol state.
      */
 
-    public enum MovementTypeEnum { Patrol, Chase, Safe, Manual, None};
+    public enum MovementTypeEnum { Patrol, Chase, Safe, Manual, None };
     public enum RayCastDir { Left90 = 0, Left45 = 1, Left20 = 2, Forward = 3, Right20 = 4, Right45 = 5, Right90 = 6 } //raycast angles from player's transform position
 
-    public enum LookDir { Towards, Away };
+    public enum Direction { Towards, Away };
 
     // Start is called before the first frame update
     public int iBaseAttackRate = 1;
@@ -33,7 +33,7 @@ public class Enemy : MonoBehaviour
     protected float fWaitTime;
     protected float fStartWaitTime = 3f;
     protected float fVisionDistance = 100f;
-    protected Vector3 lastPosition = new Vector3(0,0,0); //used to see if we are blocked and the front raycast can't detect it.
+    protected Vector3 lastPosition = new Vector3(0, 0, 0); //used to see if we are blocked and the front raycast can't detect it.
     protected Vector3 goalLocation; //used by house enemy spawner
 
 
@@ -76,14 +76,14 @@ public class Enemy : MonoBehaviour
 
     void Start()
     {
-        layerMask = (1 << 4) | (1<<9) | (1<<12);
+        layerMask = (1 << 4) | (1 << 9) | (1 << 12);
         //layersToAvoid.layerMask = 4608;//
         layersToAvoid.layerMask = LayerMask.GetMask("Obstacles", "Player"); // It may be helpful to put Enemies in seperate layer or get rid of Player layer.
         playersToAvoid = LayerMask.GetMask("Player");
         fWaitTime = fStartWaitTime;
         //iRandomSpot = Random.Range(0, moveSpots.Length);
         iRandomSpot = 0;
-        if(aiMvmt == MovementTypeEnum.None)
+        if (aiMvmt == MovementTypeEnum.None)
         {
             FillMoveSpots();
             aiMvmt = MovementTypeEnum.Patrol;
@@ -106,7 +106,7 @@ public class Enemy : MonoBehaviour
         }
 
         canShoot = true;
-        if(aiMvmt != MovementTypeEnum.Manual)
+        if (aiMvmt != MovementTypeEnum.Manual)
         {
             EnemyRayCast();
         }
@@ -140,7 +140,7 @@ public class Enemy : MonoBehaviour
                 break;
         }
 
-        if(playerTarget != null && playerTarget.GetComponent<Player>().PlayerState != PlayerState.ALIVE)
+        if (playerTarget != null && playerTarget.GetComponent<Player>().PlayerState != PlayerState.ALIVE)
         {
             playerTarget = null;
         }
@@ -150,7 +150,7 @@ public class Enemy : MonoBehaviour
            raycasts[(int)RayCastDir.Forward].collider != null && raycasts[(int)RayCastDir.Forward].collider.gameObject == playerTarget &&
            Vector2.Distance(transform.position, playerTarget.transform.position) < attackDistance)
         {
-            Debug.Log("RayCastDir.forward collider tag = " + raycasts[(int)RayCastDir.Forward].collider.tag + "    collider name = " +raycasts[(int)RayCastDir.Forward].collider.name); 
+            Debug.Log("RayCastDir.forward collider tag = " + raycasts[(int)RayCastDir.Forward].collider.tag + "    collider name = " + raycasts[(int)RayCastDir.Forward].collider.name);
             //face player
             Vector2 dir = playerTarget.transform.position - shootPosition.position;
             var angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
@@ -191,7 +191,9 @@ public class Enemy : MonoBehaviour
             transform.position = Vector2.MoveTowards(transform.position, moveSpots[iRandomSpot], fMoveSpeed * Time.deltaTime);
             Vector2 dir = moveSpots[iRandomSpot] - (Vector2)transform.position;
             var angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-            transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+            //transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+            //smoother
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.AngleAxis(angle, Vector3.forward), fRotationSpeed * Time.deltaTime);
             feetAnimation.SetBool("Moving", true);
         }
     }
@@ -212,7 +214,7 @@ public class Enemy : MonoBehaviour
             //transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
             transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.AngleAxis(angle, Vector3.forward), fRotationSpeed * Time.deltaTime);
 
-            if (Vector2.Distance(transform.position, playerTarget.transform.position) > attackDistance/4)
+            if (Vector2.Distance(transform.position, playerTarget.transform.position) > attackDistance / 4)
             {
                 transform.position = Vector2.MoveTowards(transform.position, playerTarget.transform.position, fMoveSpeed * Time.deltaTime);
                 feetAnimation.SetBool("Moving", true);
@@ -226,26 +228,27 @@ public class Enemy : MonoBehaviour
 
     protected void MvmtSafe()// Should be used when enemy has low health AND enemies are nearby
     {
-        if (playerTarget == null || transform == null) return;
-        if (Vector2.Distance(transform.position, playerTarget.transform.position) < minDistance)
+        SafetyRadius2();
+        if (playerTarget == null)
+        {
+            return;
+        }
+        else if (Vector2.Distance(transform.position, playerTarget.transform.position) < minDistance)
         {
             withInMinDistance = true;
-            LookAt(LookDir.Away);
-            transform.position = Vector2.MoveTowards(transform.position, playerTarget.transform.position, fMoveSpeed * Time.deltaTime * -1f);
-            //transform.LookAt(2 * transform.position - playerTarget.transform.position);
-            //transform.LookAt(playerTarget.transform.position);
-            //transform.position += transform.forward * fSpeed * Time.deltaTime;
-            //Debug.Log("Player is within minDistance.");
+            LookAt(Direction.Away);
+            MoveAtTarget(Direction.Away);
         }
 
         else
         {
             //Debug.Log("Players outside minDistance.");
-            LookAt(LookDir.Towards);
+            LookAt(Direction.Towards);
             withInMinDistance = false;
+            feetAnimation.SetBool("Moving", false);
         }
 
-        Debug.Log(playerTarget.transform.position);
+        // Debug.Log(playerTarget.transform.position);
     }
 
     protected void MvmtManual()
@@ -273,27 +276,52 @@ public class Enemy : MonoBehaviour
         aiMvmt = MovementTypeEnum.Manual;
     }
 
+    private void MoveAtTarget(Direction direction)
+    {
+        switch (direction)
+        {
+            case Direction.Away:
+                transform.position = Vector2.MoveTowards(transform.position, 2 * transform.position - playerTarget.transform.position, fMoveSpeed * Time.deltaTime);
+                break;
+            case Direction.Towards:
+                transform.position = Vector2.MoveTowards(transform.position, playerTarget.transform.position, fMoveSpeed * Time.deltaTime);
+                break;
+        }
+        feetAnimation.SetBool("Moving", true);
+    }
 
-    private void LookAt(LookDir lookDir)
+    private void LookAt(Direction lookDir)
     {
         Vector3 dir;
         float angle;
 
+
+        /*Vector2 dir = moveSpots[iRandomSpot] - (Vector2)transform.position;
+        var angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+        //transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+        //smoother
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.AngleAxis(angle, Vector3.forward), fRotationSpeed * Time.deltaTime);
+        */
+
         switch (lookDir)
         {
-            case LookDir.Away:
-                dir = -(playerTarget.transform.position - transform.position);
+            case Direction.Away:
+                //dir = playerTarget.transform.position - shootPosition.position;
+                dir = shootPosition.position - playerTarget.transform.position;
                 angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-                transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+                //transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+                transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.AngleAxis(angle, Vector3.forward), fRotationSpeed * Time.deltaTime);
                 break;
-            case LookDir.Towards:
-                dir = playerTarget.transform.position - transform.position;
+            case Direction.Towards:
+                dir = playerTarget.transform.position - shootPosition.position;
                 angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-                transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+                //transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+                transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.AngleAxis(angle, Vector3.forward), fRotationSpeed * Time.deltaTime);
                 break;
         }
     }
 
+    // Sorry, this took a while and got pretty messy. Many of the extra statements were used for debugging.
     // Sorry, this took a while and got pretty messy. Many of the extra statements were used for debugging.
     private void FillMoveSpots()
     {
@@ -323,10 +351,20 @@ public class Enemy : MonoBehaviour
             int p, q; // Not needed if assignment statements are put into the while condition.
             do
             {
-                //Debug.Log("Iterations: " + ++j);
-                int moveSpotMinDistance = UnityEngine.Random.Range(-5, 5); // removed do loop, 
-                moveSpots[i] = new Vector2(moveSpotMinDistance + moveSpots[i - 1].x, UnityEngine.Random.Range(-10, 10) + moveSpots[i - 1].y);
+                /*    int moveSpotDistanceX, moveSpotDistanceY;
+                    do
+                    {
+                        moveSpotDistanceX = UnityEngine.Random.Range(-10, 10);
+                    } while (Mathf.Abs(moveSpotDistanceX) < 2);
+                    do
+                    {
+                        moveSpotDistanceY = UnityEngine.Random.Range(-10, 10);
+                    } while (Mathf.Abs(moveSpotDistanceY) < 2);
 
+                    //Debug.Log("Iterations: " + ++j);
+                    moveSpots[i] = new Vector2(moveSpotDistanceX + moveSpots[i - 1].x, moveSpotDistanceY + moveSpots[i - 1].y);
+                */
+                moveSpots[i] = new Vector2(UnityEngine.Random.Range(-10, 10) + moveSpots[i - 1].x, UnityEngine.Random.Range(-10, 10) + moveSpots[i - 1].y);
                 p = Physics2D.CircleCast(moveSpots[i - 1], radius, moveSpots[i] - moveSpots[i - 1], layersToAvoid, raycasts, Vector2.Distance(moveSpots[i], moveSpots[i - 1]));
                 q = Physics2D.CircleCast(moveSpots[i], radius, moveSpots[0] - moveSpots[i], layersToAvoid, raycasts, Vector2.Distance(moveSpots[0], moveSpots[i]));
                 //Debug.Log("p: " + p + " & q: " + q);
@@ -352,15 +390,15 @@ public class Enemy : MonoBehaviour
     {
         try
         {
-            
+
             Debug.Log("Rececived " + (int)storage[0] + " damage");
             fHP -= (int)storage[0];
             HealthBarHandler.OnDamaged(fHP);
-            
+
             if (storage[1] != null)
             {
                 GameObject temp = (GameObject)storage[1];
-                if(temp.GetComponent<Player>() != null && fHP <= 0)
+                if (temp.GetComponent<Player>() != null && fHP <= 0)
                 {
                     EventAggregator.GetInstance().Publish<OnEnemyKilledEvent>(new OnEnemyKilledEvent(temp.GetComponent<Player>().playerNumber, 100));
                 }
@@ -380,7 +418,7 @@ public class Enemy : MonoBehaviour
         {
             Debug.Log("Cast exception in enemy's damaged function");
         }
-        
+
     }
 
 
@@ -391,7 +429,7 @@ public class Enemy : MonoBehaviour
         {
             //player.Damaged(); // simple test
         }
-        
+
     }
 
     private GameObject EnemyRayCast()
@@ -403,7 +441,7 @@ public class Enemy : MonoBehaviour
         {
             //var angle = Mathf.Atan2(playerTarget.transform.position.y, playerTarget.transform.position.x) * Mathf.Rad2Deg;
             //if (Physics2D.Raycast(transform.position, Quaternion.AngleAxis(angle, transform.forward) * transform.right, fVisionDistance).collider == null)
-            if(Vector2.Distance(transform.position, playerTarget.transform.position) > fVisionDistance)
+            if (Vector2.Distance(transform.position, playerTarget.transform.position) > fVisionDistance)
             {
                 playerTarget = null;
                 Debug.Log("Lost sight of player");
@@ -424,7 +462,7 @@ public class Enemy : MonoBehaviour
         raycasts[(int)RayCastDir.Right90] = Physics2D.Raycast(transform.position, Quaternion.AngleAxis(-90, transform.forward) * transform.right, fVisionDistance / 2, layerMask);
         foreach (RayCastDir castDir in (RayCastDir[])System.Enum.GetValues(typeof(RayCastDir)))
         {
-            
+
             int ii = (int)castDir;
             if (raycasts[ii].collider != null && raycasts[ii].collider.gameObject.tag == "Player" && raycasts[ii].collider.gameObject.GetComponent<Player>().PlayerState == PlayerState.ALIVE)
             {
@@ -500,6 +538,37 @@ public class Enemy : MonoBehaviour
         canShoot = false;
     }
 
+    private int OutsideSafteyRadius()
+    {
+
+
+
+        return -1;
+    }
+
+    private int SafetyRadius2()
+    {
+        players = Physics2D.OverlapCircleAll(transform.position, fVisionDistance, playersToAvoid);//may be memory consuming
+        //if (players != null && players.Length > 0)
+        if (players == null)
+        {
+            Debug.Log("no players around");
+        }
+        if (players.Length > 0)
+        {
+            foreach (Collider2D player in players)
+            {
+                if (player.gameObject.tag == "Player")  // does this return the closest player?
+                {
+                    playerTarget = player.gameObject;
+                    return 1;
+                }
+            }
+        }
+        playerTarget = null;
+        return -1;
+    }
+
     private int SafetyRadius()
     {
         players = Physics2D.OverlapCircleAll(transform.position, fVisionDistance, playersToAvoid);
@@ -512,7 +581,7 @@ public class Enemy : MonoBehaviour
             {
                 if (player.gameObject.tag == "Player")
                 {
-                    playerTarget.transform.position += player.transform.position; 
+                    playerTarget.transform.position += player.transform.position;
                     ++numPlayers;
                     Debug.Log(this.name + numPlayers + "");
 
@@ -526,9 +595,9 @@ public class Enemy : MonoBehaviour
                 Debug.Log(this.name + ": PlayerTarget position: " + playerTarget.transform.position);
                 return numPlayers;
             }
-            Destroy(playerTarget);
+            //Destroy(playerTarget);
         }
-        
+
         playerTarget = null;
         return -1;
     }
