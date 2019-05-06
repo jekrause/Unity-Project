@@ -40,13 +40,29 @@ public class Stats : MonoBehaviour, ISubscriber<OnEnemyKilledEvent>
         InitializeStats(); // used for testing higher level
     }
 
+    /// <summary>
+    /// Set the max HP of the player. Should only be modifed on initialization/starting the game only!!!
+    /// </summary>
+    /// <param name="HP"></param>
     public void SetMaxHP(float HP)
     {
-        if (HP < MaxHealth)
-            Debug.Log("WARNING: You've lowered Max HP. Max HP was: " + MaxHealth + ", Max HP is now: " + HP);
-        
+        if (HP <= 0) throw new System.ArgumentException("Cannot have negative HP");
+        Debug.Log("WARNING: You've changed Max HP. Max HP was: " + MaxHealth + ", Max HP is now: " + HP);
         MaxHealth = HP;
         Health = MaxHealth;
+    }
+
+    /// <summary>
+    /// Set the starting level of the player. Should only be modifed on initialization/starting the game only!!!
+    /// </summary>
+    /// <param name="newLevel"></param>
+    public void SetLevel(int newLevel)
+    {
+        if (newLevel <= 0 || newLevel >= MAX_LEVEL) throw new System.ArgumentException("Invalid level");
+        Debug.Log("WARNING: You've changed the player's level in code. Level was: " + Level + ", Level is now: " + newLevel);
+        Level = newLevel;
+        CalculateNextLevel();
+        InitializeStats();
     }
 
     public void OnEventHandler(OnEnemyKilledEvent eventData)
@@ -84,7 +100,7 @@ public class Stats : MonoBehaviour, ISubscriber<OnEnemyKilledEvent>
 
     private int CalculateNextLevel()
     {
-        return NextLevelRequirement = 100; // testint used to level up quickly, in general we would use either the two functions below
+        return NextLevelRequirement = 100; // testing used to level up quickly, in general we would use either the two functions below
         //or return NextLevelRequirement = (int)Mathf.Ceil(BASE_EXP * Level);
         //or return NextLevelRequirement = (int)Mathf.Celi(BASE_EXP * (LevelNumber ^ EXPONENT));
     }

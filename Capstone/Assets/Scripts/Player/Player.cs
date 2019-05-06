@@ -352,8 +352,6 @@ public abstract class Player : MonoBehaviour, ISubscriber<OnLevelUpEvent>
             {
                 if (CurrentWeapon != null)
                 {
-                    print("weapon inventory size = " + WeaponInventory.GetNumOfSlotUsed());
-                    print("Trying to fire " + CurrentWeapon.name);
                     fAttackTime = Time.time + CurrentWeapon.GetAttackRate();
                     CurrentWeapon.UseItem(this);
                 }
@@ -365,17 +363,10 @@ public abstract class Player : MonoBehaviour, ISubscriber<OnLevelUpEvent>
                 // Reload 
                 if (CurrentWeapon != null && CurrentWeapon is RangedWeapon)
                 {
-                    if (Ammunition.Amount <= 0)
+                    if (Ammunition.Amount > 0)
                     {
-                        Debug.Log("I have no more ammunition");
-                    }
-                    else
-                    {
-
                         StartCoroutine(((RangedWeapon)CurrentWeapon).Reload(playerNumber, Ammunition));
-
                     }
-
                 }
 
             }
