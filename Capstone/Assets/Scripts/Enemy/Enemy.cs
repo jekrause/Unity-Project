@@ -453,13 +453,13 @@ public class Enemy : MonoBehaviour
         }
 
         //use cone of vision to detect new enemy
-        raycasts[(int)RayCastDir.Forward] = Physics2D.CircleCast(transform.position, 2f, transform.right, fVisionDistance, layerMask);
-        raycasts[(int)RayCastDir.Left20] = Physics2D.Raycast(transform.position, Quaternion.AngleAxis(20, transform.forward) * transform.right, fVisionDistance, layerMask);
-        raycasts[(int)RayCastDir.Left45] = Physics2D.Raycast(transform.position, Quaternion.AngleAxis(45, transform.forward) * transform.right, fVisionDistance, layerMask);
-        raycasts[(int)RayCastDir.Left90] = Physics2D.Raycast(transform.position, Quaternion.AngleAxis(90, transform.forward) * transform.right, fVisionDistance / 2, layerMask);
-        raycasts[(int)RayCastDir.Right20] = Physics2D.Raycast(transform.position, Quaternion.AngleAxis(-20, transform.forward) * transform.right, fVisionDistance, layerMask);
-        raycasts[(int)RayCastDir.Right45] = Physics2D.Raycast(transform.position, Quaternion.AngleAxis(-45, transform.forward) * transform.right, fVisionDistance, layerMask);
-        raycasts[(int)RayCastDir.Right90] = Physics2D.Raycast(transform.position, Quaternion.AngleAxis(-90, transform.forward) * transform.right, fVisionDistance / 2, layerMask);
+        raycasts[(int)RayCastDir.Forward] = Physics2D.CircleCast(transform.position, 1f, transform.right, fVisionDistance, layerMask);
+        raycasts[(int)RayCastDir.Left20] = Physics2D.CircleCast(transform.position, 1f, Quaternion.AngleAxis(20, transform.forward) * transform.right, fVisionDistance, layerMask);
+        raycasts[(int)RayCastDir.Left45] = Physics2D.CircleCast(transform.position, 1f, Quaternion.AngleAxis(45, transform.forward) * transform.right, fVisionDistance, layerMask);
+        raycasts[(int)RayCastDir.Left90] = Physics2D.CircleCast(transform.position, 1f, Quaternion.AngleAxis(90, transform.forward) * transform.right, 5, layerMask);
+        raycasts[(int)RayCastDir.Right20] = Physics2D.CircleCast(transform.position, 1f, Quaternion.AngleAxis(-20, transform.forward) * transform.right, fVisionDistance, layerMask);
+        raycasts[(int)RayCastDir.Right45] = Physics2D.CircleCast(transform.position, 1f, Quaternion.AngleAxis(-45, transform.forward) * transform.right, fVisionDistance, layerMask);
+        raycasts[(int)RayCastDir.Right90] = Physics2D.CircleCast(transform.position, 1f, Quaternion.AngleAxis(-90, transform.forward) * transform.right, 5, layerMask);
         foreach (RayCastDir castDir in (RayCastDir[])System.Enum.GetValues(typeof(RayCastDir)))
         {
 
@@ -481,13 +481,14 @@ public class Enemy : MonoBehaviour
                     indexPlayerFoundAt = ii;
                 }
             }
-            else if (raycasts[ii].collider != null && Vector2.Distance(raycasts[ii].collider.gameObject.transform.position, transform.position) < 5)
+            else if (raycasts[ii].collider != null )//&& Vector2.Distance(raycasts[ii].collider.gameObject.transform.position, transform.position) < 5)
             {
-                //Debug.Log("Blocked path at " + ii + "  tag = " + raycasts[ii].collider.tag);
+                //Debug.Log("Blocked path at " + ii + "  tag = " + raycasts[ii].collider.tag + " distance = "+ Vector2.Distance(raycasts[ii].collider.gameObject.transform.position, transform.position));
                 blockedPaths[ii] = true;
             }
             else
             {
+                Debug.Log("not blocked at " + ii);
                 blockedPaths[ii] = false;
             }
         }

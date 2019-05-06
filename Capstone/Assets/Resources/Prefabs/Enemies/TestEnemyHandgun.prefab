@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7912580900652919048}
   - component: {fileID: 7912580900652919049}
   - component: {fileID: 7912580900652919050}
-  m_Layer: 9
+  m_Layer: 13
   m_Name: Feet
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -109,7 +109,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7912580900705754958}
   - component: {fileID: 7912580900705754959}
-  m_Layer: 5
+  m_Layer: 13
   m_Name: Fill Area
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -157,7 +157,7 @@ GameObject:
   - component: {fileID: 7912580900990933831}
   - component: {fileID: 7912580900990933830}
   - component: {fileID: 7912580900990933829}
-  m_Layer: 5
+  m_Layer: 13
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -302,7 +302,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7912580901002187575}
   - component: {fileID: 7912580901002187568}
-  m_Layer: 5
+  m_Layer: 13
   m_Name: HealthBar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -390,7 +390,7 @@ GameObject:
   - component: {fileID: 7912580901393216889}
   - component: {fileID: 7912580901393216891}
   - component: {fileID: 7912580901393216890}
-  m_Layer: 5
+  m_Layer: 13
   m_Name: Fill
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -464,7 +464,7 @@ GameObject:
   - component: {fileID: 7912580901782757622}
   - component: {fileID: 7912580901782757616}
   - component: {fileID: 7912580901782757623}
-  m_Layer: 5
+  m_Layer: 13
   m_Name: Background
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -542,7 +542,7 @@ GameObject:
   - component: {fileID: 7912580902075593177}
   - component: {fileID: 7912580902075593176}
   - component: {fileID: 7912580902075593173}
-  m_Layer: 9
+  m_Layer: 13
   m_Name: TestEnemyHandgun
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -714,7 +714,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 1.565
+  m_Radius: 0.85
 --- !u!1 &7912580902271398936
 GameObject:
   m_ObjectHideFlags: 0
@@ -724,7 +724,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7912580902271398937}
-  m_Layer: 9
+  m_Layer: 13
   m_Name: ShootPosition
   m_TagString: Untagged
   m_Icon: {fileID: 0}

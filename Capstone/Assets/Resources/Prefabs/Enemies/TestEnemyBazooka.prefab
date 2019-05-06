@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1031263646216479245}
   - component: {fileID: 1031263646216479244}
   - component: {fileID: 1031263646216479247}
-  m_Layer: 9
+  m_Layer: 13
   m_Name: Feet
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -109,7 +109,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1031263646550824011}
   - component: {fileID: 1031263646550824010}
-  m_Layer: 5
+  m_Layer: 13
   m_Name: Fill Area
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -157,7 +157,7 @@ GameObject:
   - component: {fileID: 1031263646869491778}
   - component: {fileID: 1031263646869491779}
   - component: {fileID: 1031263646869491776}
-  m_Layer: 5
+  m_Layer: 13
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -302,7 +302,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1031263646873966642}
   - component: {fileID: 1031263646873966645}
-  m_Layer: 5
+  m_Layer: 13
   m_Name: HealthBar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -390,7 +390,7 @@ GameObject:
   - component: {fileID: 1031263647002918524}
   - component: {fileID: 1031263647002918526}
   - component: {fileID: 1031263647002918527}
-  m_Layer: 5
+  m_Layer: 13
   m_Name: Fill
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -464,7 +464,7 @@ GameObject:
   - component: {fileID: 1031263647621049331}
   - component: {fileID: 1031263647621049333}
   - component: {fileID: 1031263647621049330}
-  m_Layer: 5
+  m_Layer: 13
   m_Name: Background
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -542,7 +542,7 @@ GameObject:
   - component: {fileID: 1031263647947930332}
   - component: {fileID: 1031263647947930333}
   - component: {fileID: 1031263647947930320}
-  m_Layer: 9
+  m_Layer: 13
   m_Name: TestEnemyBazooka
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -712,9 +712,9 @@ CircleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: -0.26, y: 0}
   serializedVersion: 2
-  m_Radius: 1.565
+  m_Radius: 0.85
 --- !u!1 &1031263648139050781
 GameObject:
   m_ObjectHideFlags: 0
@@ -724,7 +724,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1031263648139050780}
-  m_Layer: 9
+  m_Layer: 13
   m_Name: ShootPosition
   m_TagString: Untagged
   m_Icon: {fileID: 0}
