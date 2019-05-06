@@ -5,6 +5,8 @@ using UnityEngine;
 public class InitializePlayer : MonoBehaviour
 {
     //public GameObject playerPrefab;
+    public GameObject playerCrossHair;
+
 
     // Start is called before the first frame update
     void Start()
@@ -77,12 +79,47 @@ public class InitializePlayer : MonoBehaviour
         {
             gameObject.GetComponent<Player>().myCamera = GameObject.FindWithTag("Camera4").GetComponent<Camera>();    //set player camera
         }
+        SetCameraDistance(playerIndex);
+        SetCrossHair();
         Debug.Log("Should have initialized Player"+(playerIndex+1));
     }
 
-    // Update is called once per frame
-    void Update()
+
+    private void SetCameraDistance(int playerIndex)
     {
-        
+        int playerClassIndex = MenuInputSelector.PlayerClasses[playerIndex];
+
+        switch (playerClassIndex)
+        {
+            case 0:
+                gameObject.GetComponent<Player>().myCamera.orthographicSize = 14;
+                break;
+            case 1:
+                gameObject.GetComponent<Player>().myCamera.orthographicSize = 16;
+                break;
+            case 2:
+                gameObject.GetComponent<Player>().myCamera.orthographicSize = 10;
+                break;
+            case 3:
+                gameObject.GetComponent<Player>().myCamera.orthographicSize = 20;
+                break;
+        }
     }
+
+    private void SetCrossHair()
+    {
+        if (gameObject.GetComponent<Player>() != null && gameObject.GetComponent<Player>().myControllerInput != null)
+        {
+            if (gameObject.GetComponent<Player>().myControllerInput.inputType == InputType.KEYBOARD)
+            {
+                playerCrossHair.SetActive(false);
+            }
+            else
+            {
+                playerCrossHair.SetActive(true);
+            }
+        }
+    }
+
+
 }
