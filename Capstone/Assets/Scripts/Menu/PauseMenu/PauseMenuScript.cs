@@ -19,7 +19,6 @@ public class PauseMenuScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //if (Input.GetKeyDown(KeyCode.Escape))
         if(PressedPauseButton())
         {
             if (GameIsPaused)
@@ -85,6 +84,8 @@ public class PauseMenuScript : MonoBehaviour
 
     public void QuitToTitleScreen()
     {
+        Time.timeScale = 1f;
+        GameIsPaused = false;
         AudioManager.Play("Menu_Back");
         SceneManager.LoadScene("TitleScreen");
         Debug.Log("Tried to load level???");

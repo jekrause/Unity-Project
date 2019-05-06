@@ -10,10 +10,8 @@ public class PauseMenuUIControl : MonoBehaviour
     PlayerMenuScript.PlayerMenuNode nextButtons;
     public GameObject firstButton;
     public int currentButton;
-    [HideInInspector]
-    //public GameObject[] Players = { null, null, null, null };
     private string OS = Settings.OS;
-    public static bool GameIsPaused = false;
+    private int numOfPlayers;
 
     //for windows gamepad checks
     public static bool[] playerAxisInUse = new bool[4];
@@ -21,137 +19,153 @@ public class PauseMenuUIControl : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        //Players = GetComponentInParent<PauseMenuScript>().Players;
+        numOfPlayers = Settings.NumOfPlayers;
         nextButtons = firstButton.GetComponentInChildren<PauseButtonScript>().nextButtons;
     }
 
     // Update is called once per frame
     void Update()
     {
+
+        for(int i = 0; i < numOfPlayers; i += 1)
+        {
+            pressDirection(i);
+        }
+
+        /*
         pressDirection(0);
         pressDirection(1);
         pressDirection(2);
         pressDirection(3);
+        */
     }
 
     private void GotoNextButton(GameObject next)
     {
         int nextButton = next.GetComponentInChildren<PauseButtonScript>().buttonID;
+
         if (currentButton != nextButton)
         {
             AudioManager.Play("Menu_Move");
             currentButton = nextButton;
         }
-        //currentButton = next.GetComponentInChildren<MenuPlayerButtonScript>().buttonID;
         nextButtons = next.GetComponentInChildren<PauseButtonScript>().nextButtons;
     }
 
     private void pressDirection(int playerIndex)
     {
-        if (MenuInputSelector.menuControl[playerIndex] != null)
+        if (GetComponentInParent<PauseMenuScript>().Players[playerIndex] != null)
         {
-            if (MenuInputSelector.menuControl[playerIndex].inputType == InputType.KEYBOARD)
+            if (GetComponentInParent<PauseMenuScript>().Players[playerIndex].GetComponent<Player>() != null)
             {
-
-                if (Input.GetKeyDown(KeyCode.UpArrow))
+                if (GetComponentInParent<PauseMenuScript>().Players[playerIndex].GetComponent<Player>().myControllerInput != null)
                 {
-                    GotoNextButton(nextButtons.upButton);
-                }
-
-                if (Input.GetKeyDown(KeyCode.DownArrow))
-                {
-                    GotoNextButton(nextButtons.downButton);
-                }
-
-                if (Input.GetKeyDown(KeyCode.RightArrow))
-                {
-                    GotoNextButton(nextButtons.rightButton);
-                }
-
-                if (Input.GetKeyDown(KeyCode.LeftArrow))
-                {
-                    GotoNextButton(nextButtons.leftButton);
-                }
-            }
-            else
-            {
-                if (OS.Equals("Mac"))
-                {
-                    if (Input.GetButtonDown(MenuInputSelector.menuControl[playerIndex].DPadUp_Mac))
+                    if (GetComponentInParent<PauseMenuScript>().Players[playerIndex].GetComponent<Player>().myControllerInput.inputType == InputType.KEYBOARD)
                     {
-                        GotoNextButton(nextButtons.upButton);
-                    }
-
-                    if (Input.GetButtonDown(MenuInputSelector.menuControl[playerIndex].DPadDown_Mac))
-                    {
-                        GotoNextButton(nextButtons.downButton);
-                    }
-
-                    if (Input.GetButtonDown(MenuInputSelector.menuControl[playerIndex].DPadRight_Mac))
-                    {
-                        GotoNextButton(nextButtons.rightButton);
-                    }
-
-                    if (Input.GetButtonDown(MenuInputSelector.menuControl[playerIndex].DPadLeft_Mac))
-                    {
-                        GotoNextButton(nextButtons.leftButton);
-                    }
-                }
-                else   //for xbox(windows) and PS4
-                {
-                    if (!playerAxisInUse[playerIndex] && MenuInputSelector.menuControl[playerIndex] != null)
-                    {
-                        playerAxisInUse[playerIndex] = true;
-                        if (Input.GetAxis(MenuInputSelector.menuControl[playerIndex].DPadY_Windows) > 0)
+                        if (Input.GetKeyDown(KeyCode.UpArrow))
                         {
                             GotoNextButton(nextButtons.upButton);
                         }
-                        if (Input.GetAxis(MenuInputSelector.menuControl[playerIndex].DPadY_Windows) < 0)
+
+                        if (Input.GetKeyDown(KeyCode.DownArrow))
                         {
                             GotoNextButton(nextButtons.downButton);
                         }
 
-                        if (Input.GetAxis(MenuInputSelector.menuControl[playerIndex].DPadX_Windows) > 0)
+                        if (Input.GetKeyDown(KeyCode.RightArrow))
                         {
                             GotoNextButton(nextButtons.rightButton);
                         }
 
-                        if (Input.GetAxis(MenuInputSelector.menuControl[playerIndex].DPadX_Windows) < 0)
+                        if (Input.GetKeyDown(KeyCode.LeftArrow))
                         {
                             GotoNextButton(nextButtons.leftButton);
                         }
-
                     }
-
-                    if (MenuInputSelector.menuControl[playerIndex] != null
-                        && (Input.GetAxis(MenuInputSelector.menuControl[playerIndex].DPadY_Windows) == 0 && Input.GetAxis(MenuInputSelector.menuControl[playerIndex].DPadX_Windows) == 0))
+                    else
                     {
-                        // if player is not pressing any axis, reset boolean to allow us to check user input again. 
-                        // The player shouldn't be pressing more than 1 D-Pad button at the same time when searching.
-                        playerAxisInUse[playerIndex] = false;
+                        if (OS.Equals("Mac"))
+                        {
+                            if (Input.GetButtonDown(GetComponentInParent<PauseMenuScript>().Players[playerIndex].GetComponent<Player>().myControllerInput.DPadUp_Mac))
+                            {
+                                GotoNextButton(nextButtons.upButton);
+                            }
+
+                            if (Input.GetButtonDown(GetComponentInParent<PauseMenuScript>().Players[playerIndex].GetComponent<Player>().myControllerInput.DPadDown_Mac))
+                            {
+                                GotoNextButton(nextButtons.downButton);
+                            }
+
+                            if (Input.GetButtonDown(GetComponentInParent<PauseMenuScript>().Players[playerIndex].GetComponent<Player>().myControllerInput.DPadRight_Mac))
+                            {
+                                GotoNextButton(nextButtons.rightButton);
+                            }
+
+                            if (Input.GetButtonDown(GetComponentInParent<PauseMenuScript>().Players[playerIndex].GetComponent<Player>().myControllerInput.DPadLeft_Mac))
+                            {
+                                GotoNextButton(nextButtons.leftButton);
+                            }
+                        }
+                        else   //for xbox(windows) and PS4
+                        {
+                            if (!playerAxisInUse[playerIndex] && GetComponentInParent<PauseMenuScript>().Players[playerIndex].GetComponent<Player>().myControllerInput != null)
+                            {
+                                playerAxisInUse[playerIndex] = true;
+                                if (Input.GetAxis(GetComponentInParent<PauseMenuScript>().Players[playerIndex].GetComponent<Player>().myControllerInput.DPadY_Windows) > 0)
+                                {
+                                    GotoNextButton(nextButtons.upButton);
+                                }
+                                if (Input.GetAxis(GetComponentInParent<PauseMenuScript>().Players[playerIndex].GetComponent<Player>().myControllerInput.DPadY_Windows) < 0)
+                                {
+                                    GotoNextButton(nextButtons.downButton);
+                                }
+
+                                if (Input.GetAxis(GetComponentInParent<PauseMenuScript>().Players[playerIndex].GetComponent<Player>().myControllerInput.DPadX_Windows) > 0)
+                                {
+                                    GotoNextButton(nextButtons.rightButton);
+                                }
+
+                                if (Input.GetAxis(GetComponentInParent<PauseMenuScript>().Players[playerIndex].GetComponent<Player>().myControllerInput.DPadX_Windows) < 0)
+                                {
+                                    GotoNextButton(nextButtons.leftButton);
+                                }
+
+                            }
+
+                            if (GetComponentInParent<PauseMenuScript>().Players[playerIndex].GetComponent<Player>().myControllerInput != null
+                                && (Input.GetAxis(GetComponentInParent<PauseMenuScript>().Players[playerIndex].GetComponent<Player>().myControllerInput.DPadY_Windows) == 0 
+                                && Input.GetAxis(GetComponentInParent<PauseMenuScript>().Players[playerIndex].GetComponent<Player>().myControllerInput.DPadX_Windows) == 0))
+                            {
+                                // if player is not pressing any axis, reset boolean to allow us to check user input again. 
+                                // The player shouldn't be pressing more than 1 D-Pad button at the same time when searching.
+                                playerAxisInUse[playerIndex] = false;
+                            }
+                        }
                     }
                 }
             }
-
         }
     }
 
-    /*
-    public void ResumeGame()
+
+
+    // For Debugging only
+    private void PrintPlayerInputs()
     {
-        AudioManager.Play("Menu_Back");
+        for(int i = 0; i < 4; i += 1)
+        {
+            if (GetComponentInParent<PauseMenuScript>().Players[i] != null)
+            {
+                if (GetComponentInParent<PauseMenuScript>().Players[i].GetComponent<Player>() != null)
+                {
+                    Debug.Log("Player"+(i+1)+"Input = " + GetComponentInParent<PauseMenuScript>().Players[i].GetComponent<Player>().myControllerInput.inputType);
+                }
+                else
+                {
+                    Debug.Log("Player" + (i+1) + "Input = null");
+                }
+            }
+        }
     }
 
-    public void PauseGame()
-    {
-        AudioManager.Play("Menu_Move");
-    }
-
-    public void QuitToTitleScreen()
-    {
-        AudioManager.Play("Menu_Back");
-        SceneManager.LoadScene("TitleScreen");
-        Debug.Log("Tried to load level???");
-    }
-    */
 }

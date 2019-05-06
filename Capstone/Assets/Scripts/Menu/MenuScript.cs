@@ -650,7 +650,7 @@ public class MenuScript : MonoBehaviour
         currentMenu.SetActive(false);
         currentMenu = mainmenu;
         totalMenuItemsX = 1;
-        totalMenuItemsY = 2;
+        totalMenuItemsY = 3;
     }
 
 
@@ -700,6 +700,15 @@ public class MenuScript : MonoBehaviour
         {
             GotoMainMenu();
         }
+    }
+
+    public void QuitGame()
+    {
+        //Quits the game when running a build
+        Application.Quit();
+
+        //Quits game within unity editor
+        //UnityEditor.EditorApplication.isPlaying = false;
     }
 
 

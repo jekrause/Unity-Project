@@ -46,20 +46,16 @@ public class PauseButtonScript : MonoBehaviour
                 {
                     if (transform.parent.GetComponentInParent<PauseMenuScript>().Players[playerIndex].GetComponent<Player>().myControllerInput.inputType == InputType.KEYBOARD)
                     {
-                        
                         if (Input.GetKeyDown(KeyCode.Space))
                         {
-                            Debug.Log("HEY YO I GOT TO KEYBOARD!!");
                             EventToCall.Invoke();
                         }
                     }
                     else
                     {
-                        Debug.Log("HEY YO I GOT Here by the gamepads!!");
                         // no need to check for mac os as DownButton work for both platform
                         if (Input.GetButtonDown(transform.parent.GetComponentInParent<PauseMenuScript>().Players[playerIndex].GetComponent<Player>().myControllerInput.DownButton))
                         {
-                            Debug.Log("HEY YO I GOT TO GAMEPADS!!");
                             EventToCall.Invoke();
                         }
                     }
