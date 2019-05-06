@@ -40,6 +40,8 @@ public class Bullet : MonoBehaviour
             tempStorage[0] = (int)damage;
             tempStorage[1] = shooter;
             col.gameObject.SendMessage("Damaged", tempStorage);
+            if (shooter != null && shooter.GetComponents<Player>() != null)
+                EventAggregator.GetInstance().Publish(new OnBulletCollisionEvent(shooter.GetComponent<Player>().playerNumber, col.gameObject.tag));
             Instantiate(bulletPuff, gameObject.transform.position, gameObject.transform.rotation);
             Destroy(gameObject);
             AudioManager.Play("BulletHit");
@@ -47,6 +49,9 @@ public class Bullet : MonoBehaviour
         else if(col.gameObject.tag == TAG_OBSTACLE || 
             (Vector2.Distance(spawnPosition, transform.position) > 2 && (col.gameObject.tag == "Enemy" || col.gameObject.tag == "Player")))
         {
+            if(shooter != null && shooter.GetComponents<Player>() != null)
+                EventAggregator.GetInstance().Publish(new OnBulletCollisionEvent(shooter.GetComponent<Player>().playerNumber, col.gameObject.tag));
+
             AudioManager.Play("BulletHit");
             Instantiate(bulletPuff, gameObject.transform.position, gameObject.transform.rotation);
             Destroy(gameObject);

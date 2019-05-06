@@ -147,5 +147,12 @@ public class OnLevelUpEvent
     }
 }
 
+public class OnBulletCollisionEvent
+{
+    public int PlayerNum;
+    public string CollidedTag { get; private set; }
+    public OnBulletCollisionEvent(int playerNumber, string collidedTag) { PlayerNum = playerNumber; CollidedTag = collidedTag; }
+}
+
 // other events to add...
 
