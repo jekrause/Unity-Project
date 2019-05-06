@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-    private const int MAX_FRAMES_BETWEEN_RAYCASTS = 3;
+    private const int MAX_FRAMES_BETWEEN_RAYCASTS = 2;
     private const float LOW_HP_THRESHOLD = 20f;
 
     /*
