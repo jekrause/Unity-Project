@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-
+    private const int MAX_FRAMES_BETWEEN_RAYCASTS = 3;
     private const float LOW_HP_THRESHOLD = 20f;
 
     /*
@@ -16,7 +16,7 @@ public class Enemy : MonoBehaviour
      */
 
     public enum MovementTypeEnum { Patrol, Chase, Safe, Manual, None };
-    public enum RayCastDir { Left90 = 0, Left45 = 1, Left20 = 2, Forward = 3, Right20 = 4, Right45 = 5, Right90 = 6 } //raycast angles from player's transform position
+    public enum RayCastDir { Left90 = 0, Left45 = 1, Forward = 2, Right45 = 3, Right90 = 4 } //raycast angles from player's transform position
 
     public enum Direction { Towards, Away };
 
@@ -58,7 +58,8 @@ public class Enemy : MonoBehaviour
     public float attackDistance = 50;
     public float fDamage = 10f;         //default damage if no weapon is equipped
 
-
+    private int frameCount = 0;
+    private int frameToCastOn = 0;
     protected RaycastHit2D[] raycasts = new RaycastHit2D[7]; //raycast results list
     protected bool[] blockedPaths = new bool[7]; //array for the directions in the RayCastDir enum. Index will be true if blocked, false if clear.
 
@@ -81,7 +82,9 @@ public class Enemy : MonoBehaviour
         layersToAvoid.layerMask = LayerMask.GetMask("Obstacles", "Player"); // It may be helpful to put Enemies in seperate layer or get rid of Player layer.
         playersToAvoid = LayerMask.GetMask("Player");
         fWaitTime = fStartWaitTime;
-        //iRandomSpot = Random.Range(0, moveSpots.Length);
+
+        frameToCastOn = Random.Range(0, MAX_FRAMES_BETWEEN_RAYCASTS);
+
         iRandomSpot = 0;
         if (aiMvmt == MovementTypeEnum.None)
         {
@@ -106,7 +109,9 @@ public class Enemy : MonoBehaviour
         }
 
         canShoot = true;
-        if (aiMvmt != MovementTypeEnum.Manual)
+        frameCount += 1;
+        frameCount %= MAX_FRAMES_BETWEEN_RAYCASTS;
+        if (aiMvmt != MovementTypeEnum.Manual && frameCount == frameToCastOn)
         {
             EnemyRayCast();
         }
@@ -207,7 +212,6 @@ public class Enemy : MonoBehaviour
         }
         else
         {
-            Debug.Log("Path not blocked!!!!");
             //face player
             Vector2 dir = playerTarget.transform.position - shootPosition.position;
             var angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
@@ -446,18 +450,12 @@ public class Enemy : MonoBehaviour
                 playerTarget = null;
                 Debug.Log("Lost sight of player");
             }
-            else
-            {
-                Debug.Log("Still chasing Player");
-            }
         }
 
         //use cone of vision to detect new enemy
         raycasts[(int)RayCastDir.Forward] = Physics2D.CircleCast(transform.position, 1f, transform.right, fVisionDistance, layerMask);
-        raycasts[(int)RayCastDir.Left20] = Physics2D.CircleCast(transform.position, 1f, Quaternion.AngleAxis(20, transform.forward) * transform.right, fVisionDistance, layerMask);
         raycasts[(int)RayCastDir.Left45] = Physics2D.CircleCast(transform.position, 1f, Quaternion.AngleAxis(45, transform.forward) * transform.right, fVisionDistance, layerMask);
         raycasts[(int)RayCastDir.Left90] = Physics2D.CircleCast(transform.position, 1f, Quaternion.AngleAxis(90, transform.forward) * transform.right, 5, layerMask);
-        raycasts[(int)RayCastDir.Right20] = Physics2D.CircleCast(transform.position, 1f, Quaternion.AngleAxis(-20, transform.forward) * transform.right, fVisionDistance, layerMask);
         raycasts[(int)RayCastDir.Right45] = Physics2D.CircleCast(transform.position, 1f, Quaternion.AngleAxis(-45, transform.forward) * transform.right, fVisionDistance, layerMask);
         raycasts[(int)RayCastDir.Right90] = Physics2D.CircleCast(transform.position, 1f, Quaternion.AngleAxis(-90, transform.forward) * transform.right, 5, layerMask);
         foreach (RayCastDir castDir in (RayCastDir[])System.Enum.GetValues(typeof(RayCastDir)))
@@ -488,7 +486,6 @@ public class Enemy : MonoBehaviour
             }
             else
             {
-                Debug.Log("not blocked at " + ii);
                 blockedPaths[ii] = false;
             }
         }
@@ -506,7 +503,7 @@ public class Enemy : MonoBehaviour
         {
             //Debug.Log("Go Right");
             //listed in order of move priority
-            if (!blockedPaths[(int)RayCastDir.Right20] || !blockedPaths[(int)RayCastDir.Right45] || !blockedPaths[(int)RayCastDir.Right90])
+            if (!blockedPaths[(int)RayCastDir.Right45] || !blockedPaths[(int)RayCastDir.Right90])
             {
                 //Debug.Log("turning right");
                 transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z - 20), fRotationSpeed * Time.deltaTime);
@@ -520,7 +517,7 @@ public class Enemy : MonoBehaviour
         else
         {
             //Debug.Log("Go Left");
-            if (!blockedPaths[(int)RayCastDir.Left20] || !blockedPaths[(int)RayCastDir.Left45] || !blockedPaths[(int)RayCastDir.Left90])
+            if ( !blockedPaths[(int)RayCastDir.Left45] || !blockedPaths[(int)RayCastDir.Left90])
             {
                 //Debug.Log("turning left");
                 transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z + 20), fRotationSpeed * Time.deltaTime);
