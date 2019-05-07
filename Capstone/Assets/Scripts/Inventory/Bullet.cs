@@ -31,7 +31,7 @@ public class Bullet : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D col)
     {
-        print("collided with " + col.tag);
+        //print("collided with " + col.tag);
 
         if (col.gameObject.tag == targetTag)
         {

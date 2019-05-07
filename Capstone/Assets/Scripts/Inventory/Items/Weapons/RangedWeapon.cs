@@ -52,7 +52,7 @@ public abstract class RangedWeapon : Weapon
         else
         {
             IsReloading = true;
-            Debug.Log(this.name + ": Reloading...");
+            //Debug.Log(this.name + ": Reloading...");
             AudioManager.Play(ReloadSound);
             EventAggregator.GetInstance().Publish<OnWeaponReloadEvent>(new OnWeaponReloadEvent(playerNumber, this));
             for (float timer = ReloadTime; timer > 0; timer -= 0.25f)
@@ -146,13 +146,15 @@ public class AmmoClip
             CurrentAmmoRaw += ammunition.Amount;
             ammunition.Amount = 0;
         }
-        Debug.Log("Ammunition left on player: " + ammunition.Amount);
+        //Debug.Log("Ammunition left on player: " + ammunition.Amount);
     }
 
     public void Decrement()
     {
         CurrentAmmoRaw = CurrentAmmoRaw - AMMO_USE_PER_BULLET < 0 ? 0 : CurrentAmmoRaw - AMMO_USE_PER_BULLET;
     }
+
+    public float GetPercentageInClip() => (1.0f * CurrentAmmoRaw) / (1.0f * MAX_CLIP_SIZE);
 
     public bool IsEmpty() { return this.CurrentAmmoRaw <= 0; }
 

@@ -72,6 +72,11 @@ public class MyControllerInput
     // -- Controller right side buttons --//
 
     /// <summary>
+    /// Use only in Input.GetButton(). This button is represented differently depending what platform it is  (PS4 - Option Button || XBOX-360 - Start Button)
+    /// </summary>
+    public string StartButton { get; private set; }
+
+    /// <summary>
     /// Use only in Input.GetButton(). This button is represented differently depending what platform it is  (PS4 - X Button || XBOX-360 - A Button)
     /// </summary>
     public string DownButton { get; private set; }
@@ -142,6 +147,7 @@ public class MyControllerInput
             RTrigger = "J" + joystickNum + controllerType + "_RTrigger_" + OS;
             LBumper = "J" + joystickNum + controllerType + "_LBumper_" + OS;
             RBumper = "J" + joystickNum + controllerType + "_RBumper_" + OS;
+            StartButton = "J" + joystickNum + controllerType + "_StartButton_" + OS;
             if (Settings.OS.Equals("Windows") || controllerType.Equals("PS4"))
             {
                 DPadX_Windows = "J" + joystickNum + controllerType + "_DPadX_" + OS;
@@ -162,7 +168,7 @@ public class MyControllerInput
             LeftHorizontalAxis = "KeyboardHorizontal"; // keyboard a and d
             LeftVerticalAxis = "KeyboardVertical"; // keyboard w and s
             LeftButton = "Keyboard_R";
-            RightButton = "Keyboard_Escape";
+            RightButton = "Keyboard_F";
             UpButton = "Keyboard_I";
             DownButton = "Keyboard_E";
             RTrigger = "Keyboard_Fire"; // mouse left button
@@ -171,6 +177,7 @@ public class MyControllerInput
             RBumper = "Keyboard_V";
             DPadX_Windows = "Keyboard_DPadX"; // keyboard left and right
             DPadY_Windows = "Keyboard_DPadY"; // keyboard up and down
+            StartButton = "Keyboard_Escape";
 
         }
 

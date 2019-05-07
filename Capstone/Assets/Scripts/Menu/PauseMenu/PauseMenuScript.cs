@@ -53,7 +53,7 @@ public class PauseMenuScript : MonoBehaviour
                         else
                         {
                             // no need to check for mac os as DownButton work for both platform
-                            if (Input.GetButtonDown(Players[i].GetComponent<Player>().myControllerInput.RightButton))
+                            if (Input.GetButtonDown(Players[i].GetComponent<Player>().myControllerInput.StartButton))
                             {
                                return true;
                             }

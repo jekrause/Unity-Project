@@ -96,7 +96,7 @@ public class InventoryHandler : MonoBehaviour, ISubscriber<OnMainInvChangedEvent
     // Update is called once per frame
     void Update()
     {
-        if(player.PlayerState == PlayerState.ALIVE)
+        if(!PauseMenuScript.GameIsPaused && player.PlayerState == PlayerState.ALIVE)
             ReadControllerInput();
     }
 
@@ -131,6 +131,7 @@ public class InventoryHandler : MonoBehaviour, ISubscriber<OnMainInvChangedEvent
 
     private void ReadControllerInput()
     {
+
         if (player.myControllerInput != null && player.myControllerInput.inputType != InputType.NONE
             && (player.InteractionState == InteractionState.INVENTORY_STATE || player.InteractionState == InteractionState.OPEN_STATE) )
         {

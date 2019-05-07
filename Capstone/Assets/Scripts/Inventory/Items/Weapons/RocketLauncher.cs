@@ -29,8 +29,8 @@ public class RocketLauncher : RangedWeapon
         projDamage = DEFAULT_PROJ_DAMAGE + playerStats.DamageMultiplier;
         if(playerStats.Level % 2 == 0)
         {
-            int ammoInClip = AmmoClip.CurrentAmmoRaw;
             MaxAmmoClip = DEFAULT_MAX_CLIP_SIZE + (AMMO_USED_PER_BULLET * playerStats.Level);
+            int ammoInClip = (int) (AmmoClip.GetPercentageInClip() * MaxAmmoClip);
             AmmoClip = new AmmoClip(ammoInClip, MaxAmmoClip, AMMO_USED_PER_BULLET);
         }
 
@@ -42,13 +42,7 @@ public class RocketLauncher : RangedWeapon
         ReloadTime = DEFAULT_RELOAD_TIME;
         attackRate = DEFAULT_ATTACK_RATE;
         projDamage = DEFAULT_PROJ_DAMAGE;
-        float ammoInClip = AmmoClip.CurrentAmmoRaw;
-        if (AmmoClip.CurrentAmmoRaw > DEFAULT_MAX_CLIP_SIZE)
-        {
-            // normalize the ammo clip back to default current ammo in clip
-            ammoInClip = (1.0f * AmmoClip.CurrentAmmoRaw) / (1.0f * AmmoClip.MAX_CLIP_SIZE);
-            ammoInClip = ammoInClip * DEFAULT_MAX_CLIP_SIZE;
-        }
+        float ammoInClip = AmmoClip.GetPercentageInClip() * DEFAULT_MAX_CLIP_SIZE * 1f;
         AmmoClip = new AmmoClip((int)ammoInClip, DEFAULT_MAX_CLIP_SIZE, AMMO_USED_PER_BULLET);
     }
 

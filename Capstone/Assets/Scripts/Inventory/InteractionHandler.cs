@@ -84,7 +84,7 @@ public class InteractionHandler : MonoBehaviour
         if (player.PlayerState == PlayerState.ALIVE && collision != null)
         {
             MostRecentCollider = collision;
-            Debug.Log(MostRecentCollider.tag);
+            //Debug.Log(MostRecentCollider.tag);
             switch (collision.tag)
             {
                 case ("Player"):
