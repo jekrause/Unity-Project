@@ -77,7 +77,7 @@ public abstract class Player : MonoBehaviour, ISubscriber<OnLevelUpEvent>
 
             case InputType.KEYBOARD:
                 DownPlatformButton = "E";
-                RightPlatformButton = "Esc";
+                RightPlatformButton = "F";
                 break;
 
             case InputType.PS4_CONTROLLER:
@@ -145,37 +145,35 @@ public abstract class Player : MonoBehaviour, ISubscriber<OnLevelUpEvent>
     {
         if (PlayerState == PlayerState.ALIVE)
         {
-            if(Stats.Health <= 0)
+            if (downPlayer != null && InteractionState == InteractionState.OPEN_STATE || InteractionState == InteractionState.REVIVING_STATE)
             {
-                PlayerState = PlayerState.DOWN;
-                reviveBarHandler.OnReviveHandler(MAX_DOWN_TIME, 0); //start the timer
-            }
-            else
-            {
-                if (downPlayer != null && InteractionState == InteractionState.OPEN_STATE)
+                InteractionState = InteractionState.REVIVING_STATE;
+                if (ReviveTimer == 0)
                 {
-                    InteractionState = InteractionState.REVIVING_STATE;
-                    if (ReviveTimer == 0)
-                    {
-                        downPlayer.OnReviveStart(myControllerInput.inputType);
-                    }
-                    RevivePlayer(downPlayer);
+                    downPlayer.OnReviveStart(myControllerInput.inputType);
                 }
+                RevivePlayer(downPlayer);
             }
-            
+
         }
-        else if(PlayerState == PlayerState.DOWN)
+        else if (PlayerState == PlayerState.DOWN)
+        {
+            if (DownStateTimer <= 0)
+                Death();
+        }
+
+    }
+
+    private void LateUpdate()
+    {
+        if (PlayerState == PlayerState.DOWN)
         {
             if (!IsBeingRevived)
             {
                 DownStateTimer -= Time.deltaTime;
                 reviveBarHandler.OnReviveHandler(DownStateTimer, 0);
             }
-            if (DownStateTimer <= 0)
-                Death();
-            
         }
-
     }
 
     public void OnPlayerTriggerEnter(Collider2D collider)
@@ -306,7 +304,10 @@ public abstract class Player : MonoBehaviour, ISubscriber<OnLevelUpEvent>
 	            if(PlayerState == PlayerState.ALIVE)
 	            {
 	                PlayerState = PlayerState.DOWN;
-	            }
+                    reviveBarHandler.OnReviveHandler(MAX_DOWN_TIME, 0); //start the timer
+                    DownStateTimer -= Time.deltaTime;
+                    reviveBarHandler.OnReviveHandler(DownStateTimer, 0);
+                }
    
         	}
             
@@ -422,7 +423,7 @@ public abstract class Player : MonoBehaviour, ISubscriber<OnLevelUpEvent>
                 InteractionState = InteractionState.REVIVING_STATE;
                 ReviveTimer += Time.deltaTime;
                 player.reviveBarHandler.OnReviveHandler(player.DownStateTimer, ReviveTimer);
-                Debug.Log(player.name + " is being revived\nTimer_To_Revive: " + ReviveTimer + "\nDown_Timer: " + player.DownStateTimer);
+                //Debug.Log(player.name + " is being revived\nTimer_To_Revive: " + ReviveTimer + "\nDown_Timer: " + player.DownStateTimer);
                 player.IsBeingRevived = true;
 
             }
@@ -432,6 +433,7 @@ public abstract class Player : MonoBehaviour, ISubscriber<OnLevelUpEvent>
                 Debug.Log(this.name + " revived player successfully");
                 player.OnReviveCompleted();
                 ReviveTimer = 0;
+                downPlayer = null;
             }
         }
 
@@ -439,7 +441,7 @@ public abstract class Player : MonoBehaviour, ISubscriber<OnLevelUpEvent>
         {
             if (ReviveTimer < MAX_REVIVE_TIME)
             {
-                Debug.Log("You didn't finish reviving and let go");
+                //Debug.Log("You didn't finish reviving and let go");
                 InteractionState = InteractionState.OPEN_STATE;
                 ReviveTimer = 0; // reset as player let go of the button
                 player.OnReviveCancel();
