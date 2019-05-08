@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-    private const int MAX_FRAMES_BETWEEN_RAYCASTS = 2;
+    private const int MAX_FRAMES_BETWEEN_RAYCASTS = 1;
     private const float LOW_HP_THRESHOLD = 20f;
 
     /*
@@ -453,11 +453,11 @@ public class Enemy : MonoBehaviour
         }
 
         //use cone of vision to detect new enemy
-        raycasts[(int)RayCastDir.Forward] = Physics2D.CircleCast(transform.position, 1f, transform.right, fVisionDistance, layerMask);
-        raycasts[(int)RayCastDir.Left45] = Physics2D.CircleCast(transform.position, 1f, Quaternion.AngleAxis(45, transform.forward) * transform.right, fVisionDistance, layerMask);
-        raycasts[(int)RayCastDir.Left90] = Physics2D.CircleCast(transform.position, 1f, Quaternion.AngleAxis(90, transform.forward) * transform.right, 5, layerMask);
-        raycasts[(int)RayCastDir.Right45] = Physics2D.CircleCast(transform.position, 1f, Quaternion.AngleAxis(-45, transform.forward) * transform.right, fVisionDistance, layerMask);
-        raycasts[(int)RayCastDir.Right90] = Physics2D.CircleCast(transform.position, 1f, Quaternion.AngleAxis(-90, transform.forward) * transform.right, 5, layerMask);
+        raycasts[(int)RayCastDir.Forward] = Physics2D.CircleCast(transform.position, 0.8f, transform.right, fVisionDistance, layerMask);
+        raycasts[(int)RayCastDir.Left45] = Physics2D.Raycast(transform.position, Quaternion.AngleAxis(45, transform.forward) * transform.right, fVisionDistance, layerMask);
+        raycasts[(int)RayCastDir.Left90] = Physics2D.Raycast(transform.position, Quaternion.AngleAxis(90, transform.forward) * transform.right, 5, layerMask);
+        raycasts[(int)RayCastDir.Right45] = Physics2D.Raycast(transform.position, Quaternion.AngleAxis(-45, transform.forward) * transform.right, fVisionDistance, layerMask);
+        raycasts[(int)RayCastDir.Right90] = Physics2D.Raycast(transform.position, Quaternion.AngleAxis(-90, transform.forward) * transform.right, 5, layerMask);
         foreach (RayCastDir castDir in (RayCastDir[])System.Enum.GetValues(typeof(RayCastDir)))
         {
 
@@ -506,12 +506,12 @@ public class Enemy : MonoBehaviour
             if (!blockedPaths[(int)RayCastDir.Right45] || !blockedPaths[(int)RayCastDir.Right90])
             {
                 //Debug.Log("turning right");
-                transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z - 20), fRotationSpeed * Time.deltaTime);
+                transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z - 20), fRotationSpeed/3 * Time.deltaTime);
             }
             else
             {
                 //Debug.Log("Right is blocked, going left");
-                transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z + 20), fRotationSpeed * Time.deltaTime);
+                transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z + 20), fRotationSpeed/3 * Time.deltaTime);
             }
         }
         else
@@ -520,12 +520,12 @@ public class Enemy : MonoBehaviour
             if ( !blockedPaths[(int)RayCastDir.Left45] || !blockedPaths[(int)RayCastDir.Left90])
             {
                 //Debug.Log("turning left");
-                transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z + 20), fRotationSpeed * Time.deltaTime);
+                transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z + 20), fRotationSpeed/3 * Time.deltaTime);
             }
             else
             {
                 //Debug.Log("left is blocked, going right");
-                transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z - 20), fRotationSpeed * Time.deltaTime);
+                transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z - 20), fRotationSpeed/3 * Time.deltaTime);
             }
 
         }
