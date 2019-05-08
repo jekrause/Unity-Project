@@ -33,8 +33,6 @@ public class RocketLauncher : RangedWeapon
             int ammoInClip = (int) (AmmoClip.GetPercentageInClip() * MaxAmmoClip);
             AmmoClip = new AmmoClip(ammoInClip, MaxAmmoClip, AMMO_USED_PER_BULLET);
         }
-
-        AmmoClip = new AmmoClip(MaxAmmoClip, AMMO_USED_PER_BULLET);
     }
 
     public override void ResetWeaponStats()

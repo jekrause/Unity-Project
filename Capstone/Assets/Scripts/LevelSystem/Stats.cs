@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class Stats : MonoBehaviour, ISubscriber<OnEnemyKilledEvent>
 {
@@ -21,6 +22,7 @@ public class Stats : MonoBehaviour, ISubscriber<OnEnemyKilledEvent>
     private const float EXPONENT = 1.5f;
     private const int BASE_EXP = 100;
     public readonly int MAX_LEVEL = 100;
+    private Text LevelText;
 
 
     private void OnEnable()
@@ -36,6 +38,7 @@ public class Stats : MonoBehaviour, ISubscriber<OnEnemyKilledEvent>
     void Start()
     {
         playerNum = GetComponent<Player>().playerNumber;
+        LevelText = GetComponent<Player>().MyHUD.transform.Find("LevelText").GetComponent<Text>();
         CalculateNextLevel();
         InitializeStats(); // used for testing higher level
     }
@@ -113,6 +116,7 @@ public class Stats : MonoBehaviour, ISubscriber<OnEnemyKilledEvent>
         ReloadMultiplier += 0.01f;
         DamageMultiplier += 0.2f;
         MaxHealth = MaxHealth + 10;
+        LevelText.text = "Lvl. " + Level;
         EventAggregator.GetInstance().Publish<OnLevelUpEvent>(new OnLevelUpEvent(playerNum, this));
     }
 
@@ -123,6 +127,7 @@ public class Stats : MonoBehaviour, ISubscriber<OnEnemyKilledEvent>
         ReloadMultiplier = Level * ReloadMultiplier;
         DamageMultiplier = Level * DamageMultiplier;
         MaxHealth = Health = MaxHealth + (Level * 10);
+        LevelText.text = "Lvl. " + Level;
     }
 
 }

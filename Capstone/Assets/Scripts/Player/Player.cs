@@ -35,6 +35,7 @@ public abstract class Player : MonoBehaviour, ISubscriber<OnLevelUpEvent>
     private Vector2 direction;
 
     //camera for the specific player
+    public float CameraOriginalPosition;
     [SerializeField] public Camera myCamera;
 
     // reference to the controller that is attached to the player
@@ -90,7 +91,7 @@ public abstract class Player : MonoBehaviour, ISubscriber<OnLevelUpEvent>
                 RightPlatformButton = "B";
                 break;
         }
-
+        CameraOriginalPosition = myCamera.orthographicSize;
         Stats = GetComponent<Stats>();
         feetAnimation = transform.Find("Feet").GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
@@ -179,6 +180,7 @@ public abstract class Player : MonoBehaviour, ISubscriber<OnLevelUpEvent>
     public void OnPlayerTriggerEnter(Collider2D collider)
     {
         downPlayer = collider.GetComponent<Player>();
+        myCamera.orthographicSize = 4;
     }
 
     public void OnPlayerTriggerExit()
@@ -189,7 +191,9 @@ public abstract class Player : MonoBehaviour, ISubscriber<OnLevelUpEvent>
             downPlayer.OnReviveCancel();
             downPlayer = null;
             InteractionState = InteractionState.OPEN_STATE;
+            myCamera.orthographicSize = CameraOriginalPosition;
         }
+       
     }
 
     public void WaitForFireSprite(Sprite originalSprite, float delaySeconds)
@@ -342,7 +346,18 @@ public abstract class Player : MonoBehaviour, ISubscriber<OnLevelUpEvent>
         GetComponent<InventoryHandler>().ClearInventoryHUD();
         MyHUD.gameObject.SetActive(false);
         bagObj.gameObject.SetActive(true);
+        GameObject temp = GameObject.Find("CharacterList");
+        GameObject cameraControl = GameObject.Find("Camera" + playerNumber);
+        for (int i = 0; i < Settings.NumOfPlayers; i++)
+        {
+            if (temp?.gameObject?.transform?.GetChild(i)?.GetComponent<Player>()?.Stats.Health > 0)
+            {
+                cameraControl?.GetComponent<CameraControl>()?.AssignCameraToPlayer(temp.gameObject.transform.GetChild(i).gameObject);
+                break;
+            }
+        }
         gameObject.SetActive(false);
+        
     }
 
     protected void GetAttackInput()
@@ -425,7 +440,6 @@ public abstract class Player : MonoBehaviour, ISubscriber<OnLevelUpEvent>
                 player.reviveBarHandler.OnReviveHandler(player.DownStateTimer, ReviveTimer);
                 //Debug.Log(player.name + " is being revived\nTimer_To_Revive: " + ReviveTimer + "\nDown_Timer: " + player.DownStateTimer);
                 player.IsBeingRevived = true;
-
             }
             else
             {
@@ -434,6 +448,7 @@ public abstract class Player : MonoBehaviour, ISubscriber<OnLevelUpEvent>
                 player.OnReviveCompleted();
                 ReviveTimer = 0;
                 downPlayer = null;
+                myCamera.orthographicSize = CameraOriginalPosition;
             }
         }
 
@@ -445,6 +460,7 @@ public abstract class Player : MonoBehaviour, ISubscriber<OnLevelUpEvent>
                 InteractionState = InteractionState.OPEN_STATE;
                 ReviveTimer = 0; // reset as player let go of the button
                 player.OnReviveCancel();
+                myCamera.orthographicSize = CameraOriginalPosition;
             }
         }
 
@@ -479,7 +495,7 @@ public abstract class Player : MonoBehaviour, ISubscriber<OnLevelUpEvent>
 
     public virtual void OnReviveCompleted() 
     {
-        Stats.Health = 50f;
+        Stats.Health = (int) (0.5 * Stats.MaxHealth);
         PlayerState = PlayerState.ALIVE;
         reviveBarHandler.OnReviveFinishHandler();
         DownStateTimer = MAX_DOWN_TIME; // reset down timer

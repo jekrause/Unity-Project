@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Helicopter : MonoBehaviour, ISubscriber<OnQuestItemPickUpEvent>, ISubscriber<OnQuestItemDroppedEvent>, ISubscriber<OnEnemyKilledEvent>
 {
@@ -34,16 +35,11 @@ public class Helicopter : MonoBehaviour, ISubscriber<OnQuestItemPickUpEvent>, IS
     {
         if(CurrentInteractor != null)
         {
-            if (HaveHelicopterKey && NumOfPlayersInRange == Settings.NumOfPlayers)
+            if (HaveHelicopterKey)
             {
                 ActionMessage = "Hold '" + CurrentInteractor.DownPlatformButton + "' to use \n'Helicopter Key'";
                 CurrentInteractor.ShowInteractionPanel(this.name, ActionMessage);
                 ListenForUserInput();
-            }
-            else if (HaveHelicopterKey && NumOfPlayersInRange != Settings.NumOfPlayers)
-            {
-                string message = "Need all players here to fly the helicopter";
-                CurrentInteractor.ShowInteractionPanel(this.name, message);
             }
             else
             {
@@ -89,6 +85,7 @@ public class Helicopter : MonoBehaviour, ISubscriber<OnQuestItemPickUpEvent>, IS
                     CurrentInteractor.RemoveInteractionPanel();
                     //Load next level
                     Debug.Log("Hello World");
+                    LoadNextScene();
                     ButtonHeldTimer = 0;
                     this.enabled = false;
                 }
@@ -100,6 +97,27 @@ public class Helicopter : MonoBehaviour, ISubscriber<OnQuestItemPickUpEvent>, IS
                 CurrentInteractor.RemoveLoadBar();
                 ButtonHeldTimer = 0;
             }
+        }
+    }
+
+    private void LoadNextScene()
+    {
+        StartCoroutine(LoadNextSceneAsync());
+    }
+
+    IEnumerator LoadNextSceneAsync()
+    {
+        yield return null;
+
+        AsyncOperation EndOfDemoScene = SceneManager.LoadSceneAsync("EndOfDemo");
+        EndOfDemoScene.allowSceneActivation = false;
+        while (!EndOfDemoScene.isDone)
+        {
+            if (EndOfDemoScene.progress >= 0.9f)
+            {
+                EndOfDemoScene.allowSceneActivation = true;
+            }
+            yield return null;
         }
     }
 

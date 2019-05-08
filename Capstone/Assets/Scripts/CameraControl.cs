@@ -148,4 +148,11 @@ public class CameraControl : MonoBehaviour {
 
 
     }
+
+    public void AssignCameraToPlayer(GameObject p)
+    {
+        player = p;
+        transform.position = new Vector3(player.transform.position.x, player.transform.position.y, -10);
+        offset = transform.position - player.transform.position;
+    }
 }

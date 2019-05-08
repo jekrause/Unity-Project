@@ -7,7 +7,7 @@ public class Shotgun : RangedWeapon
     public readonly float DEFAULT_RELOAD_TIME = 4f;
     public readonly float DEFAULT_PROJ_DAMAGE = 10f;
     private const int DEFAULT_MAX_CLIP_SIZE = 50;
-    private const int AMMO_USED_PER_BULLET = 25;
+    private const int AMMO_USED_PER_BULLET = 10;
     private int MaxAmmoClip = DEFAULT_MAX_CLIP_SIZE; // mutated value as level increases
 
     private readonly Vector3[] projAngles = new Vector3[]
@@ -41,8 +41,6 @@ public class Shotgun : RangedWeapon
             int ammoInClip = (int)(AmmoClip.GetPercentageInClip() * MaxAmmoClip);
             AmmoClip = new AmmoClip(ammoInClip, MaxAmmoClip, AMMO_USED_PER_BULLET);
         }
-
-        AmmoClip = new AmmoClip(MaxAmmoClip, AMMO_USED_PER_BULLET);
     }
 
     public override void ResetWeaponStats()
