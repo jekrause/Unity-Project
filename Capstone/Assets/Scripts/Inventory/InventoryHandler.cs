@@ -586,6 +586,7 @@ public class InventoryHandler : MonoBehaviour, ISubscriber<OnMainInvChangedEvent
             {
                 InventoryHUD.OnWeaponEquip(weaponSlot);
                 player.UpdatePlayerCurrentWeapon(weaponToUse);
+                EquippedWeaponSlot = weaponSlot;
                 if (weaponToUse is RangedWeapon)
                     AudioManager.Play(((RangedWeapon)weaponToUse).ReloadFinishSound);
             }
