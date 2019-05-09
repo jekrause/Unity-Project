@@ -10,7 +10,7 @@ public class PlayerShotgun : Player
         base.Start();
         MyHUD.transform.Find("HealthBarPanel").GetComponent<HealthHUD>().SetMaxHP(Stats);
         fAttackRadius = 2f;
-        fMoveRate = 6f;
+        fMoveRate = 10f;//6f;
         fProjSpeed = 20f;
     }
 

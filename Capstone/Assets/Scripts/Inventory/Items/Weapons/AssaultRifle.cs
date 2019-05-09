@@ -14,7 +14,7 @@ public class AssaultRifle : RangedWeapon
         ReloadTime = DEFAULT_ATTACK_RATE;
         AmmoClip = new AmmoClip(DEFAULT_MAX_CLIP_SIZE, AMMO_USED_PER_BULLET);
         weight = 2;
-        projSpeed = 650f;
+        projSpeed = 1500f;//650f;
         attackRate = DEFAULT_ATTACK_RATE;
         projDamage = DEFAULT_PROJ_DAMAGE;
         ReloadSound = "Universal_Reload";

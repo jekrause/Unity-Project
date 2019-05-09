@@ -9,7 +9,7 @@ public class PlayerHeavy : Player
     new void Start()
     {
         base.Start();
-        fMoveRate = 5f;
+        fMoveRate = 7f; //5f;
         Stats.Health *= 1.5f;
         Stats.SetMaxHP(Stats.Health);
         MyHUD.transform.Find("HealthBarPanel").GetComponent<HealthHUD>().SetMaxHP(Stats);

@@ -228,8 +228,162 @@ public abstract class Player : MonoBehaviour, ISubscriber<OnLevelUpEvent>
         }
     }
 
+
+    private bool isRunning = false;
+
     private void getRotationPosition()
     {
+        float angle;
+        Quaternion eulerRot;
+        if (myControllerInput.inputType == InputType.KEYBOARD)
+        {
+            float moveHorizontal = Input.GetAxis(myControllerInput.LeftHorizontalAxis);
+            float moveVertical = Input.GetAxis(myControllerInput.LeftVerticalAxis);
+            Vector2 KeyMoveDirectionInput = new Vector2(moveHorizontal, moveVertical);
+            float deadzone = 0.15f;
+
+            if (Input.GetButton("Keyboard_Q"))  //run button is being held down
+            {
+                if (!isRunning)
+                {
+                    isRunning = true;
+                    fMoveRate = fMoveRate * 2f;
+                }
+
+                if (KeyMoveDirectionInput.magnitude < deadzone)    //if left stick is not being used
+                {
+                    KeyMoveDirectionInput = Vector2.zero;
+                }
+                else  // left stick is being used
+                {
+                    angle = Mathf.Atan2(moveVertical, moveHorizontal) * Mathf.Rad2Deg;
+                    eulerRot = Quaternion.Euler(0.0f, 0.0f, angle);
+                    transform.localRotation = Quaternion.Slerp(transform.rotation, eulerRot, Time.deltaTime * 120);
+                }
+
+            }
+            else   //not holding down run button
+            {
+                if (isRunning)
+                {
+                    isRunning = false;
+                    fMoveRate = fMoveRate / 2f;
+                }
+
+                Vector3 position = Input.mousePosition;
+                position = myCamera.ScreenToWorldPoint(position);
+                position.x = position.x - transform.position.x;
+                position.y = position.y - transform.position.y;
+                angle = Mathf.Atan2(position.y, position.x) * Mathf.Rad2Deg;
+                eulerRot = Quaternion.Euler(0.0f, 0.0f, angle);
+                transform.rotation = Quaternion.Slerp(transform.rotation, eulerRot, Time.deltaTime * 120);
+            }
+        }
+        else //use controller inputs 
+        {
+            //OLD
+            /*
+            try
+            {
+                float horizontal = Input.GetAxisRaw(myControllerInput.RightHorizontalAxis);
+                float vertical = Input.GetAxisRaw(myControllerInput.RightVerticalAxis);
+                float deadzone = 0.15f;
+                Vector2 stickInput = new Vector2(horizontal, vertical);
+                if (stickInput.magnitude < deadzone)
+                {
+                    stickInput = Vector2.zero;
+                    rb.freezeRotation = true;
+                }  
+                else
+                {
+                    
+                    rb.freezeRotation = false;
+                    angle = Mathf.Atan2(vertical, horizontal) * Mathf.Rad2Deg;
+                    eulerRot = Quaternion.Euler(0.0f, 0.0f, angle);
+                    transform.localRotation = Quaternion.Slerp(transform.rotation, eulerRot, Time.deltaTime * 120);
+                    
+                }
+            }
+            catch
+            {
+
+            }
+            */
+
+            try
+            {
+                float horizontal = Input.GetAxisRaw(myControllerInput.RightHorizontalAxis);
+                float vertical = Input.GetAxisRaw(myControllerInput.RightVerticalAxis);
+
+                float LeftHorizontal = Input.GetAxisRaw(myControllerInput.LeftHorizontalAxis);
+                float LeftVertical = Input.GetAxisRaw(myControllerInput.LeftVerticalAxis);
+                float LeftTrigger = Input.GetAxisRaw(myControllerInput.LTrigger);
+
+
+                float deadzone = 0.15f;
+                Vector2 stickInput = new Vector2(horizontal, vertical);
+                Vector2 LeftStickInput = new Vector2(LeftHorizontal, LeftVertical);
+
+
+
+                if (LeftTrigger > 0.8)  //if left trigger is pressed
+                {
+                    if (!isRunning) //if not running yet, set to running
+                    {
+                        isRunning = true;
+                        fMoveRate = fMoveRate * 2f;  //double the move rate
+                    }
+
+                    if (LeftStickInput.magnitude < deadzone)    //if left stick is not being used
+                    {
+                        LeftStickInput = Vector2.zero;
+                    }
+                    else  // left stick is being used
+                    {
+                        angle = Mathf.Atan2(LeftVertical, LeftHorizontal) * Mathf.Rad2Deg;
+                        eulerRot = Quaternion.Euler(0.0f, 0.0f, angle);
+                        transform.localRotation = Quaternion.Slerp(transform.rotation, eulerRot, Time.deltaTime * 120);
+                    }
+                }
+                else
+                {
+                    if (isRunning)  //if was running, set to not running
+                    {
+                        isRunning = false;
+                        fMoveRate = fMoveRate / 2f;  //halve the move rate
+                    }
+
+
+                    if (stickInput.magnitude < deadzone)    // if right thumbstick is not being used
+                    {
+                        //OLD
+                        stickInput = Vector2.zero;
+                        //rb.freezeRotation = true;
+
+                    }
+                    else
+                    {
+
+                        //rb.freezeRotation = false;
+                        angle = Mathf.Atan2(vertical, horizontal) * Mathf.Rad2Deg;
+                        eulerRot = Quaternion.Euler(0.0f, 0.0f, angle);
+                        transform.localRotation = Quaternion.Slerp(transform.rotation, eulerRot, Time.deltaTime * 120);
+
+                    }
+                }
+            }
+            catch
+            {
+
+            }
+
+
+        }
+
+
+
+        //OLD CODE
+        /*
         float angle;
         Quaternion eulerRot;
         if (myControllerInput.inputType == InputType.KEYBOARD)
@@ -271,7 +425,7 @@ public abstract class Player : MonoBehaviour, ISubscriber<OnLevelUpEvent>
             }
 
         }
-
+        */
     }
 
     //Called when player is healed

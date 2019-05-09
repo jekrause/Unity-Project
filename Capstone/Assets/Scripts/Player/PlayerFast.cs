@@ -8,7 +8,7 @@ public class PlayerFast : Player
     new void Start()
     {
         base.Start();
-        fMoveRate = 10f;
+        fMoveRate = 9f;//10f;
         fProjSpeed = 20f;
         MyHUD.transform.Find("HealthBarPanel").GetComponent<HealthHUD>().SetMaxHP(Stats);
         for (int i = 0; i < gameObject.transform.childCount; i++)

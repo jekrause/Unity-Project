@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ExplosionDamage : MonoBehaviour
 {
-    protected float damage = 20; 
+    protected float damage = 5;//20; 
     private const string TAG_OBSTACLE = "Obstacle";
     protected string targetTag = "Enemy";
 
@@ -14,7 +14,8 @@ public class ExplosionDamage : MonoBehaviour
         AudioManager.Play("RocketExplode");
     }
 
-    void OnTriggerEnter2D(Collider2D col)
+    //void OnTriggerEnter2D(Collider2D col)
+    void OnTriggerStay2D(Collider2D col)
     {
         print("explosion collided with " + col.tag);
 

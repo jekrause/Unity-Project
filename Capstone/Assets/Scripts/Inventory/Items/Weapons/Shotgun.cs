@@ -22,7 +22,7 @@ public class Shotgun : RangedWeapon
     public Shotgun() {
         weight = 3;
         projDamage = DEFAULT_PROJ_DAMAGE;
-        projSpeed = 350;
+        projSpeed = 2000f;//350;
         AmmoClip = new AmmoClip(DEFAULT_MAX_CLIP_SIZE, AMMO_USED_PER_BULLET);
         ReloadTime = DEFAULT_RELOAD_TIME;
         attackRate = DEFAULT_ATTACK_RATE;

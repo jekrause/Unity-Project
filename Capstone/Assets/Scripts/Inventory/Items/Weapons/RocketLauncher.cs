@@ -12,7 +12,7 @@ public class RocketLauncher : RangedWeapon
 
     public RocketLauncher() {
         projDamage = DEFAULT_PROJ_DAMAGE;
-        projSpeed = 300f;
+        projSpeed = 1000f;//300f;
         weight = 4;
         ReloadTime = DEFAULT_RELOAD_TIME;
         attackRate = DEFAULT_ATTACK_RATE;

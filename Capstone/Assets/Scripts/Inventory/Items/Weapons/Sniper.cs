@@ -13,7 +13,7 @@ public class Sniper : RangedWeapon
 
     public Sniper() {
         projDamage = DEFAULT_PROJ_DAMAGE;
-        projSpeed = 1000;
+        projSpeed = 2500f;//1000;
         weight = 2;
         AmmoClip = new AmmoClip(DEFAULT_MAX_CLIP_SIZE, AMMO_USED_PER_BULLET);
         ReloadTime = DEFAULT_RELOAD_TIME;

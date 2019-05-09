@@ -8,7 +8,7 @@ public class PlayerSniper : Player
     new void Start()
     {
         base.Start();
-        fMoveRate = 7f;
+        fMoveRate = 8f;//7f;
         Stats.Health *= 0.75f;
         Stats.SetMaxHP(Stats.Health);
         MyHUD.transform.Find("HealthBarPanel").GetComponent<HealthHUD>().SetMaxHP(Stats);

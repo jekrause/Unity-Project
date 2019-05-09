@@ -12,7 +12,7 @@ public class HandGun : RangedWeapon
 
     public HandGun() {
         projDamage = DEFAULT_PROJ_DAMAGE;
-        projSpeed = 500;
+        projSpeed = 1500f;//500;
         weight = 0;
         ReloadTime = DEFAULT_RELOAD_TIME;
         attackRate = DEFAULT_ATTACK_RATE;
