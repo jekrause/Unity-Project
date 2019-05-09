@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class GodLoot : MonoBehaviour
 {
-    private Inventory Inventory = new Inventory(9);
+    private List<Slot> Inventory = new List<Slot>(9);
     private GameObject[] items = new GameObject[9];
     // Start is called before the first frame update
     void Start()
@@ -22,7 +22,7 @@ public class GodLoot : MonoBehaviour
         for (int i = 0; i < items.Length; i++)
         {
             items[i].SetActive(false);
-            Inventory.AddItem(items[i].GetComponent<Item>());
+            Inventory.Add(new Slot(items[i].GetComponent<Item>(), 1));
         }
 
         GetComponent<LootBag>().Inventory = Inventory;

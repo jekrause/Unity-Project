@@ -372,14 +372,6 @@ public class InventoryHandler : MonoBehaviour, ISubscriber<OnMainInvChangedEvent
             player.InteractionPanel.RemoveInteractionPanel();
     }
 
-
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        
-
-
-    }
-
     /// <summary>
     /// Simply Update the Inventory Action Panel message and send the message so it can be Displayed on Inventory HUD
     /// </summary>

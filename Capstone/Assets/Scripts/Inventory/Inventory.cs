@@ -8,8 +8,8 @@
 public class Inventory
 {
     public readonly int MAX_SLOT_SIZE;
-    [SerializeField] private int slotUsed = 0;
-    [SerializeField] private readonly Slot[] Slots;
+    private int slotUsed = 0;
+    private readonly Slot[] Slots;
 
     public Inventory(int maxSlotSize)
     {
@@ -140,24 +140,29 @@ public class Inventory
     /// Modifies the slot in this inventory by updating the item in this slot to the given item and quantity. 
     /// </summary>
     /// <param name="slotNum"></param>
-    /// <param name="item"></param>
+    /// <param name="newItem"></param>
     /// <param name="quantity"></param>
-    public void ModifySlot(int slotNum, Item item, int quantity)
+    public void ModifySlot(int slotNum, Item newItem, int quantity)
     {
-        if(item == null)
+        if(newItem == null)
         {
             if(Slots[slotNum].HasItem())
                 slotUsed--;
 
-            Slots[slotNum] = new Slot();
+            Slots[slotNum].Clear();
             
         }
         else
         {
             if (!Slots[slotNum].HasItem())
                 slotUsed++;
+            else
+            {
+                if(Slots[slotNum].GetType() != newItem.GetType())
+                    Slots[slotNum].RemoveAllItem();
+            }
 
-            Slots[slotNum] = new Slot(item, quantity);
+            Slots[slotNum] = new Slot(newItem, quantity);
         }
     }
 

@@ -6,10 +6,13 @@ public class LootBag : MonoBehaviour
 {
     private static int BagCounter = 0;
     public int ID { get; private set; }
-    public Inventory Inventory = new Inventory(9);
+    public List<Slot> Inventory = new List<Slot>(9);
 
     private void Start()
     {
+        for (int i = 0; i < Inventory.Capacity; i++)
+            Inventory.Add(new Slot());
+            
         ID = BagCounter++;
     }
     

@@ -6,7 +6,7 @@ public class LootBagHandler : MonoBehaviour, ISubscriber<OnLootBagChangedEvent>
 {
     // HUD componenets
     public GameObject LootBagHUD;        // The parent game object, will be used to simply toggle On and Off when interacting (Loot bag)
-    private GameObject[] LootBagSlots;   // The slots to update item images Loot bag slots)
+    private GameObject[] LootBagSlots;   // The slots to update item images Loot bag slots
     private GameObject LootBagSlotPanel; // The game object panel that contains all the Inventory Slot game objects
 
 
@@ -15,7 +15,7 @@ public class LootBagHandler : MonoBehaviour, ISubscriber<OnLootBagChangedEvent>
     private GameObject MainInvPanel;
     private GameObject WeaponInvPanel;
     
-    private int SlotSize;                // Tow many slots we have in the bag
+    private int SlotSize;                // how many slots we have in the bag
 
     // Data
     private LootBag CurrentLootBag;      // The current loot bag the player is looting
@@ -211,7 +211,7 @@ public class LootBagHandler : MonoBehaviour, ISubscriber<OnLootBagChangedEvent>
     {
         if (CurrentLootBag == null) return;
 
-        if(CurrentLootBag.Inventory.GetNumOfSlotUsed() == 0)
+        if(CurrentLootBag.Inventory.Count == 0)
         {
             for (int i = 0; i < SlotSize; i++)
                 LootBagSlots[i].transform.Find(ITEM_SLOT).Find(ITEM).gameObject.SetActive(false);
@@ -221,13 +221,13 @@ public class LootBagHandler : MonoBehaviour, ISubscriber<OnLootBagChangedEvent>
             Item item;
             for (int i = 0; i < SlotSize; i++)
             {
-                item = CurrentLootBag.Inventory.GetItemInSlot(i);
+                item = CurrentLootBag.Inventory[i].GetItem();
                 if (item != null)
                 {
                     LootBagSlots[i].transform.Find(ITEM_SLOT).Find(ITEM).GetComponent<Image>().sprite = item.Image;
                     if (item is FirstAid)
                     {
-                        LootBagSlots[i].transform.Find(ITEM_SLOT).Find(BACKGROUND).Find(QUANTITY).GetComponent<Text>().text = CurrentLootBag.Inventory.GetQuantityInSlot(i) + "";
+                        LootBagSlots[i].transform.Find(ITEM_SLOT).Find(BACKGROUND).Find(QUANTITY).GetComponent<Text>().text = CurrentLootBag.Inventory[LootBagSlotIndex].CurrentQuantity + "";
                         LootBagSlots[i].transform.Find(ITEM_SLOT).Find(BACKGROUND).gameObject.SetActive(true);
                     }
                     else
@@ -305,8 +305,8 @@ public class LootBagHandler : MonoBehaviour, ISubscriber<OnLootBagChangedEvent>
         int normalizedIndex = NormalizedIndex(); // normalize the myInvIndex since Main Inv is [0-5] and Weapon Inv is [0-2]
 
         // Loot bag slot
-        Item itemToCopy = CurrentLootBag.Inventory.GetItemInSlot(LootBagSlotIndex);
-        int quantityToCopy = CurrentLootBag.Inventory.GetQuantityInSlot(LootBagSlotIndex);
+        Item itemToCopy = CurrentLootBag.Inventory[LootBagSlotIndex].GetItem();
+        int quantityToCopy = CurrentLootBag.Inventory[LootBagSlotIndex].CurrentQuantity;
         if (itemToCopy == null) return;
 
         BusyLooting = true;
@@ -376,8 +376,8 @@ public class LootBagHandler : MonoBehaviour, ISubscriber<OnLootBagChangedEvent>
             }
            
         }
-         
-        CurrentLootBag.Inventory.ModifySlot(LootBagSlotIndex, myItem, myItemQuantity);  // update Loot bag slot
+
+        CurrentLootBag.Inventory[LootBagSlotIndex] = new Slot(myItem, myItemQuantity);  // update Loot bag slot
         EventAggregator.GetInstance().Publish(new OnLootBagChangedEvent(CurrentLootBag)); // announce that the loot bag have been altered
 
         //Update HUD bags
@@ -490,8 +490,8 @@ public class LootBagHandler : MonoBehaviour, ISubscriber<OnLootBagChangedEvent>
         }
         else
         {
-            if (CurrentLootBag != null && CurrentLootBag.Inventory.GetItemInSlot(LootBagSlotIndex) != null)
-                itemType = CurrentLootBag.Inventory.GetItemInSlot(LootBagSlotIndex).GetType() + "";
+            if (CurrentLootBag != null && CurrentLootBag.Inventory[LootBagSlotIndex].GetItem() != null)
+                itemType = CurrentLootBag.Inventory[LootBagSlotIndex].GetItem().GetType() + "";
             else
                 action = "-Empty-";
 
@@ -613,7 +613,7 @@ public class LootBagHandler : MonoBehaviour, ISubscriber<OnLootBagChangedEvent>
             }
             else
             {
-                if (CurrentLootBag != null && CurrentLootBag.Inventory.GetItemInSlot(LootBagSlotIndex) != null)
+                if (CurrentLootBag != null && CurrentLootBag.Inventory[LootBagSlotIndex].GetItem() != null)
                 {
                     IteratingMyInv = !IteratingMyInv;
                     SwapSelectionHUD();

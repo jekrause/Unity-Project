@@ -136,7 +136,7 @@ public class Slot
             DecrementQuantity();
 
             if (CurrentQuantity <= 0)
-                Clear();
+                CurrentItem = null;
         }
 
         return ret;
@@ -167,6 +167,15 @@ public class Slot
     /// </summary>
     public void Clear()
     {
+        try
+        {
+            InventoryHandler.ObjectsPickedUp.Remove(CurrentItem.gameObject);
+        }
+        catch(Exception e)
+        {
+            Debug.Log("Slot Clear(): Attempt to remove a item that is null, Error Msg: " + e.Message);
+        }
+        
         CurrentItem = null;
         CurrentQuantity = 0;
     }

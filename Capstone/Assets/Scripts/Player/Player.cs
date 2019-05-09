@@ -457,19 +457,16 @@ public abstract class Player : MonoBehaviour, ISubscriber<OnLevelUpEvent>
             {
                 Stats.Health -= (int)storage[0];
                 EventAggregator.GetInstance().Publish(new PlayerDamagedEvent(Stats.Health, playerNumber)); // fire event
-                return true;
-            }
-            else
-        	{
-	            if(PlayerState == PlayerState.ALIVE)
-	            {
-	                PlayerState = PlayerState.DOWN;
+
+                if (Stats.Health <= 0 && PlayerState == PlayerState.ALIVE)
+                {
+                    PlayerState = PlayerState.DOWN;
                     reviveBarHandler.OnReviveHandler(MAX_DOWN_TIME, 0); //start the timer
                     DownStateTimer -= Time.deltaTime;
                     reviveBarHandler.OnReviveHandler(DownStateTimer, 0);
                 }
-   
-        	}
+                return true;
+            }
             
             return false;
         }
@@ -485,18 +482,25 @@ public abstract class Player : MonoBehaviour, ISubscriber<OnLevelUpEvent>
         GameObject prefab = Resources.Load("Prefabs/Bag") as GameObject;
         GameObject bagObj = Instantiate(prefab, transform.position, transform.rotation); // create the player loot bag
 
-        Inventory ptr = bagObj.GetComponent<LootBag>().Inventory;
+        List<Slot> ptr = bagObj.GetComponent<LootBag>().Inventory;
 
         for (int i = 0; i < MainInventory.MAX_SLOT_SIZE; i++)
         {
             if (MainInventory.GetItemInSlot(i) != null)
-                ptr.AddItem(MainInventory.GetItemInSlot(i));
+            {
+                ptr[i] = new Slot(MainInventory.GetItemInSlot(i), MainInventory.GetQuantityInSlot(i));
+                MainInventory.RemoveAllItemInSlot(i);
+            }
         }
 
         for (int i = 0; i < WeaponInventory.MAX_SLOT_SIZE; i++)
         {
             if (WeaponInventory.GetItemInSlot(i) != null)
-                ptr.AddItem(WeaponInventory.GetItemInSlot(i));
+            {
+                ptr[i] = new Slot(WeaponInventory.GetItemInSlot(i), WeaponInventory.GetQuantityInSlot(i));
+                WeaponInventory.RemoveAllItemInSlot(i);
+            }
+                
         }
         GetComponent<InventoryHandler>().ClearInventoryHUD();
         MyHUD.gameObject.SetActive(false);
