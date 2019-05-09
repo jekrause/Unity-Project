@@ -4,17 +4,12 @@ using UnityEngine.SceneManagement;
 public class GameOverHandler : MonoBehaviour, ISubscriber<OnPlayerDeathEvent>
 {
     // Start is called before the first frame update
-    private int NumberOfPlayer; 
+    public static int PlayersAlive { get; private set; }
 
     void Start()
     {
+        PlayersAlive = Settings.NumOfPlayers;
         EventAggregator.GetInstance().Register<OnPlayerDeathEvent>(this);
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 
     private void OnDisable()
@@ -24,8 +19,8 @@ public class GameOverHandler : MonoBehaviour, ISubscriber<OnPlayerDeathEvent>
 
     public void OnEventHandler(OnPlayerDeathEvent eventData)
     {
-        NumberOfPlayer++;
-        if (NumberOfPlayer == Settings.NumOfPlayers)
+        --PlayersAlive;
+        if (PlayersAlive <= 0)
         {
             LoadGameOverScene();
         }

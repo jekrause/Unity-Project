@@ -262,22 +262,24 @@ public abstract class Player : MonoBehaviour, ISubscriber<OnLevelUpEvent>
                 }
 
             }
-            else   //not holding down run button
+
+            if (Input.GetButtonUp("Keyboard_Q")) //player let go of button
             {
                 if (isRunning)
                 {
                     isRunning = false;
                     fMoveRate = fMoveRate / 2f;
                 }
-
-                Vector3 position = Input.mousePosition;
-                position = myCamera.ScreenToWorldPoint(position);
-                position.x = position.x - transform.position.x;
-                position.y = position.y - transform.position.y;
-                angle = Mathf.Atan2(position.y, position.x) * Mathf.Rad2Deg;
-                eulerRot = Quaternion.Euler(0.0f, 0.0f, angle);
-                transform.rotation = Quaternion.Slerp(transform.rotation, eulerRot, Time.deltaTime * 120);
             }
+
+            Vector3 position = Input.mousePosition;
+            position = myCamera.ScreenToWorldPoint(position);
+            position.x = position.x - transform.position.x;
+            position.y = position.y - transform.position.y;
+            angle = Mathf.Atan2(position.y, position.x) * Mathf.Rad2Deg;
+            eulerRot = Quaternion.Euler(0.0f, 0.0f, angle);
+            transform.rotation = Quaternion.Slerp(transform.rotation, eulerRot, Time.deltaTime * 120);
+
         }
         else //use controller inputs 
         {
@@ -318,7 +320,7 @@ public abstract class Player : MonoBehaviour, ISubscriber<OnLevelUpEvent>
                 float LeftHorizontal = Input.GetAxisRaw(myControllerInput.LeftHorizontalAxis);
                 float LeftVertical = Input.GetAxisRaw(myControllerInput.LeftVerticalAxis);
                 float LeftTrigger = Input.GetAxisRaw(myControllerInput.LTrigger);
-
+               
 
                 float deadzone = 0.15f;
                 Vector2 stickInput = new Vector2(horizontal, vertical);
@@ -480,7 +482,6 @@ public abstract class Player : MonoBehaviour, ISubscriber<OnLevelUpEvent>
     protected void Death()
     {
         PlayerState = PlayerState.KILLED;
-        EventAggregator.GetInstance().Publish(new OnPlayerDeathEvent(playerNumber));
         GameObject prefab = Resources.Load("Prefabs/Bag") as GameObject;
         GameObject bagObj = Instantiate(prefab, transform.position, transform.rotation); // create the player loot bag
 
@@ -500,18 +501,8 @@ public abstract class Player : MonoBehaviour, ISubscriber<OnLevelUpEvent>
         GetComponent<InventoryHandler>().ClearInventoryHUD();
         MyHUD.gameObject.SetActive(false);
         bagObj.gameObject.SetActive(true);
-        GameObject temp = GameObject.Find("CharacterList");
-        GameObject cameraControl = GameObject.Find("Camera" + playerNumber);
-        for (int i = 0; i < Settings.NumOfPlayers; i++)
-        {
-            if (temp?.gameObject?.transform?.GetChild(i)?.GetComponent<Player>()?.Stats.Health > 0)
-            {
-                cameraControl?.GetComponent<CameraControl>()?.AssignCameraToPlayer(temp.gameObject.transform.GetChild(i).gameObject);
-                break;
-            }
-        }
+        EventAggregator.GetInstance().Publish(new OnPlayerDeathEvent(playerNumber));
         gameObject.SetActive(false);
-        
     }
 
     protected void GetAttackInput()
@@ -594,6 +585,7 @@ public abstract class Player : MonoBehaviour, ISubscriber<OnLevelUpEvent>
                 player.reviveBarHandler.OnReviveHandler(player.DownStateTimer, ReviveTimer);
                 //Debug.Log(player.name + " is being revived\nTimer_To_Revive: " + ReviveTimer + "\nDown_Timer: " + player.DownStateTimer);
                 player.IsBeingRevived = true;
+                myCamera.orthographicSize = 4;
             }
             else
             {

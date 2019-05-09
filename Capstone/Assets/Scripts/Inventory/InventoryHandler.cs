@@ -501,7 +501,6 @@ public class InventoryHandler : MonoBehaviour, ISubscriber<OnMainInvChangedEvent
 
                     // disable game object
                     itemOnGround.gameObject.SetActive(false);
-                    ObjectsPickedUp.Add(itemOnGround.gameObject);
                     ItemFocused = false;
                     player.InteractionPanel.RemoveInteractionPanel();
                 }
@@ -556,7 +555,6 @@ public class InventoryHandler : MonoBehaviour, ISubscriber<OnMainInvChangedEvent
                 if (MainInventory.UseItem(GetComponent<Player>(), MainSlotIndex) == true)
                 {
                     InventoryHUD.OnItemRemove(MainInventory.GetQuantityInSlot(MainSlotIndex));
-                    ObjectsPickedUp.Remove(itemToUse.gameObject);
                     if (MainInventory.GetItemInSlot(MainSlotIndex) == null)
                         Destroy(itemToUse.gameObject);
                 }
@@ -682,9 +680,6 @@ public class InventoryHandler : MonoBehaviour, ISubscriber<OnMainInvChangedEvent
                         }
                     }
                     InventoryHUD.OnItemRemove(MainInventory.GetQuantityInSlot(MainSlotIndex));
-                    ObjectsPickedUp.RemoveAt(itemIndex);
-                    itemOnGround = itemToRemove;
-                    ItemFocused = true;
                 }
             }
             else
@@ -713,9 +708,6 @@ public class InventoryHandler : MonoBehaviour, ISubscriber<OnMainInvChangedEvent
                         }
                     }
                     InventoryHUD.OnItemRemove(WeaponInventory.GetQuantityInSlot(WeaponSlotIndex));
-                    ObjectsPickedUp.RemoveAt(itemIndex);
-                    itemOnGround = itemToRemove;
-                    ItemFocused = true;
                 }
 
             }

@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System;
 public class Slot 
 {
         private Item CurrentItem;
@@ -93,6 +94,7 @@ public class Slot
             CurrentItem = item;
             IncrementQuantity();
             ret = true;
+            InventoryHandler.ObjectsPickedUp.Add(CurrentItem.gameObject);
         }
         else
         {
@@ -100,9 +102,10 @@ public class Slot
             {
                 IncrementQuantity();
                 ret = true;
+                InventoryHandler.ObjectsPickedUp.Add(CurrentItem.gameObject);
             }
         }
-
+        
         return ret;
     }
 
@@ -121,6 +124,15 @@ public class Slot
             {
                 EventAggregator.GetInstance().Publish<OnQuestItemDroppedEvent>(new OnQuestItemDroppedEvent((QuestItem)CurrentItem));
             }
+            try
+            {
+                InventoryHandler.ObjectsPickedUp.Remove(CurrentItem.gameObject);
+            }
+            catch (Exception e)
+            {
+                Debug.Log("Slot Remove Item(): Item game object is null. Exception Msg: " + e.Message);
+            }
+            
             DecrementQuantity();
 
             if (CurrentQuantity <= 0)
