@@ -5,23 +5,26 @@ using UnityEngine;
 public class LoadMenuController : MonoBehaviour
 {
     public GameObject parentPlayer;
-    public int player;
+    private int player;
     public int currentPage;
 
     // Start is called before the first frame update
     void Start()
     {
+        //PlayerPrefs.DeleteAll();
         player = parentPlayer.GetComponent<PlayerMenuScript>().playerNum;
-        LoadProfileList.LoadData();
+        LoadProfileList.totalNames = LoadProfileList.LoadData();    //loads data and set totalNames to the total amount of names
         LoadProfileList.MakePages();
         LoadProfileList.printNamePages();
+        Debug.Log("LoadProfileList.totalNames = " + LoadProfileList.totalNames);
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnEnable()
     {
-        
+        Start();
     }
+
+
 
     public void gotoNextPage()
     {
@@ -36,6 +39,7 @@ public class LoadMenuController : MonoBehaviour
         {
             currentPage = 0;
             Debug.Log("Page is null");
+            AudioManager.Play("Wait");
         }
     }
 
@@ -54,6 +58,7 @@ public class LoadMenuController : MonoBehaviour
                 }
             }
             Debug.Log("Page is null");
+            AudioManager.Play("Wait");
             currentPage = 0;
         }
         else

@@ -88,6 +88,28 @@ public class PlayerMenuScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        if (MenuScript.DeleteMenuIsActive)
+        {
+            joinScreen.SetActive(false);
+            SelectCharText.SetActive(false);
+            playerNumText.SetActive(false);
+            createNameMenu.SetActive(false);
+            chooseClassMenu.SetActive(false);
+            playerReadyScreen.SetActive(false);
+            newGameOrLoadMenu.SetActive(false);
+            StartText.SetActive(false);
+
+            selectNameMenu.SetActive(true);
+
+            currentMenu = selectNameMenu;
+            previousMenu = joinScreen;
+
+            nextButtons = currentMenu.GetComponent<PlayerMenuInitialButtonScript>().initialButton.GetComponentInChildren<MenuPlayerButtonScript>().nextButtons;
+            currentButton = 0;
+            return;
+        }
+
+
         //deactivate all menus besides titlescreen
         UnAssignAllInfo();
         playerInputIndex = 1;
@@ -95,6 +117,7 @@ public class PlayerMenuScript : MonoBehaviour
         GetComponent<Image>().enabled = false;
         StartText.SetActive(false);
         SelectCharText.SetActive(true);
+        
 
         if (playerNum == 1)
         {
@@ -332,7 +355,7 @@ public class PlayerMenuScript : MonoBehaviour
         nextButtons = pMenu.GetComponent<PlayerMenuInitialButtonScript>().initialButton.GetComponentInChildren<MenuPlayerButtonScript>().nextButtons;
     }
 
-    private void GotoPreviousMenu()
+    public void GotoPreviousMenu()
     {
         if (previousMenu == createNameMenu)
         {
@@ -673,7 +696,7 @@ public class PlayerMenuScript : MonoBehaviour
             //transform.GetChild(index).GetComponentInChildren<TextMesh>().text = "P" + (index + 1) + " (XBOX input)";
         }
 
-
+        /*
         Debug.Log("menuControl[0] = " + MenuInputSelector.menuControl[0] +
         "\nmenuControl[1] = " + MenuInputSelector.menuControl[1] +
         "\nmenuControl[2] = " + MenuInputSelector.menuControl[2] +
@@ -683,6 +706,7 @@ public class PlayerMenuScript : MonoBehaviour
        "\ninputAssigned[2] = " + Settings.inputAssigned[2] +
         "\ninputAssigned[3] = " + Settings.inputAssigned[3] +
         "\ninputAssigned[4] = " + Settings.inputAssigned[4]);
+        */
 
     }
 

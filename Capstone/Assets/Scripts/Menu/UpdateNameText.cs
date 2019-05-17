@@ -29,6 +29,7 @@ public class UpdateNameText : MonoBehaviour
         if(sampleText.text.Length < 12)
         {
             sampleText.text = sampleText.text + letter;
+            AudioManager.Play("Select");
         }
     }
 
@@ -36,6 +37,7 @@ public class UpdateNameText : MonoBehaviour
     {
         if (sampleText.text.Length > 0) {
             sampleText.text = sampleText.text.Remove(sampleText.text.Length - 1);
+            AudioManager.Play("Wait");
         }
 
     }
@@ -46,6 +48,7 @@ public class UpdateNameText : MonoBehaviour
         if (sampleText.text == "")
         {
             Debug.Log("Name cannot be blank");
+            AudioManager.Play("Wait");
             return false;
         }
 
@@ -54,6 +57,7 @@ public class UpdateNameText : MonoBehaviour
         if (LoadProfileList.checkForName(sampleText.text) == true)
         {
             Debug.Log("Name is not Valid");
+            AudioManager.Play("Wait");
             return false;
         }
         else

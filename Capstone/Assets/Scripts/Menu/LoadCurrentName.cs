@@ -21,9 +21,17 @@ public class LoadCurrentName : MonoBehaviour
     void Update()
     {
 
-        string dummName = text.text;
+        //string dummName = text.text;
 
-        text.text = selectScreen.GetComponent<LoadMenuController>().getCurrentPage()[index];
+        if (selectScreen.GetComponent<LoadMenuController>().getCurrentPage() != null)
+        {
+            text.text = selectScreen.GetComponent<LoadMenuController>().getCurrentPage()[index];
+        }
+        else
+        {
+            text.text = "";
+            Debug.Log("LoadCurrentName PAGE IS NULL!!! so setting text to blank");
+        }
 
     }
 

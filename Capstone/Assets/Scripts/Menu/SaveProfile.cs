@@ -10,11 +10,21 @@ public class SaveProfile : MonoBehaviour
 
     static public void saveProfile(string s)
     {
-        int totalNames = LoadProfileList.getTotalNames();
+        int totalNames = LoadProfileList.LoadData(); //.getTotalNames();
         PlayerPrefs.SetString("name"+totalNames,s);
+        PlayerPrefs.SetInt("AssaultLv" + totalNames, 1);  //set to level 1 for now
+        PlayerPrefs.SetInt("HeavyLv" + totalNames, 1);  //set to level 1 for now
+        PlayerPrefs.SetInt("ShotgunLv" + totalNames, 1);  //set to level 1 for now
+        PlayerPrefs.SetInt("SniperLv" + totalNames, 1);  //set to level 1 for now
         PlayerPrefs.Save();
-        Debug.Log("created: name"+totalNames);
-        PlayerPrefs.SetInt("TotalProfiles", totalNames + 1);
+        //Debug.Log("created: name"+totalNames);
+        Debug.Log("Created: name" + totalNames +
+                    "\nName" + totalNames + " = " + s +
+                    "\nAssault" + totalNames + "Lv = " + 1 +
+                    "\nHeavy" + totalNames + "Lv = " + 1 +
+                    "\nShotgun" + totalNames + "Lv = " + 1 +
+                    "\nSniper" + totalNames + "Lv = " + 1);
+        //PlayerPrefs.SetInt("TotalProfiles", totalNames + 1);
         //PlayerPrefs.DeleteAll();
     }
 
@@ -36,10 +46,11 @@ public class SaveProfile : MonoBehaviour
     }
     */
 
+    /*
     public void loadProfiles()
     {
 
     }
-
+    */
 
 }

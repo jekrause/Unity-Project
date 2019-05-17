@@ -16,12 +16,18 @@ public class LoadProfileList : MonoBehaviour
     public static string[] page9;
     public static string[] page10;
     public static string[] nameList = new string[100];
-    private static int totalNames;
+    public static int[] AssaultLvList = new int[100];
+    public static int[] HeavyLvList = new int[100];
+    public static int[] ShotgunLvList = new int[100];
+    public static int[] SniperLvList = new int[100];
+    public static int totalNames;
 
+    /*
     private void Start()
     {
 
     }
+    */
 
     public static int LoadData()
     {
@@ -29,11 +35,19 @@ public class LoadProfileList : MonoBehaviour
         int count = 0;
         string currentName = "";
         string savedName = "";
+        int currentAssaultLv = 1;
+        int currentHeavyLv = 1;
+        int currentShotgunLv = 1;
+        int currentSniperLv = 1;
 
         while (loadedAll == false)
         {
             savedName = "name" + count.ToString();
             currentName = PlayerPrefs.GetString(savedName);
+            currentAssaultLv = PlayerPrefs.GetInt("AssaultLv"+count.ToString());
+            currentHeavyLv = PlayerPrefs.GetInt("HeavyLv" + count.ToString());
+            currentShotgunLv = PlayerPrefs.GetInt("ShotgunLv" + count.ToString());
+            currentSniperLv = PlayerPrefs.GetInt("SniperLv" + count.ToString());
             Debug.Log("savedName = "+savedName);
             Debug.Log("currentName = " + currentName);
 
@@ -48,6 +62,10 @@ public class LoadProfileList : MonoBehaviour
             {
                 Debug.Log(currentName + " has been loaded");
                 nameList[count] = currentName;
+                AssaultLvList[count] = currentAssaultLv;
+                HeavyLvList[count] = currentHeavyLv;
+                ShotgunLvList[count] = currentShotgunLv;
+                SniperLvList[count] = currentSniperLv;
                 count = count + 1;
             }
         }
@@ -62,7 +80,7 @@ public class LoadProfileList : MonoBehaviour
         LoadData();
         
         Debug.Log("name = " + name);
-        int numOfNames = getTotalNames();
+        int numOfNames = LoadData();  //getTotalNames();
         Debug.Log("numOfNames = " + numOfNames);
 
         if (numOfNames == -1)
@@ -88,12 +106,106 @@ public class LoadProfileList : MonoBehaviour
         return false;
     }
 
+    public static bool RemoveName(string name)
+    {
+        int oldTotalNames = LoadData();
+
+        string[] oldNameList = nameList;
+        int[] oldAssaultLvList = AssaultLvList;
+        int[] oldHeavyLvList = HeavyLvList;
+        int[] oldShotgunLvList = ShotgunLvList;
+        int[] oldSniperLvList = SniperLvList;
+
+        int index = 0;  //keeps track of new list index
+
+        RemoveAllData();
+
+
+
+        for (int i = 0; i < oldTotalNames; i += 1)
+        {
+
+            if (!name.Equals(oldNameList[i]))
+            {
+                //nameList[index] = oldNameList[i];
+                //AssaultLvList[index] = oldAssaultLvList[i];
+                //HeavyLvList[index] = oldHeavyLvList[i];
+                //ShotgunLvList[index] = oldShotgunLvList[i];
+                //SniperLvList[index] = oldSniperLvList[i];
+                SaveProfile(oldNameList[i], index, oldAssaultLvList[i], oldHeavyLvList[i], oldShotgunLvList[i], oldSniperLvList[i]);
+                Debug.Log("added " + oldNameList[i] + " to new name list");
+                index = index + 1;
+            }
+            else
+            {
+                Debug.Log("removed " + name + " from name list");
+            }
+
+
+        }
+
+        //totalNames = totalNames - 1;
+
+        Debug.Log("oldTotalNames = " + oldTotalNames);
+        Debug.Log("newTotalNames = " + LoadData());
+
+        Debug.Log("List after removing name: " + ArrayToString(nameList, oldTotalNames-1));
+        Debug.Log("List before removing name: " + ArrayToString(oldNameList, oldTotalNames));
+
+
+        return false;
+    }
+
+    public static void RemoveAllData()
+    {
+        PlayerPrefs.DeleteAll();
+        nameList = new string[100];
+        AssaultLvList = new int[100];
+        HeavyLvList = new int[100];
+        ShotgunLvList = new int[100];
+        SniperLvList = new int[100];
+        page1 = null;
+        page2 = null;
+        page3 = null;
+        page4 = null;
+        page6 = null;
+        page7 = null;
+        page8 = null;
+        page9 = null;
+        page10 = null;
+    }
+
+
+    static public void SaveProfile(string s, int nameIndex, int assaultLv, int heavyLv, int shotgunLv, int sniperLv)
+    {
+        //int totalNames = LoadProfileList.LoadData(); //.getTotalNames();
+
+        PlayerPrefs.SetString("name" + nameIndex, s);
+        PlayerPrefs.SetInt("AssaultLv"+ nameIndex, assaultLv);
+        PlayerPrefs.SetInt("HeavyLv" + nameIndex, heavyLv);
+        PlayerPrefs.SetInt("ShotgunLv" + nameIndex, shotgunLv);
+        PlayerPrefs.SetInt("SniperLv" + nameIndex, sniperLv);
+
+        PlayerPrefs.Save();
+        Debug.Log("Saved: name" + nameIndex +
+                    "\nName"+nameIndex+" = " + s +
+                    "\nAssault" +nameIndex+"Lv = "+assaultLv+
+                    "\nHeavy" + nameIndex + "Lv = " + assaultLv +
+                    "\nShotgun" + nameIndex + "Lv = " + assaultLv +
+                    "\nSniper" + nameIndex + "Lv = " + assaultLv);
+        //PlayerPrefs.SetInt("TotalProfiles", totalNames + 1);
+        //PlayerPrefs.DeleteAll();
+    }
+
+    /*
     public static int getTotalNames()
     {
         totalNames = PlayerPrefs.GetInt("TotalProfiles");
 
         return totalNames;
     }
+    */
+
 
 
 
@@ -102,7 +214,7 @@ public class LoadProfileList : MonoBehaviour
         int currentPage = 0;
         int index = 0;
         bool newPage = true;
-        int numOfNames = getTotalNames();
+        int numOfNames = LoadData(); //getTotalNames();
 
         for (int i = 0; i < numOfNames; i += 1)
         {

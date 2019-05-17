@@ -13,6 +13,8 @@ public class MenuScript : MonoBehaviour
     public static Vector2Int menuSelect;
     public MyControllerInput myControllerInput;
 
+    public static bool DeleteMenuIsActive = false;
+
     private Player Player1;// = MenuInputSelector.playerLists[0];
 
     private int totalMenuItemsX;
@@ -30,6 +32,7 @@ public class MenuScript : MonoBehaviour
 
     private void Awake()
     {
+
         UnAssignAllInputs();    //always reset all inputs when first loading titlescreen
         //deactivate all menus besides titlescreen
         titlescreen.SetActive(true);
@@ -623,6 +626,8 @@ public class MenuScript : MonoBehaviour
         totalMenuItemsX = 1;
         totalMenuItemsY = 1;
         backButtonReleased = true;
+        DeleteMenuIsActive = false;
+        //DeleteMenuIsActive = false;
         //MenuInputSelector.menuControl[0] = null;    //set player 1 to null
         UnAssignAllInputs();    //unassign all inputs to restart input selection
 
@@ -650,7 +655,8 @@ public class MenuScript : MonoBehaviour
         currentMenu.SetActive(false);
         currentMenu = mainmenu;
         totalMenuItemsX = 1;
-        totalMenuItemsY = 3;
+        totalMenuItemsY = 4;
+        DeleteMenuIsActive = false;
     }
 
 
@@ -678,6 +684,12 @@ public class MenuScript : MonoBehaviour
         currentMenu = optionsmenu;
         totalMenuItemsX = 1;
         totalMenuItemsY = 3;
+    }
+
+    public void GotoDataMenu()
+    {
+        DeleteMenuIsActive = true;
+        GotoCharacterSelectMenu();
     }
 
     public void GotoLevel(int howManyPlayers)

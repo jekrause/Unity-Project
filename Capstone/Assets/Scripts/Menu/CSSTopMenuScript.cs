@@ -10,12 +10,44 @@ public class CSSTopMenuScript : MonoBehaviour
     public GameObject player2Menu;
     public GameObject player3Menu;
     public GameObject player4Menu;
+    public GameObject removeMenu;
+    public GameObject SelectProfileText;
+    public GameObject RemoveProfileText;
 
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        if (MenuScript.DeleteMenuIsActive == true)
+        {
+            player1Menu.SetActive(false);
+            player2Menu.SetActive(false);
+            player3Menu.SetActive(false);
+            player4Menu.SetActive(false);
+            SelectProfileText.SetActive(false);
+
+            removeMenu.SetActive(true);
+            RemoveProfileText.SetActive(true);
+            Debug.Log("selectprofile = " + SelectProfileText.activeSelf);
+        }
+        else
+        {
+            removeMenu.SetActive(false);
+            RemoveProfileText.SetActive(false);
+
+            player1Menu.SetActive(true);
+            player2Menu.SetActive(true);
+            player3Menu.SetActive(true);
+            player4Menu.SetActive(true);
+            SelectProfileText.SetActive(true);
+        }
+
+
+    }
+
+    private void OnEnable()
+    {
+        Start();
     }
 
     // Update is called once per frame
