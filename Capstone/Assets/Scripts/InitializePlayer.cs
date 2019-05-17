@@ -6,7 +6,7 @@ public class InitializePlayer : MonoBehaviour
 {
     //public GameObject playerPrefab;
     public GameObject playerCrossHair;
-
+    private int playerLevel = 1;
 
     // Start is called before the first frame update
     void Start()
@@ -39,21 +39,25 @@ public class InitializePlayer : MonoBehaviour
         {
             gameObject.AddComponent<PlayerFast>();
             gameObject.GetComponent<Player>().shootPosition = transform.GetChild(1).transform;  //may have to change this per class
+            playerLevel = LoadProfileList.GetAssaultLevel(MenuInputSelector.PlayerNames[playerIndex]);
         }
         else if (MenuInputSelector.PlayerClasses[playerIndex] == 1)   //if player1 is Heavy class
         {
             gameObject.AddComponent<PlayerHeavy>();
             gameObject.GetComponent<Player>().shootPosition = transform.GetChild(1).transform;  //may have to change this per class
+            playerLevel = LoadProfileList.GetHeavyLevel(MenuInputSelector.PlayerNames[playerIndex]);
         }
         else if (MenuInputSelector.PlayerClasses[playerIndex] == 2)   //if player1 is Shotgun class
         {
             gameObject.AddComponent<PlayerShotgun>();
             gameObject.GetComponent<Player>().shootPosition = transform.GetChild(1).transform;  //may have to change this per class
+            playerLevel = LoadProfileList.GetShotgunLevel(MenuInputSelector.PlayerNames[playerIndex]);
         }
         else if (MenuInputSelector.PlayerClasses[playerIndex] == 3)   //if player1 is Sniper class
         {
             gameObject.AddComponent<PlayerSniper>();
             gameObject.GetComponent<Player>().shootPosition = transform.GetChild(1).transform;  //may have to change this per class
+            playerLevel = LoadProfileList.GetSniperLevel(MenuInputSelector.PlayerNames[playerIndex]);
         }
 
 
@@ -62,6 +66,8 @@ public class InitializePlayer : MonoBehaviour
         //gameObject.GetComponentInChildren<TextMesh>().text = "P" + (1) + " (Keyboard input)";
         gameObject.GetComponentInChildren<TextMesh>().text = MenuInputSelector.PlayerNames[playerIndex];  //get player1 name
         gameObject.GetComponent<Player>().myControllerInput = MenuInputSelector.menuControl[playerIndex];   // set player input
+
+
 
         if (playerIndex == 0)
         {
@@ -119,6 +125,11 @@ public class InitializePlayer : MonoBehaviour
                 playerCrossHair.SetActive(true);
             }
         }
+    }
+
+    public int GetLevel()
+    {
+        return playerLevel;
     }
 
 

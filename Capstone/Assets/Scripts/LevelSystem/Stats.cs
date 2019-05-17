@@ -39,8 +39,9 @@ public class Stats : MonoBehaviour, ISubscriber<OnEnemyKilledEvent>
     {
         playerNum = GetComponent<Player>().playerNumber;
         LevelText = GetComponent<Player>().MyHUD.transform.Find("LevelText").GetComponent<Text>();
-        CalculateNextLevel();
-        InitializeStats(); // used for testing higher level
+        SetLevel(GetComponent<InitializePlayer>().GetLevel());
+        //CalculateNextLevel();
+        //InitializeStats(); // used for testing higher level
     }
 
     /// <summary>
@@ -61,6 +62,8 @@ public class Stats : MonoBehaviour, ISubscriber<OnEnemyKilledEvent>
     /// <param name="newLevel"></param>
     public void SetLevel(int newLevel)
     {
+        Debug.Log("NewLevel is " + newLevel);
+
         if (newLevel <= 0 || newLevel >= MAX_LEVEL) throw new System.ArgumentException("Invalid level");
         Debug.Log("WARNING: You've changed the player's level in code. Level was: " + Level + ", Level is now: " + newLevel);
         Level = newLevel;

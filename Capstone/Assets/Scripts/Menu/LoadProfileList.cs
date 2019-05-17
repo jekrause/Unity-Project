@@ -106,6 +106,37 @@ public class LoadProfileList : MonoBehaviour
         return false;
     }
 
+    public static int GetNameIndex(string name)
+    {
+        LoadData();
+
+        Debug.Log("name = " + name);
+        int numOfNames = LoadData();  //getTotalNames();
+        Debug.Log("numOfNames = " + numOfNames);
+
+        if (numOfNames == -1)
+        {
+            Debug.Log("There are no profiles saved!");
+            return -1;
+        }
+
+        for (int i = 0; i < numOfNames; i += 1)
+        {
+            if (nameList[i] == null)
+            {
+                Debug.Log("Name doesn't exist! returning -1");
+                return -1;
+            }
+            if (nameList[i].Equals(name))
+            {
+                Debug.Log("Name exists at index "+i);
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
     public static bool RemoveName(string name)
     {
         int oldTotalNames = LoadData();
@@ -176,25 +207,106 @@ public class LoadProfileList : MonoBehaviour
     }
 
 
+    //If a level of a class is anything less than 1, it will be ignored
     static public void SaveProfile(string s, int nameIndex, int assaultLv, int heavyLv, int shotgunLv, int sniperLv)
     {
         //int totalNames = LoadProfileList.LoadData(); //.getTotalNames();
 
         PlayerPrefs.SetString("name" + nameIndex, s);
-        PlayerPrefs.SetInt("AssaultLv"+ nameIndex, assaultLv);
-        PlayerPrefs.SetInt("HeavyLv" + nameIndex, heavyLv);
-        PlayerPrefs.SetInt("ShotgunLv" + nameIndex, shotgunLv);
-        PlayerPrefs.SetInt("SniperLv" + nameIndex, sniperLv);
+        if (assaultLv >= 1)
+        {
+            PlayerPrefs.SetInt("AssaultLv" + nameIndex, assaultLv);
+        }
+        if (heavyLv >= 1)
+        {
+            PlayerPrefs.SetInt("HeavyLv" + nameIndex, heavyLv);
+        }
+        if (shotgunLv >= 1)
+        {
+            PlayerPrefs.SetInt("ShotgunLv" + nameIndex, shotgunLv);
+        }
+        if (sniperLv >= 1)
+        {
+            PlayerPrefs.SetInt("SniperLv" + nameIndex, sniperLv);
+        }
 
         PlayerPrefs.Save();
         Debug.Log("Saved: name" + nameIndex +
                     "\nName"+nameIndex+" = " + s +
                     "\nAssault" +nameIndex+"Lv = "+assaultLv+
-                    "\nHeavy" + nameIndex + "Lv = " + assaultLv +
-                    "\nShotgun" + nameIndex + "Lv = " + assaultLv +
-                    "\nSniper" + nameIndex + "Lv = " + assaultLv);
-        //PlayerPrefs.SetInt("TotalProfiles", totalNames + 1);
-        //PlayerPrefs.DeleteAll();
+                    "\nHeavy" + nameIndex + "Lv = " + heavyLv +
+                    "\nShotgun" + nameIndex + "Lv = " + shotgunLv +
+                    "\nSniper" + nameIndex + "Lv = " + sniperLv);
+    }
+
+
+    //only can be called when playing a level
+    public static void SavePlayerProgress()
+    {
+
+        GameObject player = null;
+        string playerName = null;
+        int playerLv = 0;
+        int playerClass = 0;
+        int nameIndex = 0;
+
+        for (int i = 0; i < Settings.NumOfPlayers; i += 1)
+        {
+
+
+            player = GameObject.Find("Player" + (i + 1));
+            playerName = MenuInputSelector.PlayerNames[i];
+            playerLv = player.GetComponent<Stats>().Level;
+            playerClass = MenuInputSelector.PlayerClasses[i];
+            nameIndex = GetNameIndex(playerName);
+
+            if (playerClass == 0)
+            {
+                SaveProfile(playerName, nameIndex, playerLv, 0, 0, 0);
+            }
+            else if (playerClass == 1)
+            {
+                SaveProfile(playerName, nameIndex, 0, playerLv, 0, 0);
+            }
+            else if (playerClass == 2)
+            {
+                SaveProfile(playerName, nameIndex, 0, 0, playerLv, 0);
+            }
+            else if (playerClass == 3)
+            {
+                SaveProfile(playerName, nameIndex, 0, 0, 0, playerLv);
+            }
+        }
+
+    }
+
+    public static int GetAssaultLevel(string name)
+    {
+        int level = 0;
+        int nameIndex = GetNameIndex(name);
+        level = PlayerPrefs.GetInt("AssaultLv"+nameIndex);
+        return level;
+    }
+    public static int GetHeavyLevel(string name)
+    {
+        int level = 0;
+        int nameIndex = GetNameIndex(name);
+        level = PlayerPrefs.GetInt("HeavyLv" + nameIndex);
+        return level;
+    }
+    public static int GetShotgunLevel(string name)
+    {
+        int level = 0;
+        int nameIndex = GetNameIndex(name);
+        level = PlayerPrefs.GetInt("ShotgunLv" + nameIndex);
+        return level;
+    }
+    public static int GetSniperLevel(string name)
+    {
+        int level = 0;
+        int nameIndex = GetNameIndex(name);
+        level = PlayerPrefs.GetInt("SniperLv" + nameIndex);
+        return level;
     }
 
     /*

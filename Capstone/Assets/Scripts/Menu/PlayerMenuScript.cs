@@ -474,6 +474,10 @@ public class PlayerMenuScript : MonoBehaviour
         else
         {
             MenuInputSelector.PlayerNames[playerNum - 1] = playerName;  //set name chosen to global PlayerName variable
+            MenuInputSelector.PlayerAssaultLevels[playerNum - 1] = LoadProfileList.GetAssaultLevel(playerName);
+            MenuInputSelector.PlayerHeavyLevels[playerNum - 1] = LoadProfileList.GetHeavyLevel(playerName);
+            MenuInputSelector.PlayerShotgunLevels[playerNum - 1] = LoadProfileList.GetShotgunLevel(playerName);
+            MenuInputSelector.PlayerSniperLevels[playerNum - 1] = LoadProfileList.GetSniperLevel(playerName);
             previousMenu = selectNameMenu;
             GotoMenuHelper(chooseClassMenu);
             loadedName = true;

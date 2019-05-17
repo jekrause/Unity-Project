@@ -70,6 +70,7 @@ public class Shotgun : RangedWeapon
                 b.SetDamage(projDamage);
                 b.SetDistance(20f);
                 b.GetComponent<Rigidbody2D>().AddForce(b.transform.right * projSpeed);
+                b.setShooter(player.gameObject);
             }
             AmmoClip.Decrement();
             EventAggregator.GetInstance().Publish<OnWeaponAmmoChangedEvent>(new OnWeaponAmmoChangedEvent(player.playerNumber, AmmoClip.GetCurrentAmmo()));

@@ -42,7 +42,19 @@ public class Bullet : MonoBehaviour
             col.gameObject.SendMessage("Damaged", tempStorage);
             if (shooter != null && shooter.GetComponents<Player>() != null)
                 EventAggregator.GetInstance().Publish(new OnBulletCollisionEvent(shooter.GetComponent<Player>().playerNumber, col.gameObject.tag));
-            Instantiate(bulletPuff, gameObject.transform.position, gameObject.transform.rotation);
+            var x = Instantiate(bulletPuff, gameObject.transform.position, gameObject.transform.rotation);
+
+            if (x.GetComponent<ExplosionDamage>() != null)  //checking if puff is rocketExplosion
+            {
+                if (shooter != null && shooter.GetComponents<Player>() != null)
+                {
+                    Debug.Log(x+" is an explosion");
+                    x.GetComponent<ExplosionDamage>().setShooter(shooter);
+                    Debug.Log("explosion damage shoud be set to = " + damage);
+                    x.GetComponent<ExplosionDamage>().SetDamage(damage);
+                }
+            }
+
             Destroy(gameObject);
             AudioManager.Play("BulletHit");
         }

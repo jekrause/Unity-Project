@@ -102,6 +102,9 @@ public class Helicopter : MonoBehaviour, ISubscriber<OnQuestItemPickUpEvent>, IS
 
     private void LoadNextScene()
     {
+
+        LoadProfileList.SavePlayerProgress();
+
         StartCoroutine(LoadNextSceneAsync());
     }
 
