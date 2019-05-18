@@ -17,15 +17,24 @@ public class InitializePlayer : MonoBehaviour
         }
         else if(gameObject.name == "Player2")
         {
-            setPlayerInfo(1);
+            if(Settings.NumOfPlayers >= 2)
+            {
+                setPlayerInfo(1);
+            }
         }
         else if (gameObject.name == "Player3")
         {
-            setPlayerInfo(2);
+            if (Settings.NumOfPlayers >= 3)
+            {
+                setPlayerInfo(2);
+            }
         }
         else if (gameObject.name == "Player4")
         {
-            setPlayerInfo(3);
+            if (Settings.NumOfPlayers == 4)
+            {
+                setPlayerInfo(3);
+            }
         }
     }
 
@@ -98,16 +107,16 @@ public class InitializePlayer : MonoBehaviour
         switch (playerClassIndex)
         {
             case 0:
-                gameObject.GetComponent<Player>().myCamera.orthographicSize = 14;
+                gameObject.GetComponent<Player>().myCamera.orthographicSize = 16;//14;
                 break;
             case 1:
-                gameObject.GetComponent<Player>().myCamera.orthographicSize = 16;
+                gameObject.GetComponent<Player>().myCamera.orthographicSize = 18;//16;
                 break;
             case 2:
-                gameObject.GetComponent<Player>().myCamera.orthographicSize = 10;
+                gameObject.GetComponent<Player>().myCamera.orthographicSize = 14;//10;
                 break;
             case 3:
-                gameObject.GetComponent<Player>().myCamera.orthographicSize = 20;
+                gameObject.GetComponent<Player>().myCamera.orthographicSize = 22;//20;
                 break;
         }
     }

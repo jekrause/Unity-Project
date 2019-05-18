@@ -51,6 +51,10 @@ public class ExplosionDamage : MonoBehaviour
     public void SetDamage(float pDmg)
     {
         damage = (pDmg/10f);  //set it to 1/10th damage for balance, it damages every frame
+        if(damage < 1)
+        {
+            damage = 1f;    //should always do at least one damage
+        }
     }
 
     public void setShooter(GameObject pShooter)

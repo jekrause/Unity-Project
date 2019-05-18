@@ -5,7 +5,7 @@ public class RocketLauncher : RangedWeapon
 
     public readonly float DEFAULT_ATTACK_RATE = 2f;
     public readonly float DEFAULT_RELOAD_TIME = 5;
-    public readonly float DEFAULT_PROJ_DAMAGE = 1f; //should start pretty weak, the explosion damage does 1/10th this damage every frame
+    public readonly float DEFAULT_PROJ_DAMAGE = 10f; //should start pretty weak, the explosion damage does 1/10th this damage every frame
     private const int DEFAULT_MAX_CLIP_SIZE = 50;
     private const int AMMO_USED_PER_BULLET = 25;
     private int MaxAmmoClip = DEFAULT_MAX_CLIP_SIZE; // mutated value as level increases
