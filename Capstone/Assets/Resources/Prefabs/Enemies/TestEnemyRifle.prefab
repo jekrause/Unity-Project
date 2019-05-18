@@ -140,6 +140,7 @@ MonoBehaviour:
   - {x: 0, y: 0}
   shootPosition: {fileID: 5197658978753900395}
   bullet: {fileID: 2338026660133703715, guid: 92cfefeb70e1bc940babcdb62c9c91b6, type: 3}
+  FireSound: AssaultFire
   fAttackTime: 3
   attackDistance: 50
   fDamage: 10
@@ -501,7 +502,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1376148759
-  m_SortingLayer: 8
+  m_SortingLayer: 12
   m_SortingOrder: 0
   m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}

@@ -28,6 +28,7 @@ public class Shotgun : RangedWeapon
         attackRate = DEFAULT_ATTACK_RATE;
         ReloadSound = "Shotgun_Reload";
         ReloadFinishSound = "Shotgun_Reload_Finished";
+        FireSound = "ShotgunFire";
     }
 
     public override void UpdateWeaponStats(Stats playerStats)
@@ -71,6 +72,7 @@ public class Shotgun : RangedWeapon
                 b.SetDistance(20f);
                 b.GetComponent<Rigidbody2D>().AddForce(b.transform.right * projSpeed);
                 b.setShooter(player.gameObject);
+                b.setSound(FireSound);
             }
             AmmoClip.Decrement();
             EventAggregator.GetInstance().Publish<OnWeaponAmmoChangedEvent>(new OnWeaponAmmoChangedEvent(player.playerNumber, AmmoClip.GetCurrentAmmo()));

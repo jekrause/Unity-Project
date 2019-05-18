@@ -54,6 +54,7 @@ public class Enemy : MonoBehaviour
     //Weapon
     public Transform shootPosition;
     public Bullet bullet;
+    public string FireSound;
     public float fAttackTime = 3;
     public float attackDistance = 50;
     public float fDamage = 10f;         //default damage if no weapon is equipped
@@ -165,6 +166,9 @@ public class Enemy : MonoBehaviour
             var x = Instantiate(bullet, this.shootPosition.position, this.shootPosition.rotation);
             x.SetDamage(fDamage);
             x.SetTarget("Player");
+
+            x.setSound(FireSound);
+
             x.GetComponent<Rigidbody2D>().AddForce(x.transform.right * 800);
 
             fAttackTime = Time.time + iBaseAttackRate;
@@ -399,11 +403,18 @@ public class Enemy : MonoBehaviour
             fHP -= (int)storage[0];
             HealthBarHandler.OnDamaged(fHP);
 
+            Debug.Log("Enemy HP =" + fHP);
+            Debug.Log("storage = " + storage);
+            Debug.Log("storage[0] = " + storage[0]);
+            Debug.Log("storage[1] = " + storage[1]);
+
             if (storage[1] != null)
             {
                 GameObject temp = (GameObject)storage[1];
+                Debug.Log("player =" + temp);
                 if (temp.GetComponent<Player>() != null && fHP <= 0)
                 {
+                    Debug.Log("Enemy died, exp should have went to " + temp);
                     EventAggregator.GetInstance().Publish<OnEnemyKilledEvent>(new OnEnemyKilledEvent(temp.GetComponent<Player>().playerNumber, 100));
                 }
                 if (playerTarget == null && Vector3.Distance(temp.transform.position, gameObject.transform.position) < fVisionDistance)

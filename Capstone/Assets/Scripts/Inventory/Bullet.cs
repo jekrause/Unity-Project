@@ -14,9 +14,17 @@ public class Bullet : MonoBehaviour
     public string spawnSound;
 
     // Start is called before the first frame update
-    void Awake()
+    /*void Awake()
     {
         AudioManager.Play(spawnSound);
+        Debug.Log("Played sound = " + spawnSound);
+        spawnPosition = transform.position;
+    }*/
+
+    private void Start()
+    {
+        AudioManager.Play(spawnSound);
+        Debug.Log("Played sound = " + spawnSound);
         spawnPosition = transform.position;
     }
 
@@ -88,5 +96,11 @@ public class Bullet : MonoBehaviour
     public void setShooter(GameObject pShooter)
     {
         shooter = pShooter;
+    }
+
+    public void setSound(string soundName)
+    {
+        spawnSound = soundName;
+        Debug.Log("spawnSound was set to " + spawnSound);
     }
 }

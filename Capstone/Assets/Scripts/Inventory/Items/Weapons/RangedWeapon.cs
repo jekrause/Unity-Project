@@ -12,6 +12,7 @@ public abstract class RangedWeapon : Weapon
     public AmmoClip AmmoClip { get; protected set; }
     public string ReloadSound { get; protected set; }
     public string ReloadFinishSound { get; protected set; }
+    public string FireSound { get; protected set; }
 
 
     public virtual void Fire(Player player)
@@ -25,6 +26,8 @@ public abstract class RangedWeapon : Weapon
 
             x.SetDamage(projDamage);
             x.setShooter(player.gameObject);
+            Debug.Log("FireSound = " + FireSound);
+            x.setSound(FireSound);
             x.GetComponent<Rigidbody2D>().AddForce(x.transform.right * projSpeed);
             AmmoClip.Decrement();
             EventAggregator.GetInstance().Publish<OnWeaponAmmoChangedEvent>(new OnWeaponAmmoChangedEvent(player.playerNumber, AmmoClip.GetCurrentAmmo()));

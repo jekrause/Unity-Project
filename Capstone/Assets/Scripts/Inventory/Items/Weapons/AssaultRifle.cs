@@ -19,6 +19,7 @@ public class AssaultRifle : RangedWeapon
         projDamage = DEFAULT_PROJ_DAMAGE;
         ReloadSound = "Universal_Reload";
         ReloadFinishSound = "Universal_Reload_Finished";
+        FireSound = "AssaultFire";
     }
 
     public override void UpdateWeaponStats(Stats playerStats)

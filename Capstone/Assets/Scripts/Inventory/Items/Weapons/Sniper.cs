@@ -6,7 +6,7 @@ public class Sniper : RangedWeapon
 
     public readonly float DEFAULT_ATTACK_RATE = 5f;
     public readonly float DEFAULT_RELOAD_TIME = 4f;
-    public readonly float DEFAULT_PROJ_DAMAGE = 40f;
+    public readonly float DEFAULT_PROJ_DAMAGE = 80f;//40f;
     private const int DEFAULT_MAX_CLIP_SIZE = 200;
     private const int AMMO_USED_PER_BULLET = 25;
     private int MaxAmmoClip = DEFAULT_MAX_CLIP_SIZE; // mutated value as level increases
@@ -20,6 +20,7 @@ public class Sniper : RangedWeapon
         attackRate = DEFAULT_ATTACK_RATE;
         ReloadSound = "Sniper_Reload";
         ReloadFinishSound = "Sniper_Reload_Finished";
+        FireSound = "SniperFire";
     }
 
     public override void UpdateWeaponStats(Stats playerStats)

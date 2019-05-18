@@ -1423,7 +1423,7 @@ InputManager:
     altPositiveButton: 
     gravity: 0
     dead: 0.25
-    sensitivity: 1000
+    sensitivity: 1
     snap: 0
     invert: 0
     type: 2
@@ -1455,7 +1455,7 @@ InputManager:
     altPositiveButton: 
     gravity: 0
     dead: 0.25
-    sensitivity: 0.9
+    sensitivity: 1
     snap: 0
     invert: 0
     type: 2
@@ -1487,7 +1487,7 @@ InputManager:
     altPositiveButton: 
     gravity: 0
     dead: 0.25
-    sensitivity: 1000
+    sensitivity: 1
     snap: 0
     invert: 0
     type: 2
@@ -1503,7 +1503,7 @@ InputManager:
     altPositiveButton: 
     gravity: 0
     dead: 0.25
-    sensitivity: 1000
+    sensitivity: 1
     snap: 0
     invert: 0
     type: 2
@@ -1518,12 +1518,12 @@ InputManager:
     altNegativeButton: 
     altPositiveButton: 
     gravity: 0
-    dead: 0.15
+    dead: 0.25
     sensitivity: 1
     snap: 0
     invert: 0
     type: 2
-    axis: 4
+    axis: 3
     joyNum: 1
   - serializedVersion: 3
     m_Name: J1XBOX_Right_Vertical_Axis_Windows
@@ -1534,12 +1534,12 @@ InputManager:
     altNegativeButton: 
     altPositiveButton: 
     gravity: 0
-    dead: 0.15
+    dead: 0.25
     sensitivity: 1
     snap: 0
     invert: 1
     type: 2
-    axis: 3
+    axis: 4
     joyNum: 1
   - serializedVersion: 3
     m_Name: J1XBOX_Left_Horizontal_Axis_Windows
@@ -1551,7 +1551,7 @@ InputManager:
     altPositiveButton: 
     gravity: 0
     dead: 0.25
-    sensitivity: 3
+    sensitivity: 1
     snap: 0
     invert: 0
     type: 2
@@ -1567,7 +1567,7 @@ InputManager:
     altPositiveButton: 
     gravity: 0
     dead: 0.25
-    sensitivity: 3
+    sensitivity: 1
     snap: 0
     invert: 1
     type: 2
@@ -1727,7 +1727,7 @@ InputManager:
     altPositiveButton: 
     gravity: 0
     dead: 0.25
-    sensitivity: 1000
+    sensitivity: 1
     snap: 0
     invert: 0
     type: 2
@@ -1743,7 +1743,7 @@ InputManager:
     altPositiveButton: 
     gravity: 0
     dead: 0.25
-    sensitivity: 1000
+    sensitivity: 1
     snap: 0
     invert: 0
     type: 2
@@ -1758,12 +1758,12 @@ InputManager:
     altNegativeButton: 
     altPositiveButton: 
     gravity: 0
-    dead: 0.15
+    dead: 0.25
     sensitivity: 1
     snap: 0
     invert: 0
     type: 2
-    axis: 4
+    axis: 3
     joyNum: 2
   - serializedVersion: 3
     m_Name: J2XBOX_Right_Vertical_Axis_Windows
@@ -1774,12 +1774,12 @@ InputManager:
     altNegativeButton: 
     altPositiveButton: 
     gravity: 0
-    dead: 0.15
+    dead: 0.25
     sensitivity: 1
     snap: 0
     invert: 1
     type: 2
-    axis: 3
+    axis: 4
     joyNum: 2
   - serializedVersion: 3
     m_Name: J2XBOX_Left_Horizontal_Axis_Windows
@@ -1791,7 +1791,7 @@ InputManager:
     altPositiveButton: 
     gravity: 0
     dead: 0.25
-    sensitivity: 3
+    sensitivity: 1
     snap: 0
     invert: 0
     type: 2
@@ -1807,7 +1807,7 @@ InputManager:
     altPositiveButton: 
     gravity: 0
     dead: 0.25
-    sensitivity: 3
+    sensitivity: 1
     snap: 0
     invert: 1
     type: 2
@@ -1903,7 +1903,7 @@ InputManager:
     altPositiveButton: 
     gravity: 0
     dead: 0.25
-    sensitivity: 1000
+    sensitivity: 1
     snap: 0
     invert: 0
     type: 2
@@ -1935,7 +1935,7 @@ InputManager:
     altPositiveButton: 
     gravity: 0
     dead: 0.25
-    sensitivity: 0.9
+    sensitivity: 1
     snap: 0
     invert: 0
     type: 2
@@ -1967,7 +1967,7 @@ InputManager:
     altPositiveButton: 
     gravity: 0
     dead: 0.25
-    sensitivity: 1000
+    sensitivity: 1
     snap: 0
     invert: 0
     type: 2
@@ -1983,7 +1983,7 @@ InputManager:
     altPositiveButton: 
     gravity: 0
     dead: 0.25
-    sensitivity: 1000
+    sensitivity: 1
     snap: 0
     invert: 0
     type: 2
@@ -1998,12 +1998,12 @@ InputManager:
     altNegativeButton: 
     altPositiveButton: 
     gravity: 0
-    dead: 0.15
+    dead: 0.25
     sensitivity: 1
     snap: 0
     invert: 0
     type: 2
-    axis: 4
+    axis: 3
     joyNum: 3
   - serializedVersion: 3
     m_Name: J3XBOX_Right_Vertical_Axis_Windows
@@ -2014,12 +2014,12 @@ InputManager:
     altNegativeButton: 
     altPositiveButton: 
     gravity: 0
-    dead: 0.15
+    dead: 0.25
     sensitivity: 1
     snap: 0
     invert: 1
     type: 2
-    axis: 3
+    axis: 4
     joyNum: 3
   - serializedVersion: 3
     m_Name: J3XBOX_Left_Horizontal_Axis_Windows
@@ -2031,7 +2031,7 @@ InputManager:
     altPositiveButton: 
     gravity: 0
     dead: 0.25
-    sensitivity: 3
+    sensitivity: 1
     snap: 0
     invert: 0
     type: 2
@@ -2047,7 +2047,7 @@ InputManager:
     altPositiveButton: 
     gravity: 0
     dead: 0.25
-    sensitivity: 3
+    sensitivity: 1
     snap: 0
     invert: 1
     type: 2
@@ -2143,7 +2143,7 @@ InputManager:
     altPositiveButton: 
     gravity: 0
     dead: 0.25
-    sensitivity: 3
+    sensitivity: 1
     snap: 0
     invert: 0
     type: 2
@@ -2175,7 +2175,7 @@ InputManager:
     altPositiveButton: 
     gravity: 0
     dead: 0.25
-    sensitivity: 0.9
+    sensitivity: 1
     snap: 0
     invert: 0
     type: 2
@@ -2207,7 +2207,7 @@ InputManager:
     altPositiveButton: 
     gravity: 0
     dead: 0.25
-    sensitivity: 3
+    sensitivity: 1
     snap: 0
     invert: 0
     type: 2
@@ -2223,7 +2223,7 @@ InputManager:
     altPositiveButton: 
     gravity: 0
     dead: 0.25
-    sensitivity: 3
+    sensitivity: 1
     snap: 0
     invert: 0
     type: 2
@@ -2238,12 +2238,12 @@ InputManager:
     altNegativeButton: 
     altPositiveButton: 
     gravity: 0
-    dead: 0.15
+    dead: 0.25
     sensitivity: 1
     snap: 0
     invert: 0
     type: 2
-    axis: 4
+    axis: 3
     joyNum: 4
   - serializedVersion: 3
     m_Name: J4XBOX_Right_Vertical_Axis_Windows
@@ -2254,12 +2254,12 @@ InputManager:
     altNegativeButton: 
     altPositiveButton: 
     gravity: 0
-    dead: 0.15
+    dead: 0.25
     sensitivity: 1
     snap: 0
     invert: 1
     type: 2
-    axis: 3
+    axis: 4
     joyNum: 4
   - serializedVersion: 3
     m_Name: J4XBOX_Left_Horizontal_Axis_Windows
@@ -2271,7 +2271,7 @@ InputManager:
     altPositiveButton: 
     gravity: 0
     dead: 0.25
-    sensitivity: 3
+    sensitivity: 1
     snap: 0
     invert: 0
     type: 2
@@ -2287,7 +2287,7 @@ InputManager:
     altPositiveButton: 
     gravity: 0
     dead: 0.25
-    sensitivity: 3
+    sensitivity: 1
     snap: 0
     invert: 1
     type: 2

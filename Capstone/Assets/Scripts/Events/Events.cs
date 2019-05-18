@@ -144,6 +144,7 @@ public class OnLevelUpEvent
     {
         this.PlayerNumber = playerNum;
         this.Stats = stat;
+        AudioManager.Play("Menu_Select");   //wanted to play a "level up" sound, I didn't know where else to put it, so I put it in this event
     }
 }
 
