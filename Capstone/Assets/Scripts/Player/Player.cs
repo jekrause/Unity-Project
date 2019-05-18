@@ -242,7 +242,7 @@ public abstract class Player : MonoBehaviour, ISubscriber<OnLevelUpEvent>
             Vector2 KeyMoveDirectionInput = new Vector2(moveHorizontal, moveVertical);
             float deadzone = 0.15f;
 
-            if (Input.GetButton("Keyboard_Q"))  //run button is being held down
+            if (Input.GetButton("Keyboard_Q") || Input.GetKey(KeyCode.LeftShift))  //run button is being held down      also added leftshift key here
             {
                 if (!isRunning)
                 {
@@ -262,23 +262,24 @@ public abstract class Player : MonoBehaviour, ISubscriber<OnLevelUpEvent>
                 }
 
             }
-
-            if (Input.GetButtonUp("Keyboard_Q")) //player let go of button
+            else  //not holding down run button
             {
+
                 if (isRunning)
                 {
                     isRunning = false;
                     fMoveRate = fMoveRate / 2f;
                 }
-            }
 
-            Vector3 position = Input.mousePosition;
-            position = myCamera.ScreenToWorldPoint(position);
-            position.x = position.x - transform.position.x;
-            position.y = position.y - transform.position.y;
-            angle = Mathf.Atan2(position.y, position.x) * Mathf.Rad2Deg;
-            eulerRot = Quaternion.Euler(0.0f, 0.0f, angle);
-            transform.rotation = Quaternion.Slerp(transform.rotation, eulerRot, Time.deltaTime * 120);
+
+                Vector3 position = Input.mousePosition;
+                position = myCamera.ScreenToWorldPoint(position);
+                position.x = position.x - transform.position.x;
+                position.y = position.y - transform.position.y;
+                angle = Mathf.Atan2(position.y, position.x) * Mathf.Rad2Deg;
+                eulerRot = Quaternion.Euler(0.0f, 0.0f, angle);
+                transform.rotation = Quaternion.Slerp(transform.rotation, eulerRot, Time.deltaTime * 120);
+            }
 
         }
         else //use controller inputs 
