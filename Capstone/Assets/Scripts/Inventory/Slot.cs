@@ -92,7 +92,7 @@ public class Slot
         if (CurrentItem == null)
         {
             CurrentItem = item;
-            IncrementQuantity();
+            CurrentQuantity = 1;
             ret = true;
             InventoryHandler.ObjectsPickedUp.Add(CurrentItem.gameObject);
         }
@@ -137,6 +137,7 @@ public class Slot
 
             if (CurrentQuantity <= 0)
                 CurrentItem = null;
+
         }
 
         return ret;

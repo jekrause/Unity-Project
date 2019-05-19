@@ -685,21 +685,23 @@ public class InventoryHandler : MonoBehaviour, ISubscriber<OnMainInvChangedEvent
                         player.UpdatePlayerCurrentWeapon(null);
                         InventoryHUD.OnWeaponUnEquip();
                     }
-                    WeaponInventory.RemoveAllItemInSlot(WeaponSlotIndex);
+
                     int itemIndex = 0;
                     for (int i = 0; i < ObjectsPickedUp.Count; i++)
                     {
                         if (ObjectsPickedUp[i].GetComponent<Weapon>() == itemToRemove)
                         {
-                            ObjectsPickedUp[i].transform.position = transform.position;
+                            Vector3 itemDropPosition = new Vector3(player.InteractionPanel.transform.position.x, player.InteractionPanel.transform.position.y);
+                            ObjectsPickedUp[i].transform.position = itemDropPosition;
                             ObjectsPickedUp[i].SetActive(true);
                             AudioManager.Play("ItemDropped");
                             WeaponInventory.RemoveAllItemInSlot(WeaponSlotIndex);
                             itemIndex = i;
+                            InventoryHUD.OnItemRemove(WeaponInventory.GetQuantityInSlot(WeaponSlotIndex));
                             break;
                         }
                     }
-                    InventoryHUD.OnItemRemove(WeaponInventory.GetQuantityInSlot(WeaponSlotIndex));
+                    
                 }
 
             }
