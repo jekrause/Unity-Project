@@ -14,7 +14,8 @@ public class Ammunition
         }
         else
         {
-            throw new System.ArgumentException("Ammunition amount is out of bound: Must be [0-200]");
+            Debug.Log("Ammunition Constructor(): Amount is out of bound: Must be [0-" + MAX_CAPACITY +"]");
+            this.Amount = MAX_CAPACITY; // set it to default
         }
     }
 

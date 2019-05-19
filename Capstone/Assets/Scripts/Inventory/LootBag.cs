@@ -10,9 +10,6 @@ public class LootBag : MonoBehaviour
 
     private void Start()
     {
-        for (int i = 0; i < Inventory.Capacity; i++)
-            Inventory.Add(new Slot());
-            
         ID = BagCounter++;
     }
     

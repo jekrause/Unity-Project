@@ -330,7 +330,7 @@ public class InventoryHandler : MonoBehaviour, ISubscriber<OnMainInvChangedEvent
                 }
             }
         }
-         if (Input.GetButtonUp(player.myControllerInput.DownButton))
+         if (player.myControllerInput != null && Input.GetButtonUp(player.myControllerInput.DownButton))
             timerButtonHeldDown = 0;
     }
 

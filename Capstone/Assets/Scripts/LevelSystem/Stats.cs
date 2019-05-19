@@ -40,8 +40,6 @@ public class Stats : MonoBehaviour, ISubscriber<OnEnemyKilledEvent>
         playerNum = GetComponent<Player>().playerNumber;
         LevelText = GetComponent<Player>().MyHUD.transform.Find("LevelText").GetComponent<Text>();
         SetLevel(GetComponent<InitializePlayer>().GetLevel());
-        //CalculateNextLevel();
-        //InitializeStats(); // used for testing higher level
     }
 
     /// <summary>
@@ -50,7 +48,12 @@ public class Stats : MonoBehaviour, ISubscriber<OnEnemyKilledEvent>
     /// <param name="HP"></param>
     public void SetMaxHP(float HP)
     {
-        if (HP <= 0) throw new System.ArgumentException("Cannot have negative HP");
+        if (HP <= 0)
+        {
+            Debug.Log("Cannot have Max HP less than 0");
+            HP = 100; // set it to default
+        } 
+
         Debug.Log("WARNING: You've changed Max HP. Max HP was: " + MaxHealth + ", Max HP is now: " + HP);
         MaxHealth = HP;
         Health = MaxHealth;
@@ -64,7 +67,11 @@ public class Stats : MonoBehaviour, ISubscriber<OnEnemyKilledEvent>
     {
         Debug.Log("NewLevel is " + newLevel);
 
-        if (newLevel <= 0 || newLevel >= MAX_LEVEL) throw new System.ArgumentException("Invalid level");
+        if (newLevel <= 0 || newLevel >= MAX_LEVEL)
+        {
+            Debug.Log("Attempted to set level to " + newLevel + "\nInvalid level, must be within (1-" + MAX_LEVEL + ")");
+            newLevel = 1;
+        }
         Debug.Log("WARNING: You've changed the player's level in code. Level was: " + Level + ", Level is now: " + newLevel);
         Level = newLevel;
         CalculateNextLevel();

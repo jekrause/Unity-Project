@@ -48,8 +48,11 @@ public class Bullet : MonoBehaviour
             tempStorage[0] = (int)damage;
             tempStorage[1] = shooter;
             col.gameObject.SendMessage("Damaged", tempStorage);
+
+            // if the bullet was shot from a player
             if (shooter != null && shooter.GetComponents<Player>() != null)
                 EventAggregator.GetInstance().Publish(new OnBulletCollisionEvent(shooter.GetComponent<Player>().playerNumber, col.gameObject.tag));
+
             var x = Instantiate(bulletPuff, gameObject.transform.position, gameObject.transform.rotation);
 
             if (x.GetComponent<ExplosionDamage>() != null)  //checking if puff is rocketExplosion

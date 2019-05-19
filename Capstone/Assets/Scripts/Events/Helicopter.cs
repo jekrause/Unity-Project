@@ -84,7 +84,6 @@ public class Helicopter : MonoBehaviour, ISubscriber<OnQuestItemPickUpEvent>, IS
                 {
                     CurrentInteractor.RemoveInteractionPanel();
                     //Load next level
-                    Debug.Log("Hello World");
                     LoadNextScene();
                     ButtonHeldTimer = 0;
                     this.enabled = false;

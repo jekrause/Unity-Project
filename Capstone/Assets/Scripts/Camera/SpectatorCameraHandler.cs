@@ -27,7 +27,10 @@ public class SpectatorCameraHandler : MonoBehaviour, ISubscriber<OnPlayerDeathEv
     public void OnEventHandler(OnPlayerDeathEvent eventData)
     {
         if (eventData == null || eventData.playerNum <= 0 || eventData.playerNum > 4)
-            throw new System.ArgumentException("Invalid event data");
+        {
+            Debug.Log("Invalid event data OnPlayerDeathEvent");
+            return;
+        }
 
         // find a player who is alive that we can spectate
         GameObject playerToSpectate = null;
